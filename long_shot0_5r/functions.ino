@@ -1,0 +1,135 @@
+void sendGameStatus(){
+  int b[9] = {ticketsDispensed,scoreClicks,hundredClicks,ballClicks,
+                  coinClicks,upClicks,downClicks,selectClicks,setupClicks  };
+  for(int x = 0; x<9;x++){
+    Serial.print(b[x]);
+  }
+  ticketsDispensed = 0;
+  scoreClicks = 0;
+  coinClicks = 0;
+  hundredClicks = 0;
+  ballClicks = 0;
+  upClicks = 0;
+  downClicks = 0;
+  selectClicks = 0;
+  setupClicks = 0;
+
+}
+
+void getGameStatus(){
+  if(Serial.available()){
+    Serial.readBytesUntil('\0',(char *)state,4);
+    sendGameStatus();
+    parseGameState(state);
+    //state needs to return tickets that need to be dispensed, current score, current ball count, solenoid status, lamps status, beacon status,meter status
+  }
+}
+
+void parseGameState(byte* state){
+    dispense = state[1];
+    score = state[2];
+    ballCount = state [3];
+    if(bitRead(state[0],0) == 1){
+   //turn free game lamp on
+   digitalWrite(freeGameLight,LOW);
+   }
+   else{
+   digitalWrite(freeGameLight,HIGH);
+   //turn free game lamp off
+   }
+   if(bitRead(state[0],1) == 1){
+   //turn game over lamp on
+   digitalWrite(gameOverLight, LOW);
+   }
+   else{
+   //turn game over lamp off
+   digitalWrite(gameOverLight,HIGH);
+   
+   }
+   if(bitRead(state[0],2) == 1){
+   //turn winner lamp on
+   digitalWrite(winLight,LOW);
+   }
+   else{
+   //turn winner lamp off
+   digitalWrite(winLight,HIGH);
+   
+   }
+   if(bitRead(state[0],3) == 1){
+   //turn beacon lamp on
+   digitalWrite(beacon, HIGH);
+   }
+   else{
+   //turn beacon lamp off
+   digitalWrite(beacon,LOW);
+   }
+   if(bitRead(state[0],4) == 1){
+   //turn coin meter on
+   digitalWrite(coinMeter,LOW);
+   }
+   else{
+   //turn coin meter off
+   digitalWrite(coinMeter,HIGH);
+   
+   }
+   if(bitRead(state[0],5) == 1){
+   //turn ticket meter on
+   digitalWrite(ticketMeter,LOW);
+   }
+   else{
+   //turn ticket meter off
+   digitalWrite(ticketMeter,HIGH);
+   }
+   if(bitRead(state[0],6) == 1){
+   //turn solenoid on 
+   digitalWrite(solenoid, HIGH);
+   }
+   else{
+   //turn solenoid off
+   digitalWrite(solenoid,LOW);
+   }
+   if(bitRead(state[0],7) == 1){
+   //turn on ticket dispenser 
+   digitalWrite(ticketDispenser, HIGH);
+   }
+   else{
+   //turn off ticket dispenser
+   digitalWrite(ticketDispenser,LOW);
+   }
+   
+}
+
+int checkButtonInput(Bounce &theButton){
+  buttonDebounce(theButton);
+  if(theButton.getClicks() == 1){
+    clearClicks(theButton);   
+    return 1;
+    //do we want to ditch this and instead call getClicks when we pass
+    //it up to the Pi to handle multiple clicks?
+  }
+}
+
+void clearClicks(Bounce &theButton){
+  theButton.setClicks(0);
+}
+
+void buttonDebounce(Bounce &theButton){
+  if( theButton.update()){
+    if(theButton.read() == HIGH && theButton.getLastState() == 0){
+      theButton.setClicks((theButton.getClicks() + 1));
+      theButton.setLastState(1);
+    }
+    else{
+      theButton.setLastState(0);
+    }
+  }
+}
+
+void idler(){
+  shifter.idle();
+}
+void solenoid_off(){
+  digitalWrite(solenoid,LOW);
+}
+
+
