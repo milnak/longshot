@@ -4,7 +4,7 @@ void sendGameStatus(){
   for(int x = 0; x<9;x++){
     Serial.print(b[x]);
   }
-  ticketsDispensed = 0;
+  ticketsDispensed = 0; //this is me passing back the number of tickets dispensed since last
   scoreClicks = 0;
   coinClicks = 0;
   hundredClicks = 0;
@@ -18,16 +18,23 @@ void sendGameStatus(){
 
 void getGameStatus(){
   if(Serial.available()){
-    Serial.readBytesUntil('\0',(char *)state,4);
+    if(Serial.readBytesUntil('\0',(char *)state,4) == 4){
+    //had to do a cast here even though docs say it can take byte[]
+    
     sendGameStatus();
     parseGameState(state);
+    }
     //state needs to return tickets that need to be dispensed, current score, current ball count, solenoid status, lamps status, beacon status,meter status
   }
 }
 
 void parseGameState(byte* state){
-    dispense = state[1];
-    score = state[2];
+    dispense = state[1]; //this is the number of tickets, on/off is in the packed byte
+    score = state[2];//this isn't going to work, this is a 3 digit number
+    //also how are we going to convert 3 separate chars back into the int?
+    //ex: int someInt = someChar - '0';
+    //or: int number = atoi(input);
+    //looks like atoi will convert a char array
     ballCount = state [3];
     if(bitRead(state[0],0) == 1){
    //turn free game lamp on
@@ -128,8 +135,6 @@ void buttonDebounce(Bounce &theButton){
 void idler(){
   shifter.idle();
 }
-void solenoid_off(){
-  digitalWrite(solenoid,LOW);
-}
+
 
 
