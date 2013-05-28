@@ -67,16 +67,16 @@ int main ()
     // write our requests
     // set this so the Arduino knows we're done sending over the wire
     outGameState._terminator = '\0';
-    unsigned char* outStateMem = &outGameState;
+    unsigned char* outStateMem = (unsigned char*)&outGameState;
 
     int i = 0;
     for (i = 0; i < sizeof(outGameState); i++, outStateMem++)
-      serialPutchar(fd, outStateMem);
+      serialPutchar(fd, *outStateMem);
 
-    serialFlush( fd )
+    serialFlush( fd );
 
     // read the data from the arduino
-    unsigned char* inStateMem = &inGameState;
+    unsigned char* inStateMem = (unsigned char*)&inGameState;
     while (serialDataAvail (fd))
     {
        *inStateMem = serialGetchar(fd);
