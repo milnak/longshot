@@ -42,10 +42,7 @@ typedef struct GameStatus
 int main ()
 {
   int fd;
-  unsigned int nextTime;
-
-  outGameState._terminator = "\0";
-
+  
   // open our USB connection
   if ((fd = serialOpen ("/dev/ttyUSB0", 57600)) < 0)
   {
@@ -61,32 +58,30 @@ int main ()
   }
 
   // kick off the update loop
-  nextTime = millis () + 300;
-
+  
   while (true)
   {
-    if (millis () > nextTime)
+    // write our requests
+    // set this so the Arduino knows we're done sending over the wire
+    outGameState._terminator = "\0";
+    unsigned char* outStateMem = &outGameState;
+
+    for (int i = 0; i < sizeof(outGameState); i++, outStateMem++)
+      serialPutchar(fd, outStateMem);
+
+    serialFlush( fd )
+
+    // read the data from the arduino
+    unsigned char* inStateMem = &inGameState;
+    while (serialDataAvail (fd))
     {
-      // write our requests
-      unsigned char* outStateMem = &outGameState;
-
-      for (int i = 0; i < sizeof(outGameState); i++, outStateMem++)
-        serialPutchar(fd, outStateMem);
-
-      serialFlush( fd )
-
-      // read the data from the arduino
-      unsigned char* inStateMem = &inGameState;
-      while (serialDataAvail (fd))
-      {
-         *inStateMem = serialGetchar(fd);
-         inStateMem += sizeof(unsigned char); // we're only reading a byte at a time
-      }
-      
-      nextTime += 300 ;
+       *inStateMem = serialGetchar(fd);
+       inStateMem += sizeof(unsigned char); // we're only reading a byte at a time
     }
 
-    delay (3) ;
+    // now respond accordingly to the states
+
+    delay(300) ;
   }
 
   return 0 ;
