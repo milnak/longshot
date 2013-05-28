@@ -78,7 +78,7 @@ Bounce downDebounce = Bounce(downButton,20);
 
 void setup(){
   Serial.begin(57600);
-  Serial.println("Hi!");
+ // Serial.println("Hi!");
   idle.enable();
  
   pinMode(gameOverLight, OUTPUT);

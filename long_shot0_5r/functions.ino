@@ -1,18 +1,41 @@
+void integerToBytes(long val, byte b[4]) {
+ b[0] = (byte )((val >> 24) & 0xff);
+ b[1] = (byte )((val >> 16) & 0xff);
+ b[2] = (byte )((val >> 8) & 0xff);
+ b[3] = (byte )(val & 0xff);
+}
+
 void sendGameStatus(){
   int b[9] = {ticketsDispensed,scoreClicks,hundredClicks,ballClicks,
                   coinClicks,upClicks,downClicks,selectClicks,setupClicks  };
-  for(int x = 0; x<9;x++){
-    Serial.print(b[x]);
+   
+ // int numBytes = sizeof(int) * 9;
+ // byte* data = (byte*)malloc(numBytes);               
+  //byte* ptr = data;
+  
+  for(int x = 0; x < 9; x++){
+    byte testByte[4];
+    integerToBytes(b[x], testByte);
+    Serial.write(testByte,sizeof(testByte));
   }
-  ticketsDispensed = 0; //this is me passing back the number of tickets dispensed since last
-  scoreClicks = 0;
-  coinClicks = 0;
-  hundredClicks = 0;
-  ballClicks = 0;
-  upClicks = 0;
-  downClicks = 0;
-  selectClicks = 0;
-  setupClicks = 0;
+ // int testInt = 57;
+  
+//integerToBytes(scoreClicks,testByte);
+  
+  //int count = Serial.write(testByte,sizeof(testByte));
+ 
+  //Serial.write(data, numBytes);
+ // free(data);
+  
+  //ticketsDispensed = 0; //this is me passing back the number of tickets dispensed since last
+  //scoreClicks = 0;
+// coinClicks = 0;
+  //hundredClicks = 0;
+ // ballClicks = 0;
+  //upClicks = 0
+ // downClicks = 0;
+ // selectClicks = 0;
+ // setupClicks = 0;
 
 }
 
@@ -29,7 +52,7 @@ void getGameStatus(){
 }
 
 void parseGameState(byte* state){
-    dispense = state[1]; //this is the number of tickets, on/off is in the packed byte
+    //dispense = state[1]; //this is the number of tickets, on/off is in the packed byte
     score = state[2];//this isn't going to work, this is a 3 digit number
     //also how are we going to convert 3 separate chars back into the int?
     //ex: int someInt = someChar - '0';
