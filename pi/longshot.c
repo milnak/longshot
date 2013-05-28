@@ -24,9 +24,11 @@ typedef struct GameState {
   unsigned char score;
   unsigned char ballCount;
   unsigned char _terminator;
-} outGameState;
+};
 
-typedef struct GameStatus
+GameState outGameState;
+
+typedef struct MachineStatus
 {
   unsigned int ticketsDispensed;
   unsigned int scoreClicks;
@@ -37,7 +39,9 @@ typedef struct GameStatus
   unsigned int downClicks;
   unsigned int selectClicks;
   unsigned int setupClicks;
-} inGameState;
+};
+
+MachineStatus inGameState;
 
 int main ()
 {
@@ -63,7 +67,7 @@ int main ()
   {
     // write our requests
     // set this so the Arduino knows we're done sending over the wire
-    outGameState._terminator = "\0";
+    outGameState._terminator = '\0';
     unsigned char* outStateMem = &outGameState;
 
     for (int i = 0; i < sizeof(outGameState); i++, outStateMem++)
