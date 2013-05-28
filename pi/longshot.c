@@ -69,7 +69,8 @@ int main ()
     outGameState._terminator = '\0';
     unsigned char* outStateMem = &outGameState;
 
-    for (int i = 0; i < sizeof(outGameState); i++, outStateMem++)
+    int i = 0;
+    for (i = 0; i < sizeof(outGameState); i++, outStateMem++)
       serialPutchar(fd, outStateMem);
 
     serialFlush( fd )
