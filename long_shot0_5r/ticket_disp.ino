@@ -1,7 +1,7 @@
 
 int dispense_tickets(){
   if(dispense > 0){
-   Serial.print("Dispense");
+   //Serial.print("Dispense");
    Serial.println(dispense);
    digitalWrite(ticketDispenser, HIGH);
     
