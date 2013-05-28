@@ -60,13 +60,18 @@ int main ()
     return 1 ;
   }
 
+  outGameState.switches  = 1;
+  outGameState.dispense  = 2;
+  outGameState.score     = 3;
+  outGameState.ballCount = 4;
+  // set this so the Arduino knows we're done sending over the wire
+  outGameState._terminator = '\0';
+    
+
   // kick off the update loop
-  
   while (1)
   {
     // write our requests
-    // set this so the Arduino knows we're done sending over the wire
-    outGameState._terminator = '\0';
     unsigned char* outStateMem = (unsigned char*)&outGameState;
 
     int i = 0;
@@ -84,8 +89,9 @@ int main ()
     }
 
     // now respond accordingly to the states
+    printf("Got back %d\n", inGameState.scoreClicks);
 
-    delay(300) ;
+    delay(300);
   }
 
   return 0 ;
