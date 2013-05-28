@@ -84,7 +84,7 @@ int main ()
     unsigned char* inStateMem = (unsigned char*)&inGameState;
     int value = 0;
     
-    if (serialDataAvail(fd))
+    while (serialDataAvail(fd))
     //for (;bytesRead < sizeof(struct MachineStatus);)
     {
        //*inStateMem = serialGetchar(fd);
@@ -98,7 +98,7 @@ int main ()
        value &= serialGetchar(fd) << 0;
        printf("Got: %d\n", value);
     }
-    
+
     serialFlush( fd );
     // now respond accordingly to the states
     //printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, inGameState.scoreClicks);
