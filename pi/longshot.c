@@ -79,23 +79,25 @@ int main ()
       serialPutchar(fd, *outStateMem);
 
 
-    // read the data from the arduino
-    int bytesRead = 0;
-    unsigned char* inStateMem = (unsigned char*)&inGameState;
-    
-    while (serialDataAvail(fd))
-    //for (;bytesRead < sizeof(struct MachineStatus);)
+    if (serialDataAvail(fd))
     {
-       //*inStateMem = serialGetchar(fd);
-       //inStateMem++; // we're only reading a byte at a time
-       //bytesRead++;
+      unsigned char lastByte = '\0';
+      unsigned char[4] spunk = { 0 };
+      int bytesRead = 0;
 
-       printf("Got: %d\n", serialGetchar(fd));
+      do {
+        lastByte = serialGetchar(fd);
+        spunk[bytesRead++] = lastByte;
+      } while (lastByte != '\0');
+
+      i = (spunk[0] << 24 | spunk[1] << 16 | spunk[2] << 8 | spunk[4]);
     }
 
-    printf("**Done for now.**\n");
+    printf("Got: %d\n", i);
 
     serialFlush( fd );
+    delay(100);
+
     // now respond accordingly to the states
     //printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, inGameState.scoreClicks);
   }
