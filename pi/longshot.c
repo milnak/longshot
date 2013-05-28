@@ -18,7 +18,7 @@ enum SwitchBits {
 };
  
 
-typedef struct GameState {
+struct GameState {
   unsigned char switches;
   unsigned char dispense;
   unsigned char score;
@@ -26,9 +26,7 @@ typedef struct GameState {
   unsigned char _terminator;
 };
 
-GameState outGameState;
-
-typedef struct MachineStatus
+struct MachineStatus
 {
   unsigned int ticketsDispensed;
   unsigned int scoreClicks;
@@ -41,7 +39,8 @@ typedef struct MachineStatus
   unsigned int setupClicks;
 };
 
-MachineStatus inGameState;
+struct GameState outGameState;
+struct MachineStatus inGameState;
 
 int main ()
 {
