@@ -79,17 +79,16 @@ int main ()
     {
       serialPutchar(fd, *outStateMem);
     }
-    
-    //int value = 0;
-    //unsigned char* ptr = (unsigned char*)&value;
 
+    int value = 0;
+    
     for (i = 0; i < sizeof(int); i++)
     {
        unsigned char lastByte = serialGetchar(fd);
-       printf("Got: %d for %d. \n", lastByte, i);
+       value |= lastByte << (8 * i);
     }
 
-    printf("End Loop \n");
+    printf("End Loop. Value: %d \n", value);
     serialFlush( fd );
     delay(300);
 
