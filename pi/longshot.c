@@ -63,17 +63,11 @@ int serialReadInt() {
 void serialSetup() {
   // open our USB connection
   if ((serialConn = serialOpen("/dev/ttyUSB0", 57600)) < 0)
-  {
     fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
-    return 1 ;
-  }
 
   // see if wiringPi is DTF
   if (wiringPiSetup() == -1)
-  {
     fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
-    return 1 ;
-  }
 
    // set this so the Arduino knows we're done sending over the wire
   outGameState._terminator = '\0';
@@ -117,15 +111,18 @@ void serialExchange() {
     delay(300);
 }
 
+void updateGame() {
+
+}
+
 ////////////////////////////////////////
 // main
 ////////////////////////////////////////
 int main ()
 {
- 
   serialSetup();
 
-  while (1)
+  while (serialConn >= 0)
   {
     serialExchange();
     updateGame();
