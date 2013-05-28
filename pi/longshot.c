@@ -46,24 +46,8 @@ struct MachineStatus inGameState, lastState;
 ////////////////////////////////////////
 // setup the serial connection and wiringPi
 int serialSetup() {
-  // open our USB connection
-  int fd;
-  if ((fd = serialOpen("/dev/ttyUSB0", 57600)) < 0) {
-    fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
-    return -1;
-  }
-
-  // see if wiringPi is DTF
-  if (wiringPiSetup() == -1) {
-    fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
-    return -1;
-  }
-
-   // set this so the Arduino knows we're done sending over the wire
-  outGameState._terminator = '\0';
-  return fd;
+  
 }
-
 
 ////////////////////////////////////////
 // read 4 bytes and assemble into an int
@@ -81,7 +65,35 @@ int serialReadInt(int fd) {
 ////////////////////////////////////////
 // Write out our machine requests and read in the state
 void serialExchange(int fd) {
-  
+}
+
+void updateGame() {
+}
+
+////////////////////////////////////////
+// main
+////////////////////////////////////////
+int main ()
+{
+  // open our USB connection
+  int fd;
+  if ((fd = serialOpen("/dev/ttyUSB0", 57600)) < 0) {
+    fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
+    return -1;
+  }
+
+  // see if wiringPi is DTF
+  if (wiringPiSetup() == -1) {
+    fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
+    return -1;
+  }
+
+   // set this so the Arduino knows we're done sending over the wire
+  outGameState._terminator = '\0';
+
+
+  while (1)
+  {
     // write our requests
     unsigned char* outStateMem = (unsigned char*)&outGameState;
 
@@ -115,23 +127,8 @@ void serialExchange(int fd) {
 
     serialFlush( fd );
     delay(300);
-}
 
-void updateGame() {
-
-}
-
-////////////////////////////////////////
-// main
-////////////////////////////////////////
-int main ()
-{
-  int serialConn = serialSetup();
-
-  while (serialConn > 0)
-  {
-    serialExchange(serialConn);
-    updateGame();
+    //updateGame();
   }
 
   serialClose(serialConn);
