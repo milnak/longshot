@@ -16,6 +16,7 @@ enum SwitchBits {
  SWITCH_SOLENOID,
  SWITCH_TICKETDISPENSER
 };
+ 
 
 struct GameState {
   unsigned char switches;
@@ -38,20 +39,10 @@ struct MachineStatus
   unsigned int setupClicks;
 };
 
-// globals
 struct GameState outGameState;
-struct MachineStatus inGameState, lastState;
+struct MachineStatus inGameState;
 
-
-////////////////////////////////////////
-// setup the serial connection and wiringPi
-int serialSetup() {
-  
-}
-
-////////////////////////////////////////
-// read 4 bytes and assemble into an int
-int serialReadInt(int fd) {
+int readInt(int fd) {
   int i = 0;
   int value = 0;
   for (i = 0; i < sizeof(int); i++)
@@ -62,36 +53,33 @@ int serialReadInt(int fd) {
   return value;
 }
 
-////////////////////////////////////////
-// Write out our machine requests and read in the state
-void serialExchange(int fd) {
-}
-
-void updateGame() {
-}
-
-////////////////////////////////////////
-// main
-////////////////////////////////////////
 int main ()
 {
-  // open our USB connection
   int fd;
-  if ((fd = serialOpen("/dev/ttyUSB0", 57600)) < 0) {
+  
+  // open our USB connection
+  if ((fd = serialOpen("/dev/ttyUSB0", 57600)) < 0)
+  {
     fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
-    return -1;
+    return 1 ;
   }
 
   // see if wiringPi is DTF
-  if (wiringPiSetup() == -1) {
+  if (wiringPiSetup() == -1)
+  {
     fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
-    return -1;
+    return 1 ;
   }
 
-   // set this so the Arduino knows we're done sending over the wire
+  outGameState.switches  = 1;
+  outGameState.dispense  = 2;
+  outGameState.score     = 3;
+  outGameState.ballCount = 4;
+  // set this so the Arduino knows we're done sending over the wire
   outGameState._terminator = '\0';
+    
 
-
+  // kick off the update loop
   while (1)
   {
     // write our requests
@@ -99,38 +87,43 @@ int main ()
 
     int i = 0;
     for (i = 0; i < sizeof(outGameState); i++, outStateMem++)
+    {
       serialPutchar(fd, *outStateMem);
+    }
 
-    // copy the last update
-    //lastState = inGameState;
-
-    // read the machine state
-    inGameState.ticketsDispensed = serialReadInt(fd);
-    inGameState.scoreClicks = serialReadInt(fd);
-    inGameState.hundredClicks = serialReadInt(fd);
-    inGameState.ballClicks = serialReadInt(fd);
-    inGameState.coinClicks = serialReadInt(fd);
-    inGameState.upClicks = serialReadInt(fd);
-    inGameState.downClicks = serialReadInt(fd);
-    inGameState.selectClicks = serialReadInt(fd);
-    inGameState.setupClicks = serialReadInt(fd);
-
+    inGameState.ticketsDispensed = readInt(fd);
     printf("ticketsDispensed: %d\n", inGameState.ticketsDispensed);
+
+    inGameState.scoreClicks = readInt(fd);
     printf("scoreClicks: %d\n", inGameState.scoreClicks);
+
+    inGameState.hundredClicks = readInt(fd);
     printf("hundredClicks: %d\n", inGameState.hundredClicks);
+
+    inGameState.ballClicks = readInt(fd);
     printf("ballClicks: %d\n", inGameState.ballClicks);
+
+    inGameState.coinClicks = readInt(fd);
     printf("coinClicks: %d\n", inGameState.coinClicks);
+
+    inGameState.upClicks = readInt(fd);
     printf("upClicks: %d\n", inGameState.upClicks);
+
+    inGameState.downClicks = readInt(fd);
     printf("downClicks: %d\n", inGameState.downClicks);
+
+    inGameState.selectClicks = readInt(fd);
     printf("selectClicks: %d\n", inGameState.selectClicks);
+
+    inGameState.setupClicks = readInt(fd);
     printf("setupClicks: %d\n", inGameState.setupClicks);
 
     serialFlush( fd );
     delay(300);
 
-    //updateGame();
+    // now respond accordingly to the states
+    //printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, inGameState.scoreClicks);
   }
 
-  serialClose(fd);
   return 0 ;
 }
