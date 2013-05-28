@@ -76,27 +76,22 @@ int main ()
 
     int i = 0;
     for (i = 0; i < sizeof(outGameState); i++, outStateMem++)
-      serialPutchar(fd, *outStateMem);
-
-
-    if (serialDataAvail(fd))
     {
-      unsigned char lastByte = '\0';
-      unsigned char spunk[4] = { 0, 0, 0, 0 };
-      int bytesRead = 0;
+      serialPutchar(fd, *outStateMem);
+    }
+    
+    //int value = 0;
+    //unsigned char* ptr = (unsigned char*)&value;
 
-      do {
-        lastByte = serialGetchar(fd);
-        spunk[bytesRead++] = lastByte;
-      } while (lastByte != '\0');
-
-      i = (spunk[0] << 24 | spunk[1] << 16 | spunk[2] << 8 | spunk[4]);
-      
-      printf("Got: %d. Read %d bytes\n", i, bytesRead);
+    for (i = 0; i < sizeof(int); i++)
+    {
+       unsigned char lastByte = serialGetchar(fd);
+       printf("Got: %d for %d. \n", lastByte, i);
     }
 
+    printf("End Loop \n");
     serialFlush( fd );
-    delay(100);
+    delay(300);
 
     // now respond accordingly to the states
     //printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, inGameState.scoreClicks);
