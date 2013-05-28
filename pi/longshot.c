@@ -42,6 +42,16 @@ struct MachineStatus
 struct GameState outGameState;
 struct MachineStatus inGameState;
 
+int readInt(int fd) {
+  int value = 0;
+  for (i = 0; i < sizeof(int); i++)
+  {
+     unsigned char lastByte = serialGetchar(fd);
+     value |= lastByte << (24 - (8 * i));
+  }
+  return value;
+}
+
 int main ()
 {
   int fd;
@@ -80,15 +90,33 @@ int main ()
       serialPutchar(fd, *outStateMem);
     }
 
-    int value = 0;
-    
-    for (i = 0; i < sizeof(int); i++)
-    {
-       unsigned char lastByte = serialGetchar(fd);
-       value |= lastByte << (24 - (8 * i));
-    }
+    inGameState.ticketsDispensed = readInt(fd);
+    printf("ticketsDispensed: %d\n", inGameState.ticketsDispensed);
 
-    printf("End Loop. Value: %d \n", value);
+    inGameState.scoreClicks = readInt(fd);
+    printf("scoreClicks: %d\n", inGameState.scoreClicks);
+
+    inGameState.hundredClicks = readInt(fd);
+    printf("hundredClicks: %d\n", inGameState.hundredClicks);
+
+    inGameState.ballClicks = readInt(fd);
+    printf("ballClicks: %d\n", inGameState.ballClicks);
+
+    inGameState.coinClicks = readInt(fd);
+    printf("coinClicks: %d\n", inGameState.coinClicks);
+
+    inGameState.upClicks = readInt(fd);
+    printf("upClicks: %d\n", inGameState.upClicks);
+
+    inGameState.downClicks = readInt(fd);
+    printf("downClicks: %d\n", inGameState.downClicks);
+
+    inGameState.selectClicks = readInt(fd);
+    printf("selectClicks: %d\n", inGameState.selectClicks);
+
+    inGameState.setupClicks = readInt(fd);
+    printf("setupClicks: %d\n", inGameState.setupClicks);
+
     serialFlush( fd );
     delay(300);
 
