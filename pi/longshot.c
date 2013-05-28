@@ -43,6 +43,7 @@ struct GameState outGameState;
 struct MachineStatus inGameState;
 
 int readInt(int fd) {
+  int i = 0;
   int value = 0;
   for (i = 0; i < sizeof(int); i++)
   {
