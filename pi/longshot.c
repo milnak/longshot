@@ -44,7 +44,7 @@ struct MachineStatus inGameState, lastState;
 
 ////////////////////////////////////////
 // read 4 bytes and assemble into an int
-int serialReadInt(int fd) {
+int serialReadInt(int& fd) {
   int i = 0;
   int value = 0;
   for (i = 0; i < sizeof(int); i++)
@@ -60,12 +60,16 @@ int serialReadInt(int fd) {
 int serialSetup() {
   // open our USB connection
   int fd
-  if ((fd = serialOpen("/dev/ttyUSB0", 57600)) < 0)
+  if ((fd = serialOpen("/dev/ttyUSB0", 57600)) < 0) {
     fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
+    return -1;
+  }
 
   // see if wiringPi is DTF
-  if (wiringPiSetup() == -1)
+  if (wiringPiSetup() == -1) {
     fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
+    return -1;
+  }
 
    // set this so the Arduino knows we're done sending over the wire
   outGameState._terminator = '\0';
@@ -74,7 +78,7 @@ int serialSetup() {
 
 ////////////////////////////////////////
 // Write out our machine requests and read in the state
-void serialExchange(int fd) {
+void serialExchange(int& fd) {
   
     // write our requests
     unsigned char* outStateMem = (unsigned char*)&outGameState;
@@ -84,7 +88,7 @@ void serialExchange(int fd) {
       serialPutchar(fd, *outStateMem);
 
     // copy the last update
-    lastState = inGameState;
+    //lastState = inGameState;
 
     // read the machine state
     inGameState.ticketsDispensed = serialReadInt(fd);
@@ -122,7 +126,7 @@ int main ()
 {
   int serialConn = serialSetup();
 
-  while (1)
+  while (serialConn > 0)
   {
     serialExchange(serialConn);
     updateGame();
