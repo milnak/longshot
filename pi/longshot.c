@@ -75,15 +75,16 @@ int main ()
     unsigned char* outStateMem = (unsigned char*)&outGameState;
 
     int i = 0;
-    for (i = 0; i < sizeof(outGameState); i++, outStateMem++)
-      serialPutchar(fd, *outStateMem);
+    //for (i = 0; i < sizeof(outGameState); i++, outStateMem++)
+    //  serialPutchar(fd, *outStateMem);
 
-    serialFlush( fd );
+    //serialFlush( fd );
 
     // read the data from the arduino
     int bytesRead = 0;
     unsigned char* inStateMem = (unsigned char*)&inGameState;
-    while (serialDataAvail(fd))
+    //while (serialDataAvail(fd))
+    for (;bytesRead < sizeof(GameState);)
     {
        *inStateMem = serialGetchar(fd);
        inStateMem += sizeof(unsigned char); // we're only reading a byte at a time
