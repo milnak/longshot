@@ -82,7 +82,7 @@ int main ()
     if (serialDataAvail(fd))
     {
       unsigned char lastByte = '\0';
-      unsigned char[4] spunk = { 0 };
+      unsigned char spunk[4] = { 0, 0, 0, 0 };
       int bytesRead = 0;
 
       do {
