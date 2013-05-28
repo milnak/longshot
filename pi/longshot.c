@@ -86,6 +86,9 @@ int main ()
     {
        *inStateMem = serialGetchar(fd);
        inStateMem += sizeof(unsigned char); // we're only reading a byte at a time
+       
+       putchar(*inStateMem);
+       fflush(stdout);
     }
 
     // now respond accordingly to the states
