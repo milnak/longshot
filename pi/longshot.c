@@ -72,24 +72,25 @@ int main ()
   while (1)
   {
     // write our requests
-    //unsigned char* outStateMem = (unsigned char*)&outGameState;
+    unsigned char* outStateMem = (unsigned char*)&outGameState;
 
-    //int i = 0;
-    //for (i = 0; i < sizeof(outGameState); i++, outStateMem++)
-    //  serialPutchar(fd, *outStateMem);
+    int i = 0;
+    for (i = 0; i < sizeof(outGameState); i++, outStateMem++)
+      serialPutchar(fd, *outStateMem);
 
-    //serialFlush( fd );
 
     // read the data from the arduino
     int bytesRead = 0;
     unsigned char* inStateMem = (unsigned char*)&inGameState;
     //while (serialDataAvail(fd))
-    for (;bytesRead < sizeof(struct GameState);)
+    for (;bytesRead < sizeof(struct MachineStatus);)
     {
        *inStateMem = serialGetchar(fd);
        inStateMem += sizeof(unsigned char); // we're only reading a byte at a time
        bytesRead++;
     }
+
+    serialFlush( fd );
 
     // now respond accordingly to the states
     printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, inGameState.scoreClicks);
