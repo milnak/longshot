@@ -44,14 +44,14 @@ int main ()
   int fd;
   
   // open our USB connection
-  if ((fd = serialOpen ("/dev/ttyUSB0", 57600)) < 0)
+  if ((fd = serialOpen("/dev/ttyUSB0", 57600)) < 0)
   {
     fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
     return 1 ;
   }
 
   // see if wiringPi is DTF
-  if (wiringPiSetup () == -1)
+  if (wiringPiSetup() == -1)
   {
     fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
     return 1 ;
@@ -59,7 +59,7 @@ int main ()
 
   // kick off the update loop
   
-  while (true)
+  while (TRUE)
   {
     // write our requests
     // set this so the Arduino knows we're done sending over the wire
