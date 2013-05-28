@@ -91,9 +91,9 @@ int main ()
       } while (lastByte != '\0');
 
       i = (spunk[0] << 24 | spunk[1] << 16 | spunk[2] << 8 | spunk[4]);
+      
+      printf("Got: %d. Read %d bytes\n", i, bytesRead);
     }
-
-    printf("Got: %d\n", i);
 
     serialFlush( fd );
     delay(100);
