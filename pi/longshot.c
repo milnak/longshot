@@ -16,7 +16,6 @@ enum SwitchBits {
  SWITCH_SOLENOID,
  SWITCH_TICKETDISPENSER
 };
- 
 
 struct GameState {
   unsigned char switches;
@@ -43,7 +42,6 @@ struct MachineStatus
 struct GameState outGameState;
 struct MachineStatus inGameState, lastState;
 int serialConn;
-
 
 ////////////////////////////////////////
 // read 4 bytes and assemble into an int
@@ -76,7 +74,8 @@ void serialSetup() {
 ////////////////////////////////////////
 // Write out our machine requests and read in the state
 void serialExchange() {
-  // write our requests
+  
+    // write our requests
     unsigned char* outStateMem = (unsigned char*)&outGameState;
 
     int i = 0;
@@ -122,7 +121,7 @@ int main ()
 {
   serialSetup();
 
-  while (serialConn >= 0)
+  while (1)
   {
     serialExchange();
     updateGame();
