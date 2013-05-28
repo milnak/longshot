@@ -81,18 +81,17 @@ int main ()
     serialFlush( fd );
 
     // read the data from the arduino
+    int bytesRead = 0;
     unsigned char* inStateMem = (unsigned char*)&inGameState;
-    while (serialDataAvail (fd))
+    while (serialDataAvail(fd))
     {
        *inStateMem = serialGetchar(fd);
        inStateMem += sizeof(unsigned char); // we're only reading a byte at a time
-       
-       putchar(*inStateMem);
-       fflush(stdout);
+       bytesRead++;
     }
 
     // now respond accordingly to the states
-    printf("Got back %d\n", inGameState.scoreClicks);
+    printf("Read: %d bytes. Score Clicks: %d\n", inGameState.scoreClicks);
 
     delay(300);
   }
