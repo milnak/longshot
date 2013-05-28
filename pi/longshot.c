@@ -59,7 +59,7 @@ int main ()
 
   // kick off the update loop
   
-  while (TRUE)
+  while (1)
   {
     // write our requests
     // set this so the Arduino knows we're done sending over the wire
