@@ -85,7 +85,7 @@ int main ()
     for (i = 0; i < sizeof(int); i++)
     {
        unsigned char lastByte = serialGetchar(fd);
-       value |= lastByte << (8 * i);
+       value |= lastByte << (24 - (8 * i));
     }
 
     printf("End Loop. Value: %d \n", value);
