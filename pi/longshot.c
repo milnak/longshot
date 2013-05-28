@@ -91,7 +91,7 @@ int main ()
     }
 
     // now respond accordingly to the states
-    printf("Read: %d bytes. Score Clicks: %d\n", inGameState.scoreClicks);
+    printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, inGameState.scoreClicks);
 
     delay(300);
   }
