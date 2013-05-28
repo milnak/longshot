@@ -86,16 +86,21 @@ int main ()
     while (serialDataAvail(fd))
     //for (;bytesRead < sizeof(struct MachineStatus);)
     {
-       *inStateMem = serialGetchar(fd);
-       inStateMem++; // we're only reading a byte at a time
-       bytesRead++;
+       //*inStateMem = serialGetchar(fd);
+       //inStateMem++; // we're only reading a byte at a time
+       //bytesRead++;
+
+       printf("Got: %d\n", serialGetchar(fd));
     }
 
     serialFlush( fd );
     // now respond accordingly to the states
-    printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, inGameState.scoreClicks);
+    //printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, inGameState.scoreClicks);
 
-    delay(30);
+    //if (bytesRead > 0)
+    {
+      delay(100);
+    }
   }
 
   return 0 ;
