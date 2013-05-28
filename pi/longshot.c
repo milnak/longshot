@@ -93,14 +93,11 @@ int main ()
        printf("Got: %d\n", serialGetchar(fd));
     }
 
+    printf("**Done for now.**\n");
+
     serialFlush( fd );
     // now respond accordingly to the states
     //printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, inGameState.scoreClicks);
-
-    //if (bytesRead > 0)
-    {
-      delay(100);
-    }
   }
 
   return 0 ;
