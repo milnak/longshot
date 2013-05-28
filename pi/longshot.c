@@ -42,18 +42,6 @@ struct MachineStatus
 struct GameState outGameState;
 struct MachineStatus inGameState, lastState;
 
-////////////////////////////////////////
-// read 4 bytes and assemble into an int
-int serialReadInt(int& fd) {
-  int i = 0;
-  int value = 0;
-  for (i = 0; i < sizeof(int); i++)
-  {
-     unsigned char lastByte = serialGetchar(fd);
-     value |= lastByte << (24 - (8 * i));
-  }
-  return value;
-}
 
 ////////////////////////////////////////
 // setup the serial connection and wiringPi
@@ -76,9 +64,23 @@ int serialSetup() {
   return fd;
 }
 
+
+////////////////////////////////////////
+// read 4 bytes and assemble into an int
+int serialReadInt(int fd) {
+  int i = 0;
+  int value = 0;
+  for (i = 0; i < sizeof(int); i++)
+  {
+     unsigned char lastByte = serialGetchar(fd);
+     value |= lastByte << (24 - (8 * i));
+  }
+  return value;
+}
+
 ////////////////////////////////////////
 // Write out our machine requests and read in the state
-void serialExchange(int& fd) {
+void serialExchange(int fd) {
   
     // write our requests
     unsigned char* outStateMem = (unsigned char*)&outGameState;
