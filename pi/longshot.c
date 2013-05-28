@@ -72,9 +72,9 @@ int main ()
   while (1)
   {
     // write our requests
-    unsigned char* outStateMem = (unsigned char*)&outGameState;
+    //unsigned char* outStateMem = (unsigned char*)&outGameState;
 
-    int i = 0;
+    //int i = 0;
     //for (i = 0; i < sizeof(outGameState); i++, outStateMem++)
     //  serialPutchar(fd, *outStateMem);
 
