@@ -47,7 +47,7 @@ struct MachineStatus inGameState, lastState;
 // setup the serial connection and wiringPi
 int serialSetup() {
   // open our USB connection
-  int fd
+  int fd;
   if ((fd = serialOpen("/dev/ttyUSB0", 57600)) < 0) {
     fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
     return -1;
