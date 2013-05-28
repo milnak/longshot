@@ -84,7 +84,7 @@ int main ()
     int bytesRead = 0;
     unsigned char* inStateMem = (unsigned char*)&inGameState;
     //while (serialDataAvail(fd))
-    for (;bytesRead < sizeof(GameState);)
+    for (;bytesRead < sizeof(struct GameState);)
     {
        *inStateMem = serialGetchar(fd);
        inStateMem += sizeof(unsigned char); // we're only reading a byte at a time
