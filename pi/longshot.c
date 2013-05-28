@@ -131,6 +131,6 @@ int main ()
     //updateGame();
   }
 
-  serialClose(serialConn);
+  serialClose(fd);
   return 0 ;
 }
