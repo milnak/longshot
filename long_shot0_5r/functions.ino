@@ -6,8 +6,9 @@ void integerToBytes(long val, byte b[4]) {
 }
 
 void sendGameStatus(){
-  int b[9] = {ticketsDispensed,scoreDebounce.getClicks(),hundredClicks,ballClicks,
-                  coinClicks,upClicks,downClicks,selectClicks,setupClicks  };
+  int b[9] = {ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),ballCountDebounce.getClicks(),
+                  coinDebounce.getClicks(),upDebounce.getClicks(),downDebounce.getClicks(),
+                  selectDebounce.getClicks(),setupDebounce.getClicks()  };
    
  // int numBytes = sizeof(int) * 9;
  // byte* data = (byte*)malloc(numBytes);               

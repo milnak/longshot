@@ -112,9 +112,11 @@ void loop(){
   
   idle.check();
 
- if (dispense>0){
+ if ((dispense - ticketsDispensed)>0){
    dispense_tickets();
   }
+  
+    
 
  if(gameState ==false){
       idle.check();
