@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-I. -L ./libs/wiringPi -l wiringPi
 DEPS = machine.h longshot.h
-OBJ = longshot.o machine.o
+OBJ = longshot.o machine.o main.o
 
 all: longshot
 

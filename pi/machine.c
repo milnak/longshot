@@ -75,13 +75,13 @@ void UpdateMachine() {
 }
 
 void DumpMachineState() {
-    printf("ticketsDispensed: %d\n", gMachineIn.ticketsDispensed);
-    printf("scoreClicks: %d\n", gMachineIn.scoreClicks);
-    printf("hundredClicks: %d\n", gMachineIn.hundredClicks);
-    printf("ballClicks: %d\n", gMachineIn.ballClicks);
-    printf("coinClicks: %d\n", gMachineIn.coinClicks);
-    printf("upClicks: %d\n", gMachineIn.upClicks);
-    printf("downClicks: %d\n", gMachineIn.downClicks);
-    printf("selectClicks: %d\n", gMachineIn.selectClicks);
-    printf("setupClicks: %d\n", gMachineIn.setupClicks);
+    printf("Tickets Dispensed: %d\n", gMachineIn.ticketsDispensed);
+    printf("Score Clicks: %d\n", gMachineIn.scoreClicks);
+    printf("Hundred Clicks: %d\n", gMachineIn.hundredClicks);
+    printf("Ball Clicks: %d\n", gMachineIn.ballClicks);
+    printf("Coin Clicks: %d\n", gMachineIn.coinClicks);
+    printf("Up Clicks: %d\n", gMachineIn.upClicks);
+    printf("Down Clicks: %d\n", gMachineIn.downClicks);
+    printf("Select Clicks: %d\n", gMachineIn.selectClicks);
+    printf("Setup Clicks: %d\n", gMachineIn.setupClicks);
 }

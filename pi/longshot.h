@@ -1,0 +1,3 @@
+
+void InitLongshot();
+void UpdateLongshot();
