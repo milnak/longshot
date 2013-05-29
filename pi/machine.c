@@ -1,4 +1,11 @@
-#import "machine.h"
+#include "machine.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+
+#include <wiringPi.h>
+#include <wiringSerial.h>
 
 int gMachineCommPort = -1;
 struct MachineOutState gMachineOut;
