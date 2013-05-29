@@ -42,7 +42,7 @@ void sendGameStatus(){
 
 void getGameStatus(){
   if(Serial.available()){
-   if(Serial.readBytesUntil('\n',(char *)state,7)){
+   if(Serial.readBytesUntil('\n',(char *)state,7)==7){
     //had to do a cast here even though docs say it can take byte[]
     
     sendGameStatus();
@@ -54,7 +54,13 @@ void getGameStatus(){
 
 void parseGameState(byte* state){
     dispense = dispense + state[1]; //this is the number of tickets, on/off is in the packed byte
-    score = state[2] << 24 | state[3] << 16 | state[4] << 8 | state[5];//this isn't going to work, this is a 3 digit number
+    score = score + state[2];
+    score << 8;
+    score = score + state[3];
+    score << 8;
+    score = score + state[4];
+    score << 8;
+    score = score + state[5];
     if(score>0){gameState=true;}
     //also how are we going to convert 3 separate chars back into the int?
     //ex: int someInt = someChar - '0';
