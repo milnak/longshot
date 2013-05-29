@@ -10,6 +10,6 @@ void UpdateLongshot() {
 
     if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
     {
-        gMachineOut.score += 10;
+        gMachineOut.score += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
     }
 }
