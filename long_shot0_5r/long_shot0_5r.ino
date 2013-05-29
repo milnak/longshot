@@ -122,7 +122,7 @@ void loop(){
       idle.check();
      }
  if(gameState==true){
-       
+        idle.disable();
         shifter.display(score,ballCount);
      }
 
