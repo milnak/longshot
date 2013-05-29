@@ -2,7 +2,7 @@
 #include "longshot.h"
 
 void InitLongshot() {
-    gMachineOut.dispense  = 2;
+    gMachineOut.dispense  = 0;
 }
 
 void UpdateLongshot() {

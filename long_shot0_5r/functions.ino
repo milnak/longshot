@@ -61,7 +61,7 @@ void parseGameState(byte* state){
     score |=  state[1] << 8;
     score |=  state[0];
 
-    if(score>=0){gameState=true;}
+    
     ballCount = state[6];
     if(bitRead(state[4],0) == 1){
    //turn free game lamp on
