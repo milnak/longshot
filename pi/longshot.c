@@ -7,7 +7,10 @@ void InitLongshot() {
 
 void UpdateLongshot() {
     gMachineOut.dispense  = 0;
-
+     if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
+    {
+        gMachineOut.score += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
+    }
     if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
     {
         gMachineOut.score += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
