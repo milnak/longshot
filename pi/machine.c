@@ -8,20 +8,8 @@
 #include <wiringSerial.h>
 
 int gMachineCommPort = -1;
-struct MachineOutState gMachineOut;
-struct MachineInState gMachineIn;
-
-int readInt() {
-  int i = 0;
-  int value = 0;
-  for (i = 0; i < sizeof(int); i++)
-  {
-     unsigned char lastByte = serialGetchar(gMachineCommPort);
-     value |= lastByte << (24 - (8 * i));
-  }
-  return value;
-}
-
+struct MachineOutState gMachineOut, gMachineOutPrev;
+struct MachineInState gMachineIn, gMachineInPrev;
 
 int InitMachine() {
     // open our USB connection
@@ -47,43 +35,53 @@ int InitMachine() {
   return 0;
 }
 
-void UpdateMachine() {
-    // write our requests
-    unsigned char* outStatePtr = (unsigned char*)&gMachineOut;
+int readInt() {
+  int i = 0;
+  int value = 0;
+  for (i = 0; i < sizeof(int); i++)
+  {
+     unsigned char lastByte = serialGetchar(gMachineCommPort);
+     value |= lastByte << (24 - (8 * i));
+  }
+  return value;
+}
 
+void writeBytes(unsigned char* ptr, unsigned int length) {
     int i = 0;
-    for (i = 0; i < sizeof(gMachineOut); i++, outStatePtr++)
-    {
-      serialPutchar(gMachineCommPort, *outStatePtr);
-    }
+    for (i = 0; i < length; i++, ptr++)
+      serialPutchar(gMachineCommPort, *ptr);
+}
 
+void UpdateMachine() {
+
+    // write our requests
+    gMachineOutPrev = gMachineOut;
+    writeBytes((unsigned char*)&gMachineOut,  sizeof(gMachineOut));
+
+    // read in the current state
+    gMachineInPrev = gMachineIn; // save off the last state
     gMachineIn.ticketsDispensed = readInt(gMachineCommPort);
-    printf("ticketsDispensed: %d\n", gMachineIn.ticketsDispensed);
-
     gMachineIn.scoreClicks = readInt(gMachineCommPort);
-    printf("scoreClicks: %d\n", gMachineIn.scoreClicks);
-
     gMachineIn.hundredClicks = readInt(gMachineCommPort);
-    printf("hundredClicks: %d\n", gMachineIn.hundredClicks);
-
     gMachineIn.ballClicks = readInt(gMachineCommPort);
-    printf("ballClicks: %d\n", gMachineIn.ballClicks);
-
     gMachineIn.coinClicks = readInt(gMachineCommPort);
-    printf("coinClicks: %d\n", gMachineIn.coinClicks);
-
     gMachineIn.upClicks = readInt(gMachineCommPort);
-    printf("upClicks: %d\n", gMachineIn.upClicks);
-
     gMachineIn.downClicks = readInt(gMachineCommPort);
-    printf("downClicks: %d\n", gMachineIn.downClicks);
-
     gMachineIn.selectClicks = readInt(gMachineCommPort);
-    printf("selectClicks: %d\n", gMachineIn.selectClicks);
-
     gMachineIn.setupClicks = readInt(gMachineCommPort);
-    printf("setupClicks: %d\n", gMachineIn.setupClicks);
-
+    
     serialFlush( gMachineCommPort );
     delay(300);
+}
+
+void DumpMachineState() {
+    printf("ticketsDispensed: %d\n", gMachineIn.ticketsDispensed);
+    printf("scoreClicks: %d\n", gMachineIn.scoreClicks);
+    printf("hundredClicks: %d\n", gMachineIn.hundredClicks);
+    printf("ballClicks: %d\n", gMachineIn.ballClicks);
+    printf("coinClicks: %d\n", gMachineIn.coinClicks);
+    printf("upClicks: %d\n", gMachineIn.upClicks);
+    printf("downClicks: %d\n", gMachineIn.downClicks);
+    printf("selectClicks: %d\n", gMachineIn.selectClicks);
+    printf("setupClicks: %d\n", gMachineIn.setupClicks);
 }
