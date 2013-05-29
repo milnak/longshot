@@ -3,8 +3,6 @@
 #include <string.h>
 #include <errno.h>
 
-#include "longshot.h"
-
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
@@ -19,7 +17,6 @@ enum SwitchBits {
  SWITCH_TICKETDISPENSER
 };
  
-
 struct MachineOutState {
   unsigned char switches;
   unsigned char dispense;
@@ -43,7 +40,6 @@ struct MachineInState
 
 struct MachineOutState gMachineOut;
 struct MachineInState gMachineIn;
-
 
 int readInt(int fd) {
   int i = 0;
@@ -74,10 +70,10 @@ int main ()
     return 1 ;
   }
 
-  // gMachineOut.switches  = 1;
-  // gMachineOut.dispense  = 2;
-  // gMachineOut.score     = 3;
-  // gMachineOut.ballCount = 4;
+  gMachineOut.switches  = 1;
+  gMachineOut.dispense  = 2;
+  gMachineOut.score     = 3;
+  gMachineOut.ballCount = 4;
   // set this so the Arduino knows we're done sending over the wire
   gMachineOut._terminator = '\0';
     
