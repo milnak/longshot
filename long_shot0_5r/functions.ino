@@ -61,11 +61,7 @@ void parseGameState(byte* state){
     score |=  state[2] << 8;
     score |=  state[3];
 
-    if(score>0){gameState=true;}
-    //also how are we going to convert 3 separate chars back into the int?
-    //ex: int someInt = someChar - '0';
-    //or: int number = atoi(input);
-    //looks like atoi will convert a char array
+    if(score>=0){gameState=true;}
     ballCount = state[6];
     if(bitRead(state[4],0) == 1){
    //turn free game lamp on
