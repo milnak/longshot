@@ -33,3 +33,6 @@ struct MachineInState
 
 extern struct MachineOutState gMachineOut;
 extern struct MachineInState gMachineIn;
+
+void InitMachine();
+void UpdateMachine();
