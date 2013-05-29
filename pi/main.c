@@ -10,6 +10,7 @@ int main ()
   while (1)
   {
     UpdateMachine();
+    
     UpdateLongshot();
 
     DumpMachineState();

@@ -26,10 +26,10 @@ int InitMachine() {
     return 1 ;
   }
 
-  gMachineOut.switches  = 1;
-  gMachineOut.dispense  = 2;
-  gMachineOut.score     = 3;
-  gMachineOut.ballCount = 4;
+  gMachineOut.switches  = 0;
+  gMachineOut.dispense  = 0;
+  gMachineOut.score     = 0;
+  gMachineOut.ballCount = 0;
   // set this so the Arduino knows we're done sending over the wire
   gMachineOut._terminator = '\0';
   return 0;
