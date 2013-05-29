@@ -37,7 +37,7 @@
 boolean gameState=false;
 boolean gameStateChange=false;
 byte state[7];
-int score = 0;
+unsigned int score = 0;
 int ballCount = 0;
 Shifter shifter(4, SRCK,SIN,RCK); //these are the shift registers that contol the 7 seg displays
 
@@ -110,7 +110,7 @@ void loop(){
   poll_inputs();
   getGameStatus();
   
-  idle.check();
+ // idle.check();
 
  if ((dispense - ticketsDispensed)>0){
    dispense_tickets();
