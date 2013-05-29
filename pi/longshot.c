@@ -13,7 +13,7 @@ void UpdateLongshot() {
     }
     if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
     {
-        gMachineOut.score += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
+        gMachineOut.score += (50 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
     }
      if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
     {
