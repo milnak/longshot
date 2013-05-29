@@ -31,7 +31,7 @@ int InitMachine() {
   gMachineOut.score     = 0;
   gMachineOut.ballCount = 0;
   // set this so the Arduino knows we're done sending over the wire
-  gMachineOut._terminator = '\0';
+  gMachineOut._terminator = '\n';
   return 0;
 }
 
