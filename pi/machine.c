@@ -23,7 +23,7 @@ int readInt() {
 }
 
 
-void InitMachine() {
+int InitMachine() {
     // open our USB connection
   if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
   {
@@ -44,7 +44,7 @@ void InitMachine() {
   gMachineOut.ballCount = 4;
   // set this so the Arduino knows we're done sending over the wire
   gMachineOut._terminator = '\0';
-
+  return 0;
 }
 
 void UpdateMachine() {
