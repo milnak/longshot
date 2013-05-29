@@ -10,3 +10,6 @@ all: longshot
 
 longshot: $(OBJ)
 	gcc -o $@ $^ $(CFLAGS)
+
+clean:
+	rm -rf *.o longshot
