@@ -7,45 +7,22 @@ void integerToBytes(long val, byte b[4]) {
 
 
 void sendGameStatus(){
-  int b[9] = {ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),ballCountDebounce.getClicks(),
-                  coinDebounce.getClicks(),upDebounce.getClicks(),downDebounce.getClicks(),
+  int b[9] = {ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
+                  ballCountDebounce.getClicks(),coinDebounce.getClicks(),
+                  upDebounce.getClicks(),downDebounce.getClicks(),
                   selectDebounce.getClicks(),setupDebounce.getClicks()  };
-   
- // int numBytes = sizeof(int) * 9;
- // byte* data = (byte*)malloc(numBytes);               
-  //byte* ptr = data;
   
-  for(int x = 0; x < 9; x++){
+  for(int x = 0; x<=8; x++){
     byte testByte[4];
     integerToBytes(b[x], testByte);
     Serial.write(testByte,sizeof(testByte));
   }
- // int testInt = 57;
-  
-//integerToBytes(scoreClicks,testByte);
-  
-  //int count = Serial.write(testByte,sizeof(testByte));
- 
-  //Serial.write(data, numBytes);
- // free(data);
-  
-  //ticketsDispensed = 0; //this is me passing back the number of tickets dispensed since last
-  //scoreClicks = 0;
-// coinClicks = 0;
-  //hundredClicks = 0;
- // ballClicks = 0;
-  //upClicks = 0
- // downClicks = 0;
- // selectClicks = 0;
- // setupClicks = 0;
-
 }
 
 void getGameStatus(){
   if(Serial.available()){
      if(Serial.readBytesUntil('\n',(char *)state,7)==7){
       //had to do a cast here even though docs say it can take byte[]
-      
       sendGameStatus();
       parseGameState(state);
       }
@@ -135,14 +112,7 @@ void parseGameState(byte* state){
 
 int checkButtonInput(Bounce &theButton){
    buttonDebounce(theButton);
-     /*if(theButton.getClicks() == 1){
-    clearClicks(theButton);   
-    return 1;
-    */
-    //do we want to ditch this and instead call getClicks when we pass
-    //it up to the Pi to handle multiple clicks?
-  
-}
+    }
 
 void clearClicks(Bounce &theButton){
   theButton.setClicks(0);
