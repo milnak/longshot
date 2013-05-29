@@ -13,7 +13,7 @@ enum SwitchBits {
 struct MachineOutState {
   unsigned char switches;
   unsigned char dispense;
-  unsigned char score;
+  unsigned int  score;
   unsigned char ballCount;
   unsigned char _terminator;
 };
