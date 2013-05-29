@@ -6,8 +6,9 @@ void integerToBytes(long val, byte b[4]) {
 }
 
 void sendGameStatus(){
-  int b[9] = {ticketsDispensed,scoreClicks,hundredClicks,ballClicks,
-                  coinClicks,upClicks,downClicks,selectClicks,setupClicks  };
+  int b[9] = {ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),ballCountDebounce.getClicks(),
+                  coinDebounce.getClicks(),upDebounce.getClicks(),downDebounce.getClicks(),
+                  selectDebounce.getClicks(),setupDebounce.getClicks()  };
    
  // int numBytes = sizeof(int) * 9;
  // byte* data = (byte*)malloc(numBytes);               
@@ -52,8 +53,9 @@ void getGameStatus(){
 }
 
 void parseGameState(byte* state){
-    //dispense = state[1]; //this is the number of tickets, on/off is in the packed byte
+    dispense = state[1]; //this is the number of tickets, on/off is in the packed byte
     score = state[2];//this isn't going to work, this is a 3 digit number
+   // if(score>0){gameState=true;}
     //also how are we going to convert 3 separate chars back into the int?
     //ex: int someInt = someChar - '0';
     //or: int number = atoi(input);
@@ -130,13 +132,14 @@ void parseGameState(byte* state){
 }
 
 int checkButtonInput(Bounce &theButton){
-  buttonDebounce(theButton);
-  if(theButton.getClicks() == 1){
+   buttonDebounce(theButton);
+     /*if(theButton.getClicks() == 1){
     clearClicks(theButton);   
     return 1;
+    */
     //do we want to ditch this and instead call getClicks when we pass
     //it up to the Pi to handle multiple clicks?
-  }
+  
 }
 
 void clearClicks(Bounce &theButton){

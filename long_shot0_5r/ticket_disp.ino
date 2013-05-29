@@ -1,17 +1,15 @@
 
 int dispense_tickets(){
-  if(dispense > 0){
-   //Serial.print("Dispense");
-   Serial.println(dispense);
-   digitalWrite(ticketDispenser, HIGH);
-    
-    if(checkButtonInput(ticketDebounce) == 1){
-      dispense--;
-      ticketsDispensed++;
+  if((dispense - ticketsDispensed) > 0){
+    digitalWrite(ticketDispenser, HIGH);
+    checkButtonInput(ticketDebounce);
+    ticketsDispensed = ticketsDispensed + ticketDebounce.getClicks();
+    ticketDebounce.setClicks(0);
             }
-    }
-      if(dispense == 0){
+   if((dispense - ticketsDispensed) == 0){
         digitalWrite(ticketDispenser, LOW);
                   }
+    }
+      
 
-  }
+  
