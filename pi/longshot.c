@@ -14,6 +14,9 @@ int main ()
 
     // now respond accordingly to the states
     //printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, gMachineIn.scoreClicks);
+
+
+    DumpMachineState();
   }
 
   return 0 ;
