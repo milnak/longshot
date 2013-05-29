@@ -55,7 +55,7 @@ void getGameStatus(){
 void parseGameState(byte* state){
     dispense = state[1]; //this is the number of tickets, on/off is in the packed byte
     score = state[2];//this isn't going to work, this is a 3 digit number
-    if(score>0){gameState=true;}
+   // if(score>0){gameState=true;}
     //also how are we going to convert 3 separate chars back into the int?
     //ex: int someInt = someChar - '0';
     //or: int number = atoi(input);
