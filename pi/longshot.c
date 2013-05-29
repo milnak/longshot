@@ -3,44 +3,14 @@
 #include <string.h>
 #include <errno.h>
 
+#include "longshot.h"
+
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
-enum SwitchBits {
- SWITCH_FREEGAMELIGHT,
- SWITCH_GAMEOVERLIGHT,
- SWITCH_WINNERLIGHT,
- SWITCH_BEACONLIGHT,
- SWITCH_COINMETER,
- SWITCH_TICKETMETER,
- SWITCH_SOLENOID,
- SWITCH_TICKETDISPENSER
-};
- 
+struct MachineOutState  gMachineOut;
+struct MachineInState   gMachineIn;
 
-struct GameState {
-  unsigned char switches;
-  unsigned char dispense;
-  unsigned char score;
-  unsigned char ballCount;
-  unsigned char _terminator;
-};
-
-struct MachineStatus
-{
-  unsigned int ticketsDispensed;
-  unsigned int scoreClicks;
-  unsigned int hundredClicks;
-  unsigned int ballClicks;
-  unsigned int coinClicks;
-  unsigned int upClicks;
-  unsigned int downClicks;
-  unsigned int selectClicks;
-  unsigned int setupClicks;
-};
-
-struct GameState outGameState;
-struct MachineStatus inGameState;
 
 int readInt(int fd) {
   int i = 0;
@@ -71,58 +41,58 @@ int main ()
     return 1 ;
   }
 
-  outGameState.switches  = 1;
-  outGameState.dispense  = 2;
-  outGameState.score     = 3;
-  outGameState.ballCount = 4;
+  // gMachineOut.switches  = 1;
+  // gMachineOut.dispense  = 2;
+  // gMachineOut.score     = 3;
+  // gMachineOut.ballCount = 4;
   // set this so the Arduino knows we're done sending over the wire
-  outGameState._terminator = '\0';
+  gMachineOut._terminator = '\0';
     
 
   // kick off the update loop
   while (1)
   {
     // write our requests
-    unsigned char* outStateMem = (unsigned char*)&outGameState;
+    unsigned char* outStatePtr = (unsigned char*)&gMachineOut;
 
     int i = 0;
-    for (i = 0; i < sizeof(outGameState); i++, outStateMem++)
+    for (i = 0; i < sizeof(gMachineOut); i++, outStatePtr++)
     {
-      serialPutchar(fd, *outStateMem);
+      serialPutchar(fd, *outStatePtr);
     }
 
-    inGameState.ticketsDispensed = readInt(fd);
-    printf("ticketsDispensed: %d\n", inGameState.ticketsDispensed);
+    gMachineIn.ticketsDispensed = readInt(fd);
+    printf("ticketsDispensed: %d\n", gMachineIn.ticketsDispensed);
 
-    inGameState.scoreClicks = readInt(fd);
-    printf("scoreClicks: %d\n", inGameState.scoreClicks);
+    gMachineIn.scoreClicks = readInt(fd);
+    printf("scoreClicks: %d\n", gMachineIn.scoreClicks);
 
-    inGameState.hundredClicks = readInt(fd);
-    printf("hundredClicks: %d\n", inGameState.hundredClicks);
+    gMachineIn.hundredClicks = readInt(fd);
+    printf("hundredClicks: %d\n", gMachineIn.hundredClicks);
 
-    inGameState.ballClicks = readInt(fd);
-    printf("ballClicks: %d\n", inGameState.ballClicks);
+    gMachineIn.ballClicks = readInt(fd);
+    printf("ballClicks: %d\n", gMachineIn.ballClicks);
 
-    inGameState.coinClicks = readInt(fd);
-    printf("coinClicks: %d\n", inGameState.coinClicks);
+    gMachineIn.coinClicks = readInt(fd);
+    printf("coinClicks: %d\n", gMachineIn.coinClicks);
 
-    inGameState.upClicks = readInt(fd);
-    printf("upClicks: %d\n", inGameState.upClicks);
+    gMachineIn.upClicks = readInt(fd);
+    printf("upClicks: %d\n", gMachineIn.upClicks);
 
-    inGameState.downClicks = readInt(fd);
-    printf("downClicks: %d\n", inGameState.downClicks);
+    gMachineIn.downClicks = readInt(fd);
+    printf("downClicks: %d\n", gMachineIn.downClicks);
 
-    inGameState.selectClicks = readInt(fd);
-    printf("selectClicks: %d\n", inGameState.selectClicks);
+    gMachineIn.selectClicks = readInt(fd);
+    printf("selectClicks: %d\n", gMachineIn.selectClicks);
 
-    inGameState.setupClicks = readInt(fd);
-    printf("setupClicks: %d\n", inGameState.setupClicks);
+    gMachineIn.setupClicks = readInt(fd);
+    printf("setupClicks: %d\n", gMachineIn.setupClicks);
 
     serialFlush( fd );
     delay(300);
 
     // now respond accordingly to the states
-    //printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, inGameState.scoreClicks);
+    //printf("Read: %d bytes. Score Clicks: %d\n", bytesRead, gMachineIn.scoreClicks);
   }
 
   return 0 ;

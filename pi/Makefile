@@ -1,7 +1,12 @@
-all: compile
+CC=gcc
+CFLAGS=-I. -L ./libs/wiringPi -l wiringPi
+DEPS = machine.h longshot.h
+OBJ = longshot.o
 
-compile:
-	gcc -o longshot longshot.c -L ./libs/wiringPi -l wiringPi -Wall
+all: longshot
 
-clean:
-	rm -f longshot
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+longshot: $(OBJ)
+	gcc -o $@ $^ $(CFLAGS)
