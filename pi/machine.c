@@ -42,7 +42,7 @@ int readInt() {
   int value = 0;
   for (i = 0; i < sizeof(int); i++)
   {
-     unsigned char lastByte = serialGetchar(gMachineCommPort);
+     unsigned int lastByte = serialGetchar(gMachineCommPort);
      value |= lastByte << (24 - (8 * i));
   }
   return value;
