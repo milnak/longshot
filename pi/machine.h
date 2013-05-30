@@ -11,10 +11,10 @@ enum SwitchBits {
 };
  
 struct MachineOutState {
-  unsigned int  score;
-  unsigned char switches;
-  unsigned char dispense;
-  unsigned char ballCount;
+  unsigned int score;
+  unsigned int switches;
+  unsigned int dispense;
+  unsigned int ballCount;
   unsigned char _terminator;
 } __attribute__((__packed__));
 
