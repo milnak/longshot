@@ -91,7 +91,18 @@ void UpdateMachine() {
     delay(300);
 }
 
-void DumpMachineState() {
+void DumpMachineOutState() {
+    char switches[33];
+    itoa(gMachineOut.switches,switches,2);
+
+    printf("Score: %d\n", gMachineOut.score);
+    printf("Switches: %s\n", switches);
+    printf("Dispense: %d\n", gMachineOut.dispense);
+    printf("Ball Count: %d\n", gMachineOut.ballCount);
+    printf("--------------------------\n");
+}
+
+void DumpMachineInState() {
     printf("Tickets Dispensed: %d\n", gMachineIn.ticketsDispensed);
     printf("Score Clicks: %d\n", gMachineIn.scoreClicks);
     printf("Hundred Clicks: %d\n", gMachineIn.hundredClicks);
@@ -101,4 +112,5 @@ void DumpMachineState() {
     printf("Down Clicks: %d\n", gMachineIn.downClicks);
     printf("Select Clicks: %d\n", gMachineIn.selectClicks);
     printf("Setup Clicks: %d\n", gMachineIn.setupClicks);
+    printf("--------------------------\n");
 }

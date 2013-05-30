@@ -13,7 +13,8 @@ int main ()
     
     UpdateLongshot();
 
-    DumpMachineState();
+    DumpMachineInState();
+    DumpMachineOutState();
   }
  
   
