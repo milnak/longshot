@@ -15,6 +15,7 @@ int main ()
 
     DumpMachineState();
   }
-  printf("Something got fucked somewhere");
+ 
+  
   return 0 ;
 }
