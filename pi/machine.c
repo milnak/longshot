@@ -93,11 +93,8 @@ void UpdateMachine() {
 }
 
 void DumpMachineOutState() {
-    char switches[33];
-    itoa(gMachineOut.switches,switches,2);
-
     printf("Score: %d\n", gMachineOut.score);
-    printf("Switches: %s\n", switches);
+    printf("Switches: %x\n", gMachineOut.switches);
     printf("Dispense: %d\n", gMachineOut.dispense);
     printf("Ball Count: %d\n", gMachineOut.ballCount);
     printf("--------------------------\n");
