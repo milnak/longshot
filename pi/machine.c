@@ -71,9 +71,9 @@ void UpdateMachine() {
     gMachineOutPrev = gMachineOut;
     //writeBytes((unsigned char*)&gMachineOut,  sizeof(gMachineOut));
     writeInt(gMachineOut.score);
-    //writeInt(gMachineOut.switches);
-    //writeInt(gMachineOut.dispense);
-    //writeInt(gMachineOut.ballCount);
+    writeInt(gMachineOut.switches);
+    writeInt(gMachineOut.dispense);
+    writeInt(gMachineOut.ballCount);
     //writeByte(gMachineOut._terminator);
     
     // read in the current state
