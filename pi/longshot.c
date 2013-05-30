@@ -21,6 +21,6 @@ void UpdateLongshot() {
     gMachineOut.dispense = 0;
     int scoreDiff = gMachineOut.score - oldScore;
     if (scoreDiff > 100) {
-        gMachineOut.dispense = (int)scoreDiff/100;
+        //gMachineOut.dispense = (int)scoreDiff/100;
     }
 }
