@@ -13,7 +13,7 @@ void UpdateLongshot() {
         gMachineOut.score += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
     
     if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
-        gMachineOut.score += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
+        gMachineOut.score += (12 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
     
     gMachineOut.dispense = 0;
     int scoreDiff = gMachineOut.score - oldScore;

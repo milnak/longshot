@@ -33,10 +33,10 @@ void getGameStatus(){
 void parseGameState(byte* state){
     dispense = dispense + state[5]; //this is the number of tickets, on/off is in the packed byte
     score = 0;
-    score |=  state[0] << 24;
-    score |=  state[1] << 16;
-    score |=  state[2] << 8;
-    score |=  state[3];
+    score |=  state[3] << 24;
+    score |=  state[2] << 16;
+    score |=  state[1] << 8;
+    score |=  state[0];
 
     
     ballCount = state[6];
