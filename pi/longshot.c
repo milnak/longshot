@@ -11,12 +11,4 @@ void UpdateLongshot() {
     {
         gMachineOut.score += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
     }
-    if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
-    {
-        gMachineOut.score += (50 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
-    }
-     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
-    {
-        gMachineOut.ballCount += ((gMachineIn.ballClicks - gMachineInPrev.ballClicks));
-    }
 }
