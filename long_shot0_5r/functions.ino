@@ -5,69 +5,42 @@ void integerToBytes(long val, byte b[4]) {
  b[3] = (byte )(val & 0xff);
 }
 
+
 void sendGameStatus(){
-  int b[9] = {ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),ballCountDebounce.getClicks(),
-                  coinDebounce.getClicks(),upDebounce.getClicks(),downDebounce.getClicks(),
+  int b[9] = {ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
+                  ballCountDebounce.getClicks(),coinDebounce.getClicks(),
+                  upDebounce.getClicks(),downDebounce.getClicks(),
                   selectDebounce.getClicks(),setupDebounce.getClicks()  };
-   
- // int numBytes = sizeof(int) * 9;
- // byte* data = (byte*)malloc(numBytes);               
-  //byte* ptr = data;
   
-  for(int x = 0; x < 9; x++){
+  for(int x = 0; x<=8; x++){
     byte testByte[4];
     integerToBytes(b[x], testByte);
     Serial.write(testByte,sizeof(testByte));
   }
- // int testInt = 57;
-  
-//integerToBytes(scoreClicks,testByte);
-  
-  //int count = Serial.write(testByte,sizeof(testByte));
- 
-  //Serial.write(data, numBytes);
- // free(data);
-  
-  //ticketsDispensed = 0; //this is me passing back the number of tickets dispensed since last
-  //scoreClicks = 0;
-// coinClicks = 0;
-  //hundredClicks = 0;
- // ballClicks = 0;
-  //upClicks = 0
- // downClicks = 0;
- // selectClicks = 0;
- // setupClicks = 0;
-
 }
 
 void getGameStatus(){
   if(Serial.available()){
-   if(Serial.readBytesUntil('\n',(char *)state,7)==7){
-    //had to do a cast here even though docs say it can take byte[]
-    
-    sendGameStatus();
-    parseGameState(state);
-    }
+     if(Serial.readBytesUntil('\n',(char *)state,7)==7){
+      //had to do a cast here even though docs say it can take byte[]
+      sendGameStatus();
+      parseGameState(state);
+      }
     //state needs to return tickets that need to be dispensed, current score, current ball count, solenoid status, lamps status, beacon status,meter status
   }
 }
 
 void parseGameState(byte* state){
-    dispense = dispense + state[1]; //this is the number of tickets, on/off is in the packed byte
-    score = score + state[2];
-    score << 8;
-    score = score + state[3];
-    score << 8;
-    score = score + state[4];
-    score << 8;
-    score = score + state[5];
-    if(score>0){gameState=true;}
-    //also how are we going to convert 3 separate chars back into the int?
-    //ex: int someInt = someChar - '0';
-    //or: int number = atoi(input);
-    //looks like atoi will convert a char array
-    ballCount = state [6];
-    if(bitRead(state[0],0) == 1){
+    dispense = dispense + state[5]; //this is the number of tickets, on/off is in the packed byte
+    score = 0;
+    score |=  state[3] << 24;
+    score |=  state[2] << 16;
+    score |=  state[1] << 8;
+    score |=  state[0];
+
+    
+    ballCount = state[6];
+    if(bitRead(state[4],0) == 1){
    //turn free game lamp on
    digitalWrite(freeGameLight,LOW);
    }
@@ -75,7 +48,7 @@ void parseGameState(byte* state){
    digitalWrite(freeGameLight,HIGH);
    //turn free game lamp off
    }
-   if(bitRead(state[0],1) == 1){
+   if(bitRead(state[state[4]],1) == 1){
    //turn game over lamp on
    digitalWrite(gameOverLight, LOW);
    }
@@ -84,7 +57,7 @@ void parseGameState(byte* state){
    digitalWrite(gameOverLight,HIGH);
    
    }
-   if(bitRead(state[0],2) == 1){
+   if(bitRead(state[4],2) == 1){
    //turn winner lamp on
    digitalWrite(winLight,LOW);
    }
@@ -93,7 +66,7 @@ void parseGameState(byte* state){
    digitalWrite(winLight,HIGH);
    
    }
-   if(bitRead(state[0],3) == 1){
+   if(bitRead(state[4],3) == 1){
    //turn beacon lamp on
    digitalWrite(beacon, HIGH);
    }
@@ -101,7 +74,7 @@ void parseGameState(byte* state){
    //turn beacon lamp off
    digitalWrite(beacon,LOW);
    }
-   if(bitRead(state[0],4) == 1){
+   if(bitRead(state[4],4) == 1){
    //turn coin meter on
    digitalWrite(coinMeter,LOW);
    }
@@ -110,7 +83,7 @@ void parseGameState(byte* state){
    digitalWrite(coinMeter,HIGH);
    
    }
-   if(bitRead(state[0],5) == 1){
+   if(bitRead(state[4],5) == 1){
    //turn ticket meter on
    digitalWrite(ticketMeter,LOW);
    }
@@ -118,7 +91,7 @@ void parseGameState(byte* state){
    //turn ticket meter off
    digitalWrite(ticketMeter,HIGH);
    }
-   if(bitRead(state[0],6) == 1){
+   if(bitRead(state[4],6) == 1){
    //turn solenoid on 
    digitalWrite(solenoid, HIGH);
    }
@@ -126,7 +99,7 @@ void parseGameState(byte* state){
    //turn solenoid off
    digitalWrite(solenoid,LOW);
    }
-   if(bitRead(state[0],7) == 1){
+   if(bitRead(state[4],7) == 1){
    //turn on ticket dispenser 
    digitalWrite(ticketDispenser, HIGH);
    }
@@ -139,14 +112,7 @@ void parseGameState(byte* state){
 
 int checkButtonInput(Bounce &theButton){
    buttonDebounce(theButton);
-     /*if(theButton.getClicks() == 1){
-    clearClicks(theButton);   
-    return 1;
-    */
-    //do we want to ditch this and instead call getClicks when we pass
-    //it up to the Pi to handle multiple clicks?
-  
-}
+    }
 
 void clearClicks(Bounce &theButton){
   theButton.setClicks(0);

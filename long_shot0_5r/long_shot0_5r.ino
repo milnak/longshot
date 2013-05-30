@@ -46,7 +46,7 @@ Shifter shifter(4, SRCK,SIN,RCK); //these are the shift registers that contol th
 TimedAction idle = TimedAction(100,idler);
 
 //////////////ticket dispensor variables///////////////////
-int dispense = 3;
+int dispense = 0;
 int notchRead = 111;
 int ticketsDispensed = 0;
 
@@ -64,7 +64,7 @@ int setupClicks = 0;
 int setState = 0;
 int lastSetState = 0;
 
-Bounce scoreDebounce = Bounce(scoreSwitch,50);
+Bounce scoreDebounce = Bounce(scoreSwitch,35);
 Bounce coinDebounce = Bounce(coinSwitch,50);
 Bounce hundredDebounce = Bounce(hundredSwitch,50);
 Bounce ballCountDebounce = Bounce(ballCountSwitch,50);
@@ -110,7 +110,7 @@ void loop(){
   poll_inputs();
   getGameStatus();
   
-  idle.check();
+ // idle.check();
 
  if ((dispense - ticketsDispensed)>0){
    dispense_tickets();
@@ -121,6 +121,7 @@ void loop(){
  if(gameState ==false){
       idle.check();
      }
+ if(score>0){gameState=true;}
  if(gameState==true){
         idle.disable();
         shifter.display(score,ballCount);
