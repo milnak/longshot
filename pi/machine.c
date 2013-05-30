@@ -47,7 +47,7 @@ int readInt() {
   return value;
 }
 
-void writeInt(int value) {
+void writeInt(unsigned int value) {
   serialPutchar( gMachineCommPort, (value >> 24) & 0xff );
   serialPutchar( gMachineCommPort, (value >> 16) & 0xff );
   serialPutchar( gMachineCommPort, (value >> 8) & 0xff );
