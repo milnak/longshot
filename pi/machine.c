@@ -69,7 +69,6 @@ void UpdateMachine() {
     // write our requests
     gMachineOutPrev = gMachineOut;
     //writeBytes((unsigned char*)&gMachineOut,  sizeof(gMachineOut));
-
     writeInt(gMachineOut.score);
     writeByte(gMachineOut.switches);
     writeByte(gMachineOut.dispense);
