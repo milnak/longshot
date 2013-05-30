@@ -46,6 +46,17 @@ int readInt() {
   return value;
 }
 
+void writeInt(int value) {
+  serialPutchar( (value >> 24) & 0xff );
+  serialPutchar( (value >> 16) & 0xff );
+  serialPutchar( (value >> 8) & 0xff );
+  serialPutchar( value & 0xff );
+}
+
+void writeByte(unsigned char b) {
+  serialPutchar(gMachineCommPort, b);
+}
+
 void writeBytes(unsigned char* ptr, unsigned int length) {
     int i = 0;
     for (i = 0; i < length; i++, ptr++)
@@ -56,7 +67,13 @@ void UpdateMachine() {
 
     // write our requests
     gMachineOutPrev = gMachineOut;
-    writeBytes((unsigned char*)&gMachineOut,  sizeof(gMachineOut));
+    //writeBytes((unsigned char*)&gMachineOut,  sizeof(gMachineOut));
+
+    writeInt(gMachineOut.score);
+    writeByte(gMachineOut.switches);
+    writeByte(gMachineOut.dispense);
+    writeByte(gMachineOut.ballCount);
+    writeByte(gMachineOut._terminator);
 
     // read in the current state
     gMachineInPrev = gMachineIn; // save off the last state
