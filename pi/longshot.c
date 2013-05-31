@@ -44,7 +44,7 @@ void UpdateLongshot() {
         int ticketsEarned = 0;
 
         if (gMachineOut.score <= 50) tableIndex = 0;
-        if (gMachineOut.score >= 60 && gMachineOut.score <= 100) tableIndex++;
+        if (gMachineOut.score >= 60  && gMachineOut.score <= 100) tableIndex++;
         if (gMachineOut.score >= 110 && gMachineOut.score <= 200) tableIndex++;
         if (gMachineOut.score >= 210 && gMachineOut.score <= 300) tableIndex++;
         if (gMachineOut.score >= 310 && gMachineOut.score <= 400) tableIndex++;
@@ -60,6 +60,8 @@ void UpdateLongshot() {
                 gMachineOut.dispense = diff;
                 gTicketsDispensed += diff;
             }
+            printf("## LONGSHOT: Total Tickets Earned: %d Dispense Request: %d Total Dispensed: %d", 
+                    ticketsEarned, diff, gTicketsDispensed);
         }
 
     }
