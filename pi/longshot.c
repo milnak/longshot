@@ -59,9 +59,10 @@ void UpdateLongshot() {
                 int diff = ticketsEarned - gTicketsDispensed;
                 gMachineOut.dispense = diff;
                 gTicketsDispensed += diff;
-            }
-            printf("## LONGSHOT: Total Tickets Earned: %d Dispense Request: %d Total Dispensed: %d", 
+            
+                printf("## LONGSHOT: Total Tickets Earned: %d Dispense Request: %d Total Dispensed: %d", 
                     ticketsEarned, diff, gTicketsDispensed);
+            }
         }
 
     }
