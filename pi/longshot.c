@@ -47,15 +47,15 @@ void EndGame() {
 
 void UpdateLongshot() {
 
-    if (gGameState == GAMESTATE_IDLE) {
-      gMachineOut.ballCount = gMachineIn.coinClicks;
-      if (gMachineIn.coinClicks > gRequiredCoins) {
-        StartNewGame();
-      }
-    }
+    // if (gGameState == GAMESTATE_IDLE) {
+    //   gMachineOut.ballCount = gMachineIn.coinClicks;
+    //   if (gMachineIn.coinClicks > gRequiredCoins) {
+    //     StartNewGame();
+    //   }
+    // }
 
-    if (gGameState != GAMESTATE_GAME)
-      return;
+    // if (gGameState != GAMESTATE_GAME)
+    //   return;
 
     // score up
     if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
