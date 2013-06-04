@@ -53,8 +53,6 @@ void UpdateLongshot() {
       return;
     }
 
-    // if (gGameState != GAMESTATE_GAME)
-    //   return;
 
     // clear the ball solenoid
     if (gMachineOut.switches & (1 << SWITCH_SOLENOID))
@@ -93,6 +91,7 @@ void UpdateLongshot() {
                 gTicketsDispensed += diff;
             }
         }
+    }
 
     // balls played
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
