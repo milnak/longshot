@@ -74,6 +74,8 @@ Bounce setupDebounce = Bounce(setupButton,20);
 Bounce upDebounce = Bounce(upButton,20);
 Bounce downDebounce = Bounce(downButton,20);
 
+TimedAction solenoidTimer = TimedAction(6000,solenoidOff);
+
 ///////////////////////////////////
 
 void setup(){
@@ -103,13 +105,13 @@ void setup(){
   pinMode(setupButton, INPUT);
   pinMode(selectButton,INPUT);
  
-  
+  solenoidTimer.enable();
 }
 
 void loop(){
   poll_inputs();
   getGameStatus();
-  
+  solenoidTimer.check();
  // idle.check();
 
  if ((dispense - ticketsDispensed)>0){

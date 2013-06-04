@@ -94,11 +94,12 @@ void parseGameState(byte* state){
    }
    if(bitRead(switches,6) == 1){
    //turn solenoid on 
-   digitalWrite(solenoid, HIGH);
+   digitalWrite(solenoid,LOW);
+   solenoidTimer.enable();
    }
    else{
    //turn solenoid off
-   digitalWrite(solenoid,LOW);
+   
    }
    if(bitRead(switches,7) == 1){
    //game state true
@@ -143,5 +144,8 @@ void idler(){
   shifter.idle();
 }
 
-
-
+void solenoidOff(){
+  digitalWrite(solenoid, HIGH);
+  solenoidTimer.disable();
+}
+  
