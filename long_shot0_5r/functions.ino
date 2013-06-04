@@ -41,7 +41,7 @@ void parseGameState(byte* state){
     ballCount = state[12] << 24 | state[13] << 16 | state[14] << 8 | state[15];
     dispense = dispense + disp_byte;
 
-    if(bitRead(state[4],0) == 1){
+    if(bitRead(switches,0) == 1){
    //turn free game lamp on
    digitalWrite(freeGameLight,LOW);
    }
@@ -49,7 +49,7 @@ void parseGameState(byte* state){
    digitalWrite(freeGameLight,HIGH);
    //turn free game lamp off
    }
-   if(bitRead(state[state[4]],1) == 1){
+   if(bitRead(switches,1) == 1){
    //turn game over lamp on
    digitalWrite(gameOverLight, LOW);
    }
@@ -58,7 +58,7 @@ void parseGameState(byte* state){
    digitalWrite(gameOverLight,HIGH);
    
    }
-   if(bitRead(state[4],2) == 1){
+   if(bitRead(switches,2) == 1){
    //turn winner lamp on
    digitalWrite(winLight,LOW);
    }
@@ -67,7 +67,7 @@ void parseGameState(byte* state){
    digitalWrite(winLight,HIGH);
    
    }
-   if(bitRead(state[4],3) == 1){
+   if(bitRead(switches,3) == 1){
    //turn beacon lamp on
    digitalWrite(beacon, HIGH);
    }
@@ -75,7 +75,7 @@ void parseGameState(byte* state){
    //turn beacon lamp off
    digitalWrite(beacon,LOW);
    }
-   if(bitRead(state[4],4) == 1){
+   if(bitRead(switches,4) == 1){
    //turn coin meter on
    digitalWrite(coinMeter,LOW);
    }
@@ -84,7 +84,7 @@ void parseGameState(byte* state){
    digitalWrite(coinMeter,HIGH);
    
    }
-   if(bitRead(state[4],5) == 1){
+   if(bitRead(switches,5) == 1){
    //turn ticket meter on
    digitalWrite(ticketMeter,LOW);
    }
@@ -92,7 +92,7 @@ void parseGameState(byte* state){
    //turn ticket meter off
    digitalWrite(ticketMeter,HIGH);
    }
-   if(bitRead(state[4],6) == 1){
+   if(bitRead(switches,6) == 1){
    //turn solenoid on 
    digitalWrite(solenoid, HIGH);
    }
@@ -100,7 +100,7 @@ void parseGameState(byte* state){
    //turn solenoid off
    digitalWrite(solenoid,LOW);
    }
-   if(bitRead(state[4],7) == 1){
+   if(bitRead(switches,7) == 1){
    //game state true
    gameState = false;
    }
