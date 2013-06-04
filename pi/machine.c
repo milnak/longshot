@@ -48,6 +48,7 @@ int readInt() {
   return value;
 }
 
+
 void writeByte(unsigned char b) {
   serialPutchar(gMachineCommPort, b);
 }

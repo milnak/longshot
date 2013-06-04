@@ -1,6 +1,6 @@
 #include "machine.h"
 #include "longshot.h"
-#include <stdio.h>
+
 
 int gTickMatrix[9][9] = { 
   //0-50,60-100,110-200,210-300,310-400,410-500,510-600,610-700,700+//
@@ -13,11 +13,6 @@ int gTickMatrix[9][9] = {
   { 2,4,6,11,17,24,32,48,60     },
   { 3,6,10,15,21,28,42,70,100   },
   { 3,6,10,15,21,28,36,72,100   }
-};
-
-enum GameState {
-  GAMESTATE_IDLE,
-  GAMESTATE_GAME
 };
 
 int gTicketsDispensed = 0;
@@ -44,10 +39,6 @@ void EndGame() {
     gTicketsDispensed = 0;
 }
 
-void InitLongshot() {
-    EndGame();
-}
-
 void UpdateLongshot() {
 
     if (gGameState == GAMESTATE_IDLE) {
@@ -72,22 +63,23 @@ void UpdateLongshot() {
     // score up
     if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
         gMachineOut.score += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
+
     
     // we haz points! we can haz tix?
     gMachineOut.dispense = 0;
     if (gMachineOut.score > gMachineOutPrev.score) {
-        int tableIndex    = 0;
+        int tableIndex = 0;
         int ticketsEarned = 0;
 
-        if (gMachineOut.score >= 50)  tableIndex = 0;
-        if (gMachineOut.score >= 60)  tableIndex++;
-        if (gMachineOut.score >= 110) tableIndex++;
-        if (gMachineOut.score >= 210) tableIndex++;
-        if (gMachineOut.score >= 310) tableIndex++;
-        if (gMachineOut.score >= 410) tableIndex++;
-        if (gMachineOut.score >= 510) tableIndex++;
-        if (gMachineOut.score >= 610) tableIndex++;
-        if (gMachineOut.score >= 700) tableIndex++;
+        if (gMachineOut.score <= 50) tableIndex = 0;
+        if (gMachineOut.score >= 60  && gMachineOut.score <= 100) tableIndex++;
+        if (gMachineOut.score >= 110 && gMachineOut.score <= 200) tableIndex++;
+        if (gMachineOut.score >= 210 && gMachineOut.score <= 300) tableIndex++;
+        if (gMachineOut.score >= 310 && gMachineOut.score <= 400) tableIndex++;
+        if (gMachineOut.score >= 410 && gMachineOut.score <= 500) tableIndex++;
+        if (gMachineOut.score >= 510 && gMachineOut.score <= 600) tableIndex++;
+        if (gMachineOut.score >= 610 && gMachineOut.score <= 700) tableIndex++;
+        if (gMachineOut.score > 700) tableIndex++;
 
         if (tableIndex < 9) {
             ticketsEarned = gTickMatrix[gConfigTicketTableSelection][tableIndex];
@@ -95,12 +87,8 @@ void UpdateLongshot() {
                 int diff = ticketsEarned - gTicketsDispensed;
                 gMachineOut.dispense = diff;
                 gTicketsDispensed += diff;
-            
-                printf("###LONGSHOT:\n \tTotal Tickets Earned: %d\n \tDispense Request: %d\n \tTotal Dispensed: %d\n", 
-                    ticketsEarned, diff, gTicketsDispensed);
             }
         }
-    }
 
     // balls played
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
