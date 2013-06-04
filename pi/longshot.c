@@ -43,6 +43,10 @@ void EndGame() {
     gTicketsDispensed = 0;
 }
 
+void InitLongshot() {
+  EndGame();
+}
+
 void UpdateLongshot() {
 
     if (gGameState == GAMESTATE_IDLE) {
