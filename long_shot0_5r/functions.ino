@@ -106,11 +106,11 @@ void parseGameState(byte* state){
    }
    else{
      //not in game, go to idle
-     /*coinDebounce.setClicks(0);
+     coinDebounce.setClicks(0);
      scoreDebounce.setClicks(0);
      hundredDebounce.setClicks(0);
      ballCountDebounce.setClicks(0);
-     */
+     
      gameState = true;
    }
    

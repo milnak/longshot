@@ -116,10 +116,13 @@ void loop(){
    dispense_tickets();
   }
   
-      if(score > 0){gameState=true;}
+     // if(score > 0){gameState=true;}
 
  if(gameState ==false){
-      idle.check();
+      //idle.check();
+      idle.disable();
+      score = 111;
+      shifter.display(score,ballCount);
      }
    
  if(gameState==true){
