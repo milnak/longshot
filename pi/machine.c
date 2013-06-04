@@ -48,15 +48,15 @@ int readInt() {
   return value;
 }
 
+void writeByte(unsigned char b) {
+  serialPutchar(gMachineCommPort, b);
+}
+
 void writeInt(unsigned int value) {
   writeByte( (value >> 24) & 0xff );
   writeByte( (value >> 16) & 0xff );
   writeByte( (value >> 8) & 0xff );
   writeByte( (value & 0xff) );
-}
-
-void writeByte(unsigned char b) {
-  serialPutchar(gMachineCommPort, b);
 }
 
 void writeBytes(unsigned char* ptr, unsigned int length) {
