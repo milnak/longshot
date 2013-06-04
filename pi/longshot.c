@@ -51,7 +51,7 @@ void UpdateLongshot() {
 
     if (gGameState == GAMESTATE_IDLE) {
        gMachineOut.ballCount = gMachineIn.coinClicks;
-       if (gMachineIn.coinClicks > gRequiredCoins)
+       if (gMachineIn.coinClicks >= gRequiredCoins)
           StartNewGame();
       
       return;
