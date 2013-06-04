@@ -16,13 +16,45 @@ int gTickMatrix[9][9] = {
 };
 
 int gTicketsDispensed = 0;
-int gTicketTableSelection = 0;
+int gGameState = GAMESTATE_IDLE;
+int gRequiredCoins = 4;
 
-void InitLongshot() {
+int gConfigMaxBallCount = 9;
+int gConfigTicketTableSelection = 0;
+
+
+void StartNewGame() {
+    gGameState = GAMESTATE_GAME;
+    gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
+    gMachineOut.switches |=  (1 << SWITCH_SOLENOID);
+    gMachineOut.score = 0;
+    gMachineOut.ballCount = 0;
+}
+
+void EndGame() {
+    gGameState = GAMESTATE_IDLE;
+    gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
+    gMachineOut.score = 0;
+    gMachineOut.ballCount = 0;
     gTicketsDispensed = 0;
 }
 
 void UpdateLongshot() {
+
+    if (gGameState == GAMESTATE_IDLE) {
+       gMachineOut.ballCount = gMachineIn.coinClicks;
+       if (gMachineIn.coinClicks > gRequiredCoins)
+          StartNewGame();
+      
+      return;
+    }
+
+    // if (gGameState != GAMESTATE_GAME)
+    //   return;
+
+    // clear the ball solenoid
+    if (gMachineOut.switches & (1 << SWITCH_SOLENOID))
+      gMachineOut.switches &=  ~(1 << SWITCH_SOLENOID);
 
     // score up
     if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
@@ -30,16 +62,8 @@ void UpdateLongshot() {
     
     // score up
     if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
-<<<<<<< HEAD
-        gMachineOut.score += (12 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
-=======
         gMachineOut.score += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
 
-    // balls played
-    if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
-        gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
-    
->>>>>>> 940dee85979d56b5b99610b24b6855f1c793c9e7
     
     // we haz points! we can haz tix?
     gMachineOut.dispense = 0;
@@ -58,16 +82,18 @@ void UpdateLongshot() {
         if (gMachineOut.score > 700) tableIndex++;
 
         if (tableIndex < 9) {
-            ticketsEarned = gTickMatrix[gTicketTableSelection][tableIndex];
+            ticketsEarned = gTickMatrix[gConfigTicketTableSelection][tableIndex];
             if (ticketsEarned > gTicketsDispensed) {
                 int diff = ticketsEarned - gTicketsDispensed;
                 gMachineOut.dispense = diff;
                 gTicketsDispensed += diff;
-            
-                printf("## LONGSHOT: Total Tickets Earned: %d Dispense Request: %d Total Dispensed: %d", 
-                    ticketsEarned, diff, gTicketsDispensed);
             }
         }
 
+    // balls played
+    if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
+    {
+        gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
+        if (gMachineOut.ballCount > gConfigMaxBallCount) EndGame();
     }
 }

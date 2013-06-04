@@ -36,11 +36,11 @@
 
 boolean gameState=false;
 boolean gameStateChange=false;
-byte state[16];
+byte state[7];
 int score = 0;
 int ballCount = 0;
 Shifter shifter(4, SRCK,SIN,RCK); //these are the shift registers that contol the 7 seg displays
-int switches = 0;
+
 ///////////////////////////////////////////////////////////
 
 TimedAction idle = TimedAction(100,idler);
@@ -118,19 +118,15 @@ void loop(){
    dispense_tickets();
   }
   
-     // if(score > 0){gameState=true;}
+    
 
  if(gameState ==false){
-      //idle.check();
-      idle.disable();
-      score = 111;
-      shifter.display(score,ballCount);
+      idle.check();
      }
-   
+ if(score>0){gameState=true;}
  if(gameState==true){
         idle.disable();
         shifter.display(score,ballCount);
-       
      }
 
  }
