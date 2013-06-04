@@ -1,6 +1,6 @@
 #include "machine.h"
 #include "longshot.h"
-
+#include <stdio.h>
 
 int gTickMatrix[9][9] = { 
   //0-50,60-100,110-200,210-300,310-400,410-500,510-600,610-700,700+//
