@@ -93,7 +93,7 @@ void UpdateMachine() {
 
 void DumpMachineOutState() {
     printf("Score: %d\n", gMachineOut.score);
-    printf("Switches: %x\n", gMachineOut.switches);
+    printf("Switches: %d\n", gMachineOut.switches);
     printf("Dispense: %d\n", gMachineOut.dispense);
     printf("Ball Count: %d\n", gMachineOut.ballCount);
     printf("--------------------------\n");
