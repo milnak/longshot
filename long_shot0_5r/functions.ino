@@ -21,25 +21,26 @@ void sendGameStatus(){
 
 void getGameStatus(){
   if(Serial.available()){
-     if(Serial.readBytesUntil('\n',(char *)state,7)==7){
-      //had to do a cast here even though docs say it can take byte[]
-      sendGameStatus();
-      parseGameState(state);
+      if(Serial.readBytes((char *)state,16)){
+        sendGameStatus();
+        parseGameState(state);
       }
     //state needs to return tickets that need to be dispensed, current score, current ball count, solenoid status, lamps status, beacon status,meter status
   }
+  
 }
 
 void parseGameState(byte* state){
-    dispense = dispense + state[5]; //this is the number of tickets, on/off is in the packed byte
+   
     score = 0;
-    score |=  state[3] << 24;
-    score |=  state[2] << 16;
-    score |=  state[1] << 8;
-    score |=  state[0];
+    switches=0;
+    ballCount = 0;
+    score =  state[0] << 24 | state[1] << 16 | state[2] << 8 | state[3];
+    switches = state[4] << 24 | state[5] << 16 | state[6] << 8 | state[7];
+    int disp_byte = state[8] << 24 | state[9] << 16 | state[10] << 8 | state[11];
+    ballCount = state[12] << 24 | state[13] << 16 | state[14] << 8 | state[15];
+    dispense = dispense + disp_byte;
 
-    
-    ballCount = state[6];
     if(bitRead(state[4],0) == 1){
    //turn free game lamp on
    digitalWrite(freeGameLight,LOW);
@@ -100,12 +101,17 @@ void parseGameState(byte* state){
    digitalWrite(solenoid,LOW);
    }
    if(bitRead(state[4],7) == 1){
-   //turn on ticket dispenser 
-   digitalWrite(ticketDispenser, HIGH);
+   //game state true
+   gameState = false;
    }
    else{
-   //turn off ticket dispenser
-   digitalWrite(ticketDispenser,LOW);
+     //not in game, go to idle
+     /*coinDebounce.setClicks(0);
+     scoreDebounce.setClicks(0);
+     hundredDebounce.setClicks(0);
+     ballCountDebounce.setClicks(0);
+     */
+     gameState = true;
    }
    
 }
