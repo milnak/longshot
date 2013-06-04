@@ -15,14 +15,47 @@ int gTickMatrix[9][9] = {
   { 3,6,10,15,21,28,36,72,100   }
 };
 
+enum GameState {
+  GAMESTATE_IDLE,
+  GAMESTATE_GAME
+};
+
 int gTicketsDispensed = 0;
 int gTicketTableSelection = 0;
+int gGameState = GAMESTATE_IDLE;
+int gRequiredCoins = 4;
+int gMaxBallCount = 9;
 
 void InitLongshot() {
+    EndGame();
+}
+
+void StartNewGame() {
+    gGameState = GAMESTATE_GAME;
+    gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
+    gMachineOut.score = 0;
+    gMachineOut.ballCount = 0;
+}
+
+void EndGame() {
+    gGameState = GAMESTATE_IDLE;
+    gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
+    gMachineOut.score = 0;
+    gMachineOut.ballCount = 0;
     gTicketsDispensed = 0;
 }
 
 void UpdateLongshot() {
+
+    if (gGameState == GAMESTATE_IDLE) {
+      gMachineOut.ballCount = gMachineIn.coinClicks;
+      if (gMachineIn.coinClicks > gRequiredCoins) {
+        StartNewGame();
+      }
+    }
+
+    if (gGameState != GAMESTATE_GAME)
+      return;
 
     // score up
     if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
@@ -31,11 +64,6 @@ void UpdateLongshot() {
     // score up
     if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
         gMachineOut.score += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
-
-    // balls played
-    if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
-        gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
-    
     
     // we haz points! we can haz tix?
     gMachineOut.dispense = 0;
@@ -43,8 +71,8 @@ void UpdateLongshot() {
         int tableIndex    = 0;
         int ticketsEarned = 0;
 
-        if (gMachineOut.score >= 50) tableIndex = 0;
-        if (gMachineOut.score >= 60) tableIndex++;
+        if (gMachineOut.score >= 50)  tableIndex = 0;
+        if (gMachineOut.score >= 60)  tableIndex++;
         if (gMachineOut.score >= 110) tableIndex++;
         if (gMachineOut.score >= 210) tableIndex++;
         if (gMachineOut.score >= 310) tableIndex++;
@@ -66,5 +94,11 @@ void UpdateLongshot() {
         }
     }
 
-
+    // balls played
+    if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
+    {
+        gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
+        if (gMachineOut.ballCount > gMaxBallCount) 
+          EndGame();
+    }
 }
