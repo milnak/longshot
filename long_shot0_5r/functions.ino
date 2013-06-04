@@ -103,14 +103,17 @@ void parseGameState(byte* state){
    if(bitRead(switches,7) == 1){
    //game state true
    gameState = false;
+   
    }
    else{
      //not in game, go to idle
      coinDebounce.setClicks(0);
+     if(gameState == false){
+       
      scoreDebounce.setClicks(0);
      hundredDebounce.setClicks(0);
      ballCountDebounce.setClicks(0);
-     
+     }
      gameState = true;
    }
    
