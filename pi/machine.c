@@ -49,10 +49,10 @@ int readInt() {
 }
 
 void writeInt(unsigned int value) {
-  serialPutchar( gMachineCommPort, (value >> 24) & 0xff );
-  serialPutchar( gMachineCommPort, (value >> 16) & 0xff );
-  serialPutchar( gMachineCommPort, (value >> 8) & 0xff );
-  serialPutchar( gMachineCommPort, (value & 0xff) );
+  writeByte( (value >> 24) & 0xff );
+  writeByte( (value >> 16) & 0xff );
+  writeByte( (value >> 8) & 0xff );
+  writeByte( (value & 0xff) );
 }
 
 void writeByte(unsigned char b) {
