@@ -26,9 +26,6 @@ int gGameState = GAMESTATE_IDLE;
 int gRequiredCoins = 4;
 int gMaxBallCount = 9;
 
-void InitLongshot() {
-    EndGame();
-}
 
 void StartNewGame() {
     gGameState = GAMESTATE_GAME;
@@ -45,14 +42,21 @@ void EndGame() {
     gTicketsDispensed = 0;
 }
 
+void InitLongshot() {
+    EndGame();
+}
+
 void UpdateLongshot() {
 
-    // if (gGameState == GAMESTATE_IDLE) {
-    //   gMachineOut.ballCount = gMachineIn.coinClicks;
-    //   if (gMachineIn.coinClicks > gRequiredCoins) {
-    //     StartNewGame();
-    //   }
-    // }
+    if (gGameState == GAMESTATE_IDLE) {
+       
+       gMachineOut.ballCount = gMachineIn.coinClicks;
+       
+       if (gMachineIn.coinClicks > gRequiredCoins)
+          StartNewGame();
+      
+      return;
+    }
 
     // if (gGameState != GAMESTATE_GAME)
     //   return;
@@ -98,7 +102,6 @@ void UpdateLongshot() {
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
     {
         gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
-        if (gMachineOut.ballCount > gMaxBallCount) 
-          EndGame();
+        if (gMachineOut.ballCount > gMaxBallCount) EndGame();
     }
 }
