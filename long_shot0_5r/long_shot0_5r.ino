@@ -36,11 +36,11 @@
 
 boolean gameState=false;
 boolean gameStateChange=false;
-byte state[7];
+byte state[16];
 int score = 0;
 int ballCount = 0;
 Shifter shifter(4, SRCK,SIN,RCK); //these are the shift registers that contol the 7 seg displays
-
+int switches = 0;
 ///////////////////////////////////////////////////////////
 
 TimedAction idle = TimedAction(100,idler);
@@ -74,6 +74,8 @@ Bounce setupDebounce = Bounce(setupButton,20);
 Bounce upDebounce = Bounce(upButton,20);
 Bounce downDebounce = Bounce(downButton,20);
 
+TimedAction solenoidTimer = TimedAction(6000,solenoidOff);
+
 ///////////////////////////////////
 
 void setup(){
@@ -103,28 +105,32 @@ void setup(){
   pinMode(setupButton, INPUT);
   pinMode(selectButton,INPUT);
  
-  
+ // solenoidTimer.enable();
 }
 
 void loop(){
   poll_inputs();
   getGameStatus();
-  
+  solenoidTimer.check();
  // idle.check();
 
  if ((dispense - ticketsDispensed)>0){
    dispense_tickets();
   }
   
-    
+     // if(score > 0){gameState=true;}
 
  if(gameState ==false){
       idle.check();
+     // idle.disable();
+     // score = 111;
+      //shifter.display(score,ballCount);
      }
- if(score>0){gameState=true;}
+   
  if(gameState==true){
         idle.disable();
         shifter.display(score,ballCount);
+       
      }
 
  }
