@@ -21,15 +21,17 @@ enum GameState {
 };
 
 int gTicketsDispensed = 0;
-int gTicketTableSelection = 0;
 int gGameState = GAMESTATE_IDLE;
 int gRequiredCoins = 4;
-int gMaxBallCount = 9;
+
+int gConfigMaxBallCount = 9;
+int gConfigTicketTableSelection = 0;
 
 
 void StartNewGame() {
     gGameState = GAMESTATE_GAME;
     gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
+    gMachineOut.switches |=  (1 << SWITCH_SOLENOID);
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
 }
@@ -49,9 +51,7 @@ void InitLongshot() {
 void UpdateLongshot() {
 
     if (gGameState == GAMESTATE_IDLE) {
-       
        gMachineOut.ballCount = gMachineIn.coinClicks;
-       
        if (gMachineIn.coinClicks > gRequiredCoins)
           StartNewGame();
       
@@ -60,6 +60,10 @@ void UpdateLongshot() {
 
     // if (gGameState != GAMESTATE_GAME)
     //   return;
+
+    // clear the ball solenoid
+    if (gMachineOut.switches & (1 << SWITCH_SOLENOID))
+      gMachineOut.switches &=  ~(1 << SWITCH_SOLENOID);
 
     // score up
     if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
@@ -86,7 +90,7 @@ void UpdateLongshot() {
         if (gMachineOut.score >= 700) tableIndex++;
 
         if (tableIndex < 9) {
-            ticketsEarned = gTickMatrix[gTicketTableSelection][tableIndex];
+            ticketsEarned = gTickMatrix[gConfigTicketTableSelection][tableIndex];
             if (ticketsEarned > gTicketsDispensed) {
                 int diff = ticketsEarned - gTicketsDispensed;
                 gMachineOut.dispense = diff;
@@ -102,6 +106,6 @@ void UpdateLongshot() {
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
     {
         gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
-        if (gMachineOut.ballCount > gMaxBallCount) EndGame();
+        if (gMachineOut.ballCount > gConfigMaxBallCount) EndGame();
     }
 }
