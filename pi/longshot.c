@@ -60,7 +60,7 @@ void UpdateLongshot() {
 
     // clear the ball solenoid
     if (gMachineOut.switches & (1 << SWITCH_SOLENOID))
-      gMachineOut.switches &=  ~(1 << SWITCH_SOLENOID);
+      gMachineOut.switches &= ~(1 << SWITCH_SOLENOID);
 
     // score up
     if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
@@ -101,6 +101,7 @@ void UpdateLongshot() {
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
     {
         gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
-        if (gMachineOut.ballCount > gConfigMaxBallCount) EndGame();
+        if (gMachineOut.ballCount >= gConfigMaxBallCount) 
+          EndGame();
     }
 }
