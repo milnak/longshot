@@ -43,14 +43,14 @@ void UpdateLongshot() {
         int tableIndex    = 0;
         int ticketsEarned = 0;
 
-        if (gMachineOut.score <= 50) tableIndex = 0;
-        if (gMachineOut.score >= 60  && gMachineOut.score <= 100) tableIndex++;
-        if (gMachineOut.score >= 110 && gMachineOut.score <= 200) tableIndex++;
-        if (gMachineOut.score >= 210 && gMachineOut.score <= 300) tableIndex++;
-        if (gMachineOut.score >= 310 && gMachineOut.score <= 400) tableIndex++;
-        if (gMachineOut.score >= 410 && gMachineOut.score <= 500) tableIndex++;
-        if (gMachineOut.score >= 510 && gMachineOut.score <= 600) tableIndex++;
-        if (gMachineOut.score >= 610 && gMachineOut.score <= 700) tableIndex++;
+        if (gMachineOut.score >= 50) tableIndex = 0;
+        if (gMachineOut.score >= 60) tableIndex++;
+        if (gMachineOut.score >= 110) tableIndex++;
+        if (gMachineOut.score >= 210) tableIndex++;
+        if (gMachineOut.score >= 310) tableIndex++;
+        if (gMachineOut.score >= 410) tableIndex++;
+        if (gMachineOut.score >= 510) tableIndex++;
+        if (gMachineOut.score >= 610) tableIndex++;
         if (gMachineOut.score >= 700) tableIndex++;
 
         if (tableIndex < 9) {
@@ -58,7 +58,7 @@ void UpdateLongshot() {
             if (ticketsEarned > gTicketsDispensed) {
                 int diff = ticketsEarned - gTicketsDispensed;
                 gMachineOut.dispense = diff;
-                gTicketsDispensed = ticketsEarned;
+                gTicketsDispensed += diff;
             
                 printf("###LONGSHOT:\n \tTotal Tickets Earned: %d\n \tDispense Request: %d\n \tTotal Dispensed: %d\n", 
                     ticketsEarned, diff, gTicketsDispensed);
@@ -66,5 +66,5 @@ void UpdateLongshot() {
         }
     }
 
-    
+
 }
