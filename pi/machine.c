@@ -175,6 +175,7 @@ int UpdateMachine() {
       // exit setup mode if necessary
       if (gMachineIn.setupClicks > 0) {
         gLogicState = LOGICSTATE_GAME;
+        gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
         SaveConfig();
       }
 
@@ -187,6 +188,7 @@ int UpdateMachine() {
        // enter Setup mode
        if (gMachineIn.setupClicks > 0) {
           gLogicState = LOGICSTATE_SETUP;
+          gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
           LoadConfig();
        }
     
