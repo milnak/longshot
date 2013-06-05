@@ -15,7 +15,6 @@ struct MachineOutState {
   unsigned int switches;
   unsigned int dispense;
   unsigned int ballCount;
-  unsigned char _terminator;
 } __attribute__((__packed__));
 
 struct MachineInState
@@ -31,6 +30,22 @@ struct MachineInState
   unsigned int setupClicks;
 } __attribute__((__packed__));
 
+enum {
+  SETUP_OPTION_COINCOUNT,
+  SETUP_OPTION_TICKETTABLE,
+  SETUP_OPTION_FREEGAME,
+  SETUP_OPTION_FREEGAME_SCORE,
+  SETUP_OPTION_BALLCOUNT,
+  //
+  SETUP_OPTION_SAVED1,
+  SETUP_OPTION_SAVED2,
+  SETUP_OPTION_SAVED3,
+  SETUP_OPTION_SAVED4,
+  SETUP_OPTION_MAX
+};
+
+extern int gOptionValues[SETUP_OPTION_MAX];
+
 extern struct MachineOutState gMachineOut;
 extern struct MachineInState gMachineIn;
 
@@ -39,4 +54,4 @@ extern struct MachineInState gMachineInPrev;
 
 
 int InitMachine();
-void UpdateMachine();
+int UpdateMachine();

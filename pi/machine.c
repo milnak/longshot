@@ -8,10 +8,59 @@
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
+enum {
+  LOGICSTATE_SETUP,
+  LOGICSTATE_GAME
+};
+
+enum {
+  SETUP_MODE_MENUSELECT,
+  SETUP_MODE_VALUESELECT,
+  SETUP_MODE_MAX
+};
+
+int gOptionValues[SETUP_OPTION_MAX] = {
+  4,    // SETUP_OPTION_COINCOUNT,
+  0,    // SETUP_OPTION_TICKETTABLE,
+  0,    // SETUP_OPTION_FREEGAME,
+  1000, // SETUP_OPTION_FREEGAME_SCORE,
+  9,    // SETUP_OPTION_BALLCOUNT,
+  0,    // SETUP_OPTION_SAVED1,
+  0,    // SETUP_OPTION_SAVED2,
+  0,    // SETUP_OPTION_SAVED3,
+  0,    // SETUP_OPTION_SAVED4,
+};
+
+int gLogicState = LOGICSTATE_GAME;
+int gSetupMode = SETUP_MODE_MENUSELECT;
+int gSetupMenu = 0;
+
 int gMachineCommPort = -1;
 struct MachineOutState gMachineOut, gMachineOutPrev;
 struct MachineInState gMachineIn, gMachineInPrev;
 
+///////////////////////////////////////////////
+void LoadConfig() {
+  FILE *f;
+  f = fopen("options.dbm", "rb");
+  if (f != NULL) {
+    fread(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
+    fclose(f);
+  } else {
+    // defaults 
+    SaveConfig();
+  }
+}
+
+///////////////////////////////////////////////
+void SaveConfig() {
+  FILE *f;
+  f = fopen("options.dbm", "wb");
+  fwrite(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
+  fclose(f);
+}
+
+///////////////////////////////////////////////
 int InitMachine() {
     // open our USB connection
   if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
@@ -32,11 +81,10 @@ int InitMachine() {
   gMachineOut.score     = 0;
   gMachineOut.ballCount = 0;
   gMachineInPrev.scoreClicks = 0;
-  // set this so the Arduino knows we're done sending over the wire
-  gMachineOut._terminator = '\n';
   return 0;
 }
 
+///////////////////////////////////////////////
 int readInt() {
   int i = 0;
   int value = 0;
@@ -48,11 +96,12 @@ int readInt() {
   return value;
 }
 
-
+///////////////////////////////////////////////
 void writeByte(unsigned char b) {
   serialPutchar(gMachineCommPort, b);
 }
 
+///////////////////////////////////////////////
 void writeInt(unsigned int value) {
   writeByte( (value >> 24) & 0xff );
   writeByte( (value >> 16) & 0xff );
@@ -60,13 +109,15 @@ void writeInt(unsigned int value) {
   writeByte( (value & 0xff) );
 }
 
+///////////////////////////////////////////////
 void writeBytes(unsigned char* ptr, unsigned int length) {
     int i = 0;
     for (i = 0; i < length; i++, ptr++)
       serialPutchar(gMachineCommPort, *ptr);
 }
 
-void UpdateMachine() {
+///////////////////////////////////////////////
+int UpdateMachine() {
 
     // write our requests
     gMachineOutPrev = gMachineOut;
@@ -88,10 +139,64 @@ void UpdateMachine() {
     gMachineIn.downClicks = readInt(gMachineCommPort);
     gMachineIn.selectClicks = readInt(gMachineCommPort);
     gMachineIn.setupClicks = readInt(gMachineCommPort);
+
+    // Setup Mode
+    if (gLogicState == LOGICSTATE_SETUP) {
+      // Select a menu/config option
+      if (gSetupMode == SETUP_MODE_MENUSELECT) {
+        if (gMachineIn.upClicks) {
+          if (++gSetupMenu >= SETUP_OPTION_MAX) gSetupMenu = 0;
+        }
+
+        if (gMachineIn.downClicks) {
+          if (--gSetupMenu < 0) gSetupMenu = SETUP_OPTION_MAX - 1;
+        }
+
+        if (gMachineIn.selectClicks)
+          gSetupMode = SETUP_MODE_VALUESELECT;
+      }
+
+      // Select a value for an option
+      if (gSetupMode == SETUP_MODE_VALUESELECT) {
+        if (gMachineIn.upClicks) {
+          gOptionValues[gSetupMenu]++;
+        }
+
+        if (gMachineIn.downClicks) {
+          gOptionValues[gSetupMenu]++;
+        }
+
+        if (gMachineIn.selectClicks) {
+          gSetupMode = SETUP_MODE_VALUESELECT;
+          SaveConfig();
+        }
+      }
+
+      // exit setup mode if necessary
+      if (gMachineIn.setupClicks > 0) {
+        gLogicState = LOGICSTATE_GAME;
+        SaveConfig();
+      }
+
+      gMachineOut.ballCount = gSetupMenu;
+      gMachineOut.score = gOptionValues[gSetupMenu];
+      return 0;
+
+    } else {
+
+       // enter Setup mode
+       if (gMachineIn.setupClicks > 0) {
+          gLogicState = LOGICSTATE_SETUP;
+          LoadConfig();
+       }
     
-    delay(300);
+    }
+    
+    return 1;
+    //delay(300);
 }
 
+///////////////////////////////////////////////
 void DumpMachineOutState() {
     printf("Score: %d\n", gMachineOut.score);
     printf("Switches: %d\n", gMachineOut.switches);

@@ -21,7 +21,6 @@ int gTickMatrix[9][9] = {
 
 int gTicketsDispensed = 0;
 int gGameState = GAMESTATE_IDLE;
-int gRequiredCoins = 4;
 
 int gConfigMaxBallCount = 9;
 int gConfigTicketTableSelection = 0;
@@ -51,7 +50,7 @@ void UpdateLongshot() {
 
     if (gGameState == GAMESTATE_IDLE) {
        gMachineOut.ballCount = gMachineIn.coinClicks;
-       if (gMachineIn.coinClicks >= gRequiredCoins)
+       if (gMachineIn.coinClicks >= gOptionValues[SETUP_OPTION_COINCOUNT])
           StartNewGame();
       
       return;
