@@ -93,27 +93,28 @@ void parseGameState(byte* state){
    digitalWrite(ticketMeter,HIGH);
    }
    if(bitRead(switches,6) == 1){
-   //turn solenoid on 
-   digitalWrite(solenoid,HIGH);
-   solenoidTimer.enable();
+     //turn solenoid on 
+     digitalWrite(solenoid,HIGH);
+     solenoidTimer.reset();
+     solenoidTimer.enable();
    }
    else{
    //turn solenoid off
    
    }
    if(bitRead(switches,7) == 1){
-   //game state true
-   gameState = false;
-   
-   }
+    if(gameState == true){
+       idle.enable();
+     }
+     gameState = false;
+  }
    else{
-     //not in game, go to idle
+     
      coinDebounce.setClicks(0);
      if(gameState == false){
-       
-     scoreDebounce.setClicks(0);
-     hundredDebounce.setClicks(0);
-     ballCountDebounce.setClicks(0);
+       scoreDebounce.setClicks(0);
+       hundredDebounce.setClicks(0);
+       ballCountDebounce.setClicks(0);
      }
      gameState = true;
    }
@@ -147,5 +148,9 @@ void idler(){
 void solenoidOff(){
   digitalWrite(solenoid, LOW);
   solenoidTimer.disable();
+}
+void lightOn(int pin, int interval){
+  
+  
 }
   
