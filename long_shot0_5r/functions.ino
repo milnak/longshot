@@ -42,55 +42,55 @@ void parseGameState(byte* state){
     dispense = dispense + disp_byte;
 
     if(bitRead(switches,0) == 1){
-   //turn free game lamp on
-   digitalWrite(freeGameLight,LOW);
+     //turn free game lamp on
+     digitalWrite(freeGameLight,LOW);
+     freeGameLightOnTimer.reset();
+     freeGameLightOnTimer.enable();
    }
    else{
-   digitalWrite(freeGameLight,HIGH);
-   //turn free game lamp off
+     digitalWrite(freeGameLight,HIGH);
+     //turn free game lamp off
    }
    if(bitRead(switches,1) == 1){
-   //turn game over lamp on
-   digitalWrite(gameOverLight, LOW);
+     //turn game over lamp on
+     digitalWrite(gameOverLight, LOW);
    }
    else{
-   //turn game over lamp off
-   digitalWrite(gameOverLight,HIGH);
-   
+     //turn game over lamp off
+     digitalWrite(gameOverLight,HIGH);
    }
    if(bitRead(switches,2) == 1){
-   //turn winner lamp on
-   digitalWrite(winLight,LOW);
+     //turn winner lamp on
+     digitalWrite(winLight,LOW);
    }
    else{
-   //turn winner lamp off
-   digitalWrite(winLight,HIGH);
+     //turn winner lamp off
+     digitalWrite(winLight,HIGH);
    
    }
    if(bitRead(switches,3) == 1){
-   //turn beacon lamp on
-   digitalWrite(beacon, HIGH);
+     //turn beacon lamp on
+     digitalWrite(beacon, HIGH);
    }
    else{
-   //turn beacon lamp off
-   digitalWrite(beacon,LOW);
+     //turn beacon lamp off
+     digitalWrite(beacon,LOW);
    }
    if(bitRead(switches,4) == 1){
-   //turn coin meter on
-   digitalWrite(coinMeter,LOW);
+     //turn coin meter on
+     digitalWrite(coinMeter,LOW);
    }
    else{
-   //turn coin meter off
-   digitalWrite(coinMeter,HIGH);
-   
+     //turn coin meter off
+     digitalWrite(coinMeter,HIGH);
    }
    if(bitRead(switches,5) == 1){
-   //turn ticket meter on
-   digitalWrite(ticketMeter,LOW);
+     //turn ticket meter on
+     digitalWrite(ticketMeter,LOW);
    }
    else{
-   //turn ticket meter off
-   digitalWrite(ticketMeter,HIGH);
+     //turn ticket meter off
+     digitalWrite(ticketMeter,HIGH);
    }
    if(bitRead(switches,6) == 1){
      //turn solenoid on 
@@ -153,31 +153,43 @@ void solenoidOff(){
 void gameOverLightOn(){
   digitalWrite(gameOverLight, LOW);
   gameOverLightOnTimer.disable();
+  gameOverLightOffTimer.reset();
+  gameOverLightOffTimer.enable();
 }
 
 void gameOverLightOff(){
   digitalWrite(gameOverLight, HIGH);
   gameOverLightOffTimer.disable();
+  gameOverLightOnTimer.reset();
+  gameOverLightOnTimer.enable();
 }
 
 void freeGameLightOn(){
   digitalWrite(freeGameLight, LOW);
   freeGameLightOnTimer.disable();
+  freeGameLightOffTimer.reset();
+  freeGameLightOffTimer.enable();
 }
 
 void freeGameLightOff(){
   digitalWrite(freeGameLight, HIGH);
   freeGameLightOffTimer.disable();
+  freeGameLightOnTimer.reset();
+  freeGameLightOnTimer.enable();
 }
 
 void winLightOn(){
   digitalWrite(winLight, LOW);
   winLightOnTimer.disable();
+  winLightOffTimer.reset();
+  winLightOffTimer.enable();
 }
 
 void winLightOff(){
   digitalWrite(winLight, HIGH);
   winLightOffTimer.disable();
+  winLightOnTimer.reset();
+  winLightOnTimer.enable();
 }
 
 void beaconOff(){
