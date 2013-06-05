@@ -144,36 +144,36 @@ int UpdateMachine() {
     if (gLogicState == LOGICSTATE_SETUP) {
       // Select a menu/config option
       if (gSetupMode == SETUP_MODE_MENUSELECT) {
-        if (gMachineIn.upClicks) {
+        if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
           if (++gSetupMenu >= SETUP_OPTION_MAX) gSetupMenu = 0;
         }
 
-        if (gMachineIn.downClicks) {
+        if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0){
           if (--gSetupMenu < 0) gSetupMenu = SETUP_OPTION_MAX - 1;
         }
 
-        if (gMachineIn.selectClicks)
+        if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0)
           gSetupMode = SETUP_MODE_VALUESELECT;
       }
 
       // Select a value for an option
       if (gSetupMode == SETUP_MODE_VALUESELECT) {
-        if (gMachineIn.upClicks) {
+        if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
           gOptionValues[gSetupMenu]++;
         }
 
-        if (gMachineIn.downClicks) {
+        if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0) {
           gOptionValues[gSetupMenu]++;
         }
 
-        if (gMachineIn.selectClicks) {
+        if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0) {
           gSetupMode = SETUP_MODE_VALUESELECT;
           SaveConfig();
         }
       }
 
       // exit setup mode if necessary
-      if (gMachineIn.setupClicks > 0) {
+      if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
         gLogicState = LOGICSTATE_GAME;
         gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
         SaveConfig();
@@ -187,7 +187,7 @@ int UpdateMachine() {
     } else {
 
        // enter Setup mode
-       if (gMachineIn.setupClicks > 0) {
+       if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
           gLogicState = LOGICSTATE_SETUP;
           LoadConfig();
        }
