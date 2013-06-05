@@ -40,6 +40,14 @@ struct MachineOutState gMachineOut, gMachineOutPrev;
 struct MachineInState gMachineIn, gMachineInPrev;
 
 ///////////////////////////////////////////////
+void SaveConfig() {
+  FILE *f;
+  f = fopen("options.dbm", "wb");
+  fwrite(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
+  fclose(f);
+}
+
+///////////////////////////////////////////////
 void LoadConfig() {
   FILE *f;
   f = fopen("options.dbm", "rb");
@@ -50,14 +58,6 @@ void LoadConfig() {
     // defaults 
     SaveConfig();
   }
-}
-
-///////////////////////////////////////////////
-void SaveConfig() {
-  FILE *f;
-  f = fopen("options.dbm", "wb");
-  fwrite(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
-  fclose(f);
 }
 
 ///////////////////////////////////////////////
