@@ -44,6 +44,16 @@ int switches = 0;
 ///////////////////////////////////////////////////////////
 
 TimedAction idle = TimedAction(100,idler);
+TimedAction solenoidTimer = TimedAction(10 * 1000,solenoidOff);
+TimedAction ticketMeterTimer = TimedAction(500, ticketMeterClick);
+TimedAction coinMeterTimer = TimedAction(500, coinMeterClick);
+TimedAction gameOverLightOnTimer = TimedAction(2000, gameOverLightOn);
+TimedAction gameOverLightOffTimer = TimedAction(2000, gameOverLightOff);
+TimedAction freeGameLightOnTimer = TimedAction(2000, freeGameLightOn);
+TimedAction freeGameLightOffTimer = TimedAction(2000, freeGameLightOff);
+TimedAction winLightOnTimer = TimedAction(2000, winLightOn);
+TimedAction winLightOffTimer = TimedAction(2000, winLightOff);
+TimedAction beaconTimer = TimedAction(50 * 1000, beaconOff);
 
 //////////////ticket dispensor variables///////////////////
 int dispense = 0;
@@ -74,7 +84,7 @@ Bounce setupDebounce = Bounce(setupButton,20);
 Bounce upDebounce = Bounce(upButton,20);
 Bounce downDebounce = Bounce(downButton,20);
 
-TimedAction solenoidTimer = TimedAction(6000,solenoidOff);
+
 
 ///////////////////////////////////
 
@@ -82,7 +92,7 @@ void setup(){
   Serial.begin(57600);
  // Serial.println("Hi!");
   idle.enable();
- 
+  solenoidTimer.disable();
   pinMode(gameOverLight, OUTPUT);
   pinMode(winLight, OUTPUT);
   pinMode(solenoid, OUTPUT);
@@ -112,7 +122,7 @@ void loop(){
   poll_inputs();
   getGameStatus();
   solenoidTimer.check();
- // idle.check();
+  idle.check();
 
  if ((dispense - ticketsDispensed)>0){
    dispense_tickets();
@@ -121,7 +131,7 @@ void loop(){
      // if(score > 0){gameState=true;}
 
  if(gameState ==false){
-      idle.check();
+     // idle.check();
      // idle.disable();
      // score = 111;
       //shifter.display(score,ballCount);
@@ -130,7 +140,7 @@ void loop(){
  if(gameState==true){
         idle.disable();
         shifter.display(score,ballCount);
-       
+        
      }
 
  }
