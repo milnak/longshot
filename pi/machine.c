@@ -167,7 +167,7 @@ int UpdateMachine() {
         }
 
         if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0) {
-          gSetupMode = SETUP_MODE_VALUESELECT;
+          gSetupMode = SETUP_MODE_MENUSELECT;
           SaveConfig();
         }
       }
