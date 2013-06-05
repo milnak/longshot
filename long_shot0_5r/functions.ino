@@ -149,8 +149,48 @@ void solenoidOff(){
   digitalWrite(solenoid, LOW);
   solenoidTimer.disable();
 }
-void lightOn(int pin, int interval){
-  
-  
+
+void gameOverLightOn(){
+  digitalWrite(gameOverLight, LOW);
+  gameOverLightOnTimer.disable();
 }
-  
+
+void gameOverLightOff(){
+  digitalWrite(gameOverLight, HIGH);
+  gameOverLightOffTimer.disable();
+}
+
+void freeGameLightOn(){
+  digitalWrite(freeGameLight, LOW);
+  freeGameLightOnTimer.disable();
+}
+
+void freeGameLightOff(){
+  digitalWrite(freeGameLight, HIGH);
+  freeGameLightOffTimer.disable();
+}
+
+void winLightOn(){
+  digitalWrite(winLight, LOW);
+  winLightOnTimer.disable();
+}
+
+void winLightOff(){
+  digitalWrite(winLight, HIGH);
+  winLightOffTimer.disable();
+}
+
+void beaconOff(){
+  digitalWrite(beacon, HIGH);
+  beaconTimer.disable();
+}
+
+void ticketMeterClick(){
+   digitalWrite(ticketMeter, LOW);
+   ticketMeterTimer.disable(); 
+}
+
+void coinMeterClick(){
+   digitalWrite(coinMeter, LOW);
+   coinMeterTimer.disable(); 
+}
