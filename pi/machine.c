@@ -179,6 +179,7 @@ int UpdateMachine() {
         SaveConfig();
       }
 
+      gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
       gMachineOut.ballCount = gSetupMenu;
       gMachineOut.score = gOptionValues[gSetupMenu];
       return 0;
@@ -188,7 +189,6 @@ int UpdateMachine() {
        // enter Setup mode
        if (gMachineIn.setupClicks > 0) {
           gLogicState = LOGICSTATE_SETUP;
-          gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
           LoadConfig();
        }
     
