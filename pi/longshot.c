@@ -1,5 +1,7 @@
 #include "machine.h"
 #include "longshot.h"
+#include <wiringPi.h>
+
 
 enum {
   GAMESTATE_IDLE,
