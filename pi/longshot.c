@@ -41,7 +41,7 @@ void StartNewGame() {
     gMachineOut.ballCount = 0;
 }
 
-void EndGame(int delay) {
+void EndGame(int d) {
 
     int score = gMachineOut.score;
 
@@ -51,7 +51,7 @@ void EndGame(int delay) {
     gMachineOut.ballCount = 0;
     gTicketsDispensed = 0;
 
-    if (delay) delay( delay );
+    if (d) delay( d );
 
     if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) 
       StartNewGame();
