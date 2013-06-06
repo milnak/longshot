@@ -155,9 +155,8 @@ int UpdateMachine() {
         if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0)
           gSetupMode = SETUP_MODE_VALUESELECT;
       }
-
       // Select a value for an option
-      if (gSetupMode == SETUP_MODE_VALUESELECT) {
+      else if (gSetupMode == SETUP_MODE_VALUESELECT) {
         if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
           gOptionValues[gSetupMenu]++;
         }
