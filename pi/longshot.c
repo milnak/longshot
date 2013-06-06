@@ -1,14 +1,6 @@
 #include "machine.h"
 #include "longshot.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
-
-#include <wiringPi.h>
-#include <wiringSerial.h>
-
 
 enum {
   GAMESTATE_IDLE,
@@ -41,7 +33,7 @@ void StartNewGame() {
     gMachineOut.ballCount = 0;
 }
 
-void EndGame(int d) {
+void EndGame() {
 
     int score = gMachineOut.score;
 
@@ -51,14 +43,12 @@ void EndGame(int d) {
     gMachineOut.ballCount = 0;
     gTicketsDispensed = 0;
 
-    if (d) delay( d );
-
     if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) 
       StartNewGame();
 }
 
 void InitLongshot() {
-  EndGame(0);
+  EndGame();
 }
 
 void UpdateLongshot() {
@@ -115,6 +105,6 @@ void UpdateLongshot() {
     {
         gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
         if (gMachineOut.ballCount >= gOptionValues[SETUP_OPTION_BALLCOUNT]) 
-          EndGame(10000);
+          EndGame();
     }
 }

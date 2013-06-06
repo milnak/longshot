@@ -196,7 +196,7 @@ int UpdateMachine() {
           gOptionValues[gSetupMenu]++;
         }
 
-        gOptionValues[gSetupMenu] = ValidateConfigVal(gOptionValues[gSetupMenu]);
+        //gOptionValues[gSetupMenu] = ValidateConfigVal(gOptionValues[gSetupMenu]);
 
         if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0) {
           gSetupMode = SETUP_MODE_MENUSELECT;
