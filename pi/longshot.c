@@ -22,8 +22,6 @@ int gTickMatrix[9][9] = {
 int gTicketsDispensed = 0;
 int gGameState = GAMESTATE_IDLE;
 
-int gConfigMaxBallCount = 9;
-int gConfigTicketTableSelection = 0;
 
 
 void StartNewGame() {
@@ -35,11 +33,19 @@ void StartNewGame() {
 }
 
 void EndGame() {
+
+    int score = gMachineOut.score;
+
     gGameState = GAMESTATE_IDLE;
     gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
     gTicketsDispensed = 0;
+
+    delay( 30 * 1000 );
+
+    if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) 
+      StartNewGame();
 }
 
 void InitLongshot() {
@@ -86,7 +92,7 @@ void UpdateLongshot() {
         if (gMachineOut.score >= 700) tableIndex++;
 
         if (tableIndex < 9) {
-            ticketsEarned = gTickMatrix[gConfigTicketTableSelection][tableIndex];
+            ticketsEarned = gTickMatrix[gOptionValues[SETUP_OPTION_TICKETTABLE]][tableIndex];
             if (ticketsEarned > gTicketsDispensed) {
                 int diff = ticketsEarned - gTicketsDispensed;
                 gMachineOut.dispense = diff;
@@ -99,7 +105,7 @@ void UpdateLongshot() {
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
     {
         gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
-        if (gMachineOut.ballCount >= gConfigMaxBallCount) 
+        if (gMachineOut.ballCount >= gOptionValues[SETUP_OPTION_BALLCOUNT]) 
           EndGame();
     }
 }

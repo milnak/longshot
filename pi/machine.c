@@ -40,6 +40,35 @@ struct MachineOutState gMachineOut, gMachineOutPrev;
 struct MachineInState gMachineIn, gMachineInPrev;
 
 ///////////////////////////////////////////////
+int ValidateConfigVal(int val) {
+  switch gSetupMenu:
+    case SETUP_OPTION_COINCOUNT:
+      val > 10 ? 10 : val;
+      break;
+
+    case SETUP_OPTION_TICKETTABLE:
+      val > 10 ? 10 : val;
+      break;
+
+    case SETUP_OPTION_FREEGAME:
+      val > 1 ? 1 : val;
+      break;
+
+    case SETUP_OPTION_FREEGAME_SCORE:
+      val > 1000 ? 900 : val;
+      break;
+
+    case SETUP_OPTION_BALLCOUNT:
+      val > 10 ? 10 : val;
+      break;
+
+
+    default:
+      return val;
+}
+
+
+///////////////////////////////////////////////
 void SaveConfig() {
   FILE *f;
   f = fopen("options.dbm", "wb");
@@ -165,11 +194,17 @@ int UpdateMachine() {
           gOptionValues[gSetupMenu]++;
         }
 
+        gOptionValues[gSetupMenu] = ValidateConfigVal(gOptionValues[gSetupMenu]);
+
         if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0) {
           gSetupMode = SETUP_MODE_MENUSELECT;
           SaveConfig();
         }
       }
+
+      gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
+      gMachineOut.ballCount = gSetupMenu;
+      gMachineOut.score = gOptionValues[gSetupMenu];
 
       // exit setup mode if necessary
       if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
@@ -178,9 +213,6 @@ int UpdateMachine() {
         SaveConfig();
       }
 
-      gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
-      gMachineOut.ballCount = gSetupMenu;
-      gMachineOut.score = gOptionValues[gSetupMenu];
       return 0;
 
     } else {
@@ -194,7 +226,7 @@ int UpdateMachine() {
     }
     
     return 1;
-    //delay(300);
+    delay(300);
 }
 
 ///////////////////////////////////////////////
