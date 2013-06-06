@@ -193,7 +193,7 @@ int UpdateMachine() {
         }
 
         if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0) {
-          gOptionValues[gSetupMenu]++;
+          gOptionValues[gSetupMenu]--;
         }
 
         //gOptionValues[gSetupMenu] = ValidateConfigVal(gOptionValues[gSetupMenu]);
