@@ -32,7 +32,7 @@ void StartNewGame() {
     gMachineOut.ballCount = 0;
 }
 
-void EndGame() {
+void EndGame(int delay) {
 
     int score = gMachineOut.score;
 
@@ -42,14 +42,14 @@ void EndGame() {
     gMachineOut.ballCount = 0;
     gTicketsDispensed = 0;
 
-    delay( 30 * 1000 );
+    if (delay) delay( delay );
 
     if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) 
       StartNewGame();
 }
 
 void InitLongshot() {
-  EndGame();
+  EndGame(0);
 }
 
 void UpdateLongshot() {
@@ -106,6 +106,6 @@ void UpdateLongshot() {
     {
         gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
         if (gMachineOut.ballCount >= gOptionValues[SETUP_OPTION_BALLCOUNT]) 
-          EndGame();
+          EndGame(10000);
     }
 }
