@@ -39,35 +39,70 @@ int gMachineCommPort = -1;
 struct MachineOutState gMachineOut, gMachineOutPrev;
 struct MachineInState gMachineIn, gMachineInPrev;
 
+
 ///////////////////////////////////////////////
-int ValidateConfigVal(int val) {
+int IncConfigVal(int val) {
   
   switch (gSetupMenu) 
   {
     case SETUP_OPTION_COINCOUNT:
-      val > 10 ? 10 : val;
+      return ++val > 10 ? 0 : val;
       break;
 
     case SETUP_OPTION_TICKETTABLE:
-      val > 10 ? 10 : val;
+      return ++val > 10 ? 10 : val;
       break;
 
     case SETUP_OPTION_FREEGAME:
-      val > 1 ? 1 : val;
+      return ++val > 1 ? 0 : val;
       break;
 
     case SETUP_OPTION_FREEGAME_SCORE:
-      val > 1000 ? 900 : val;
+      val += 10;
+      return val > 900 ? 1 : val;
       break;
 
     case SETUP_OPTION_BALLCOUNT:
-      val > 10 ? 10 : val;
+      return ++val > 10 ? 1 : val;
       break;
 
     default:
-      return val;
+      return ++val;
   }
 }
+
+///////////////////////////////////////////////
+int DecConfigVal(int val) {
+  
+  switch (gSetupMenu) 
+  {
+    case SETUP_OPTION_COINCOUNT:
+      return --val < 0 ? 10 : val;
+      break;
+
+    case SETUP_OPTION_TICKETTABLE:
+      return --val < 0 ? 9 : val;
+      break;
+
+    case SETUP_OPTION_FREEGAME:
+      return --val < 0 ? 1 : val;
+      break;
+
+    case SETUP_OPTION_FREEGAME_SCORE:
+      val -= 10;
+      return val < 1 ? 900 : val;
+      break;
+
+    case SETUP_OPTION_BALLCOUNT:
+      return --val < 0 ? 9 : val;
+      break;
+
+    default:
+      return --val;
+  }
+}
+
+
 
 
 ///////////////////////////////////////////////
@@ -189,11 +224,11 @@ int UpdateMachine() {
       // Select a value for an option
       else if (gSetupMode == SETUP_MODE_VALUESELECT) {
         if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
-          gOptionValues[gSetupMenu]++;
+          gOptionValues[gSetupMenu] = IncConfigVal(gOptionValues[gSetupMenu]);
         }
 
         if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0) {
-          gOptionValues[gSetupMenu]--;
+          gOptionValues[gSetupMenu] = DecConfigVal(gOptionValues[gSetupMenu]);
         }
 
         //gOptionValues[gSetupMenu] = ValidateConfigVal(gOptionValues[gSetupMenu]);
