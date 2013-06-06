@@ -12,4 +12,4 @@ longshot: $(OBJ)
 	gcc -o $@ $^ $(CFLAGS)
 
 clean:
-	rm -rf *.o longshot
+	rm -rf *.o *.dbm longshot
