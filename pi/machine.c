@@ -41,7 +41,9 @@ struct MachineInState gMachineIn, gMachineInPrev;
 
 ///////////////////////////////////////////////
 int ValidateConfigVal(int val) {
-  switch gSetupMenu:
+  
+  switch (gSetupMenu) 
+  {
     case SETUP_OPTION_COINCOUNT:
       val > 10 ? 10 : val;
       break;
@@ -62,9 +64,9 @@ int ValidateConfigVal(int val) {
       val > 10 ? 10 : val;
       break;
 
-
     default:
       return val;
+  }
 }
 
 
