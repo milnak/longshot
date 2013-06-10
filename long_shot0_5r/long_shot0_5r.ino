@@ -47,12 +47,9 @@ TimedAction idle = TimedAction(100,idler);
 TimedAction solenoidTimer = TimedAction(10 * 1000,solenoidOff);
 TimedAction ticketMeterTimer = TimedAction(500, ticketMeterClick);
 TimedAction coinMeterTimer = TimedAction(500, coinMeterClick);
-TimedAction gameOverLightOnTimer = TimedAction(2000, gameOverLightOn);
-TimedAction gameOverLightOffTimer = TimedAction(2000, gameOverLightOff);
-TimedAction freeGameLightOnTimer = TimedAction(2000, freeGameLightOn);
-TimedAction freeGameLightOffTimer = TimedAction(2000, freeGameLightOff);
-TimedAction winLightOnTimer = TimedAction(2000, winLightOn);
-TimedAction winLightOffTimer = TimedAction(2000, winLightOff);
+TimedAction gameOverLightTimer = TimedAction(2000, gameOverLightBlink);
+TimedAction freeGameLightTimer = TimedAction(2000, freeGameLightBlink);
+TimedAction winLightTimer = TimedAction(2000, winLightBlink);
 TimedAction beaconTimer = TimedAction(50 * 1000, beaconOff);
 TimedAction idleFlash = TimedAction(50 * 1000, idleFlashOn);
 TimedAction idleOff = TimedAction (50*1000, idleFlashOff);
@@ -125,6 +122,7 @@ void loop(){
   getGameStatus();
   solenoidTimer.check();
   idle.check();
+  
 
  if ((dispense - ticketsDispensed)>0){
    dispense_tickets();

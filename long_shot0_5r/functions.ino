@@ -43,20 +43,20 @@ void parseGameState(byte* state){
 
     if(bitRead(switches,0) == 1){
      //turn free game lamp on
-     freeGameLightOnTimer.reset();
-     freeGameLightOnTimer.enable();
+     freeGameLightTimer.reset();
+     freeGameLightTimer.enable();
    }
    
    if(bitRead(switches,1) == 1){
      //turn game over lamp on
-     gameOverLightOnTimer.reset();
-     gameOverLightOnTimer.enable();
+     gameOverLightTimer.reset();
+     gameOverLightTimer.enable();
    }
    
    if(bitRead(switches,2) == 1){
      //turn winner lamp on
-     winLightOnTimer.reset();
-     winLightOnTimer.enable();
+     winLightTimer.reset();
+     winLightTimer.enable();
    }
   
    if(bitRead(switches,3) == 1){
@@ -130,21 +130,21 @@ void idler(){
 }
 
 void idleFlashOn(){
-  gameOverLightOnTimer.enable();
-  freeGameLightOnTimer.enable();
-  winLightOnTimer.enable();
+  gameOverLightTimer.enable();
+  freeGameLightTimer.enable();
+  winLightTimer.enable();
   idleFlash.disable();
   idleOff.reset();
   idleOff.enable();
 }
 
 void idleFlashOff(){
-   gameOverLightOnTimer.disable();
-   freeGameLightOnTimer.disable();
-   winLightOnTimer.disable();
-   gameOverLightOff();
-   freeGameLightOff();
-   winLightOff(); //make sure the lights are turned off
+   gameOverLightTimer.disable();
+   freeGameLightTimer.disable();
+   winLightTimer.disable();
+   digitalWrite(gameOverLight, LOW);
+   digitalWrite(freeGameLight,LOW);
+   digitalWrite(winLight,LOW); //make sure the lights are turned off
    idleOff.disable(); 
    idleFlash.reset();
    idleFlash.enable();
@@ -155,47 +155,37 @@ void solenoidOff(){
 }
 
 //there has to be a generic way to write this
-void gameOverLightOn(){
-  digitalWrite(gameOverLight, LOW);
-  gameOverLightOnTimer.disable();
-  gameOverLightOffTimer.reset();
-  gameOverLightOffTimer.enable();
+
+
+
+void gameOverLightBlink(){
+  if(digitalRead(gameOverLight)){
+    digitalWrite(gameOverLight, LOW);
+  }
+  else{
+    digitalWrite(gameOverLight,HIGH);
+  }
 }
 
-void gameOverLightOff(){
-  digitalWrite(gameOverLight, HIGH);
-  gameOverLightOffTimer.disable();
-  gameOverLightOnTimer.reset();
-  gameOverLightOnTimer.enable();
+
+void freeGameLightBlink(){
+  if(digitalRead(freeGameLight)){
+    digitalWrite(freeGameLight, LOW);
+  }
+  else{
+    digitalWrite(freeGameLight,HIGH);
+  }
 }
 
-void freeGameLightOn(){
-  digitalWrite(freeGameLight, LOW);
-  freeGameLightOnTimer.disable();
-  freeGameLightOffTimer.reset();
-  freeGameLightOffTimer.enable();
+void winLightBlink(){
+  if(digitalRead(winLight)){
+    digitalWrite(winLight, LOW);
+  }
+  else{
+    digitalWrite(winLight,HIGH);
+  }
 }
 
-void freeGameLightOff(){
-  digitalWrite(freeGameLight, HIGH);
-  freeGameLightOffTimer.disable();
-  freeGameLightOnTimer.reset();
-  freeGameLightOnTimer.enable();
-}
-
-void winLightOn(){
-  digitalWrite(winLight, LOW);
-  winLightOnTimer.disable();
-  winLightOffTimer.reset();
-  winLightOffTimer.enable();
-}
-
-void winLightOff(){
-  digitalWrite(winLight, HIGH);
-  winLightOffTimer.disable();
-  winLightOnTimer.reset();
-  winLightOnTimer.enable();
-}
 
 void beaconOff(){
   digitalWrite(beacon, HIGH);
