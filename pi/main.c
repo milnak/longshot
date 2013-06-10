@@ -9,9 +9,8 @@ int main ()
   // kick off the update loop
   while (1)
   {
-    UpdateMachine();
-    
-    UpdateLongshot();
+     if (UpdateMachine())
+        UpdateLongshot();
 
     DumpMachineInState();
     DumpMachineOutState();

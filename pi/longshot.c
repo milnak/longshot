@@ -1,6 +1,7 @@
 #include "machine.h"
 #include "longshot.h"
 
+
 enum {
   GAMESTATE_IDLE,
   GAMESTATE_GAME
@@ -21,10 +22,7 @@ int gTickMatrix[9][9] = {
 
 int gTicketsDispensed = 0;
 int gGameState = GAMESTATE_IDLE;
-int gRequiredCoins = 4;
 
-int gConfigMaxBallCount = 9;
-int gConfigTicketTableSelection = 0;
 
 
 void StartNewGame() {
@@ -36,11 +34,17 @@ void StartNewGame() {
 }
 
 void EndGame() {
+
+    int score = gMachineOut.score;
+
     gGameState = GAMESTATE_IDLE;
     gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
     gTicketsDispensed = 0;
+
+    if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) 
+      StartNewGame();
 }
 
 void InitLongshot() {
@@ -51,7 +55,7 @@ void UpdateLongshot() {
 
     if (gGameState == GAMESTATE_IDLE) {
        gMachineOut.ballCount = gMachineIn.coinClicks;
-       if (gMachineIn.coinClicks >= gRequiredCoins)
+       if (gMachineIn.coinClicks >= gOptionValues[SETUP_OPTION_COINCOUNT])
           StartNewGame();
       
       return;
@@ -87,7 +91,7 @@ void UpdateLongshot() {
         if (gMachineOut.score >= 700) tableIndex++;
 
         if (tableIndex < 9) {
-            ticketsEarned = gTickMatrix[gConfigTicketTableSelection][tableIndex];
+            ticketsEarned = gTickMatrix[gOptionValues[SETUP_OPTION_TICKETTABLE]][tableIndex];
             if (ticketsEarned > gTicketsDispensed) {
                 int diff = ticketsEarned - gTicketsDispensed;
                 gMachineOut.dispense = diff;
@@ -100,7 +104,7 @@ void UpdateLongshot() {
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
     {
         gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
-        if (gMachineOut.ballCount >= gConfigMaxBallCount) 
+        if (gMachineOut.ballCount >= gOptionValues[SETUP_OPTION_BALLCOUNT]) 
           EndGame();
     }
 }
