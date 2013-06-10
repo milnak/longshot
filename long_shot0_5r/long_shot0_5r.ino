@@ -54,6 +54,8 @@ TimedAction freeGameLightOffTimer = TimedAction(2000, freeGameLightOff);
 TimedAction winLightOnTimer = TimedAction(2000, winLightOn);
 TimedAction winLightOffTimer = TimedAction(2000, winLightOff);
 TimedAction beaconTimer = TimedAction(50 * 1000, beaconOff);
+TimedAction idleFlash = TimedAction(50 * 1000, idleFlashOn);
+TimedAction idleOff = TimedAction (50*1000, idleFlashOff);
 
 //////////////ticket dispensor variables///////////////////
 int dispense = 0;

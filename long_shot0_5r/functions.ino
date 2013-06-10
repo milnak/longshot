@@ -48,49 +48,59 @@ void parseGameState(byte* state){
      freeGameLightOnTimer.enable();
    }
    else{
-     digitalWrite(freeGameLight,HIGH);
+    
      //turn free game lamp off
    }
    if(bitRead(switches,1) == 1){
      //turn game over lamp on
      digitalWrite(gameOverLight, LOW);
+     gameOverLightOnTimer.reset();
+     gameOverLightOnTimer.enable();
    }
    else{
      //turn game over lamp off
-     digitalWrite(gameOverLight,HIGH);
+    
    }
    if(bitRead(switches,2) == 1){
      //turn winner lamp on
      digitalWrite(winLight,LOW);
+     winLightOnTimer.reset();
+     winLightOnTimer.enable();
    }
    else{
      //turn winner lamp off
-     digitalWrite(winLight,HIGH);
+     
    
    }
    if(bitRead(switches,3) == 1){
      //turn beacon lamp on
      digitalWrite(beacon, HIGH);
+     beaconTimer.reset();
+     beaconTimer.enable();
    }
    else{
      //turn beacon lamp off
-     digitalWrite(beacon,LOW);
+     
    }
    if(bitRead(switches,4) == 1){
      //turn coin meter on
      digitalWrite(coinMeter,LOW);
+     coinMeterTimer.reset();
+     coinMeterTimer.enable();
    }
    else{
      //turn coin meter off
-     digitalWrite(coinMeter,HIGH);
+     
    }
    if(bitRead(switches,5) == 1){
      //turn ticket meter on
      digitalWrite(ticketMeter,LOW);
+     ticketMeterTimer.reset();
+     ticketMeterTimer.enable();
    }
    else{
      //turn ticket meter off
-     digitalWrite(ticketMeter,HIGH);
+     
    }
    if(bitRead(switches,6) == 1){
      //turn solenoid on 
@@ -143,8 +153,30 @@ void buttonDebounce(Bounce &theButton){
 
 void idler(){
   shifter.idle();
+  //need to handle the light flashing here too
+  idleFlash.enable();
 }
 
+void idleFlashOn(){
+  gameOverLightOnTimer.enable();
+  freeGameLightOnTimer.enable();
+  winLightOnTimer.enable();
+  idleFlash.disable();
+  idleOff.reset();
+  idleOff.enable();
+}
+
+void idleFlashOff(){
+   gameOverLightOnTimer.disable();
+   freeGameLightOnTimer.disable();
+   winLightOnTimer.disable();
+   gameOverLightOff();
+   freeGameLightOff();
+   winLightOff(); //make sure the lights are turned off
+   idleOff.disable(); 
+   idleFlash.reset();
+   idleFlash.enable();
+}
 void solenoidOff(){
   digitalWrite(solenoid, LOW);
   solenoidTimer.disable();
