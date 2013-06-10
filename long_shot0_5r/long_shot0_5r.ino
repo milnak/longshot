@@ -74,7 +74,7 @@ int setupClicks = 0;
 int setState = 0;
 int lastSetState = 0;
 
-Bounce scoreDebounce = Bounce(scoreSwitch,35);
+Bounce scoreDebounce = Bounce(scoreSwitch,25);
 Bounce coinDebounce = Bounce(coinSwitch,50);
 Bounce hundredDebounce = Bounce(hundredSwitch,50);
 Bounce ballCountDebounce = Bounce(ballCountSwitch,50);
