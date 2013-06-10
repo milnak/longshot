@@ -7,15 +7,15 @@ void integerToBytes(long val, byte b[4]) {
 
 
 void sendGameStatus(){
-  int b[9] = {ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
+  int b[9] = { ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
                   ballCountDebounce.getClicks(),coinDebounce.getClicks(),
                   upDebounce.getClicks(),downDebounce.getClicks(),
                   selectDebounce.getClicks(),setupDebounce.getClicks()  };
   
   for(int x = 0; x<=8; x++){
-    byte testByte[4];
-    integerToBytes(b[x], testByte);
-    Serial.write(testByte,sizeof(testByte));
+    byte statusByte[4];
+    integerToBytes(b[x], statusByte);
+    Serial.write(statusByte,sizeof(statusByte));
   }
 }
 
@@ -43,75 +43,47 @@ void parseGameState(byte* state){
 
     if(bitRead(switches,0) == 1){
      //turn free game lamp on
-     digitalWrite(freeGameLight,LOW);
      freeGameLightOnTimer.reset();
      freeGameLightOnTimer.enable();
    }
-   else{
-    
-     //turn free game lamp off
-   }
+   
    if(bitRead(switches,1) == 1){
      //turn game over lamp on
-     digitalWrite(gameOverLight, LOW);
      gameOverLightOnTimer.reset();
      gameOverLightOnTimer.enable();
    }
-   else{
-     //turn game over lamp off
-    
-   }
+   
    if(bitRead(switches,2) == 1){
      //turn winner lamp on
-     digitalWrite(winLight,LOW);
      winLightOnTimer.reset();
      winLightOnTimer.enable();
    }
-   else{
-     //turn winner lamp off
-     
-   
-   }
+  
    if(bitRead(switches,3) == 1){
      //turn beacon lamp on
-     digitalWrite(beacon, HIGH);
      beaconTimer.reset();
      beaconTimer.enable();
    }
-   else{
-     //turn beacon lamp off
-     
-   }
+  
    if(bitRead(switches,4) == 1){
      //turn coin meter on
-     digitalWrite(coinMeter,LOW);
      coinMeterTimer.reset();
      coinMeterTimer.enable();
    }
-   else{
-     //turn coin meter off
-     
-   }
+   
    if(bitRead(switches,5) == 1){
      //turn ticket meter on
-     digitalWrite(ticketMeter,LOW);
      ticketMeterTimer.reset();
      ticketMeterTimer.enable();
    }
-   else{
-     //turn ticket meter off
-     
-   }
+   
    if(bitRead(switches,6) == 1){
      //turn solenoid on 
      digitalWrite(solenoid,HIGH);
      solenoidTimer.reset();
      solenoidTimer.enable();
    }
-   else{
-   //turn solenoid off
    
-   }
    if(bitRead(switches,7) == 1){
     if(gameState == true){
        idle.enable();
@@ -182,6 +154,7 @@ void solenoidOff(){
   solenoidTimer.disable();
 }
 
+//there has to be a generic way to write this
 void gameOverLightOn(){
   digitalWrite(gameOverLight, LOW);
   gameOverLightOnTimer.disable();
