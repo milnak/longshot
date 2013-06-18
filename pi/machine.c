@@ -240,7 +240,7 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 
 ///////////////////////////////////////////////
 int ExitMachine() {
-
+  int index = 0;
   for ( index=0; index<NUM_SOUNDS; ++index ) {
     if ( sounds[index].data )
       free(sounds[index].data);
