@@ -63,7 +63,7 @@ void UpdateLongshot() {
 
     // score up
     if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks) {
-        PlaySound("/home/pi/verde/longshot/pi/assets/audio/tpir.wav");
+        PlaySound("./assets/audio/tpir.wav");
         gMachineOut.score += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
     }
 
