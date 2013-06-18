@@ -6,7 +6,7 @@ void integerToBytes(long val, byte b[4]) {
 }
 
 
-void sendGameStatus(){
+void sendGameState(){
   int b[9] = { ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
                   ballCountDebounce.getClicks(),coinDebounce.getClicks(),
                   upDebounce.getClicks(),downDebounce.getClicks(),
@@ -19,15 +19,13 @@ void sendGameStatus(){
   }
 }
 
-void getGameStatus(){
+void updateGame(){
   if(Serial.available()){
-      if(Serial.readBytes((char *)state,16)){
-        sendGameStatus();
-        parseGameState(state);
+      if(Serial.readBytes((char *)state,16)){ //read in the 16 byte game status from Pi
+        sendGameState(); //send out the current switch states
+        parseGameState(state); //act on the game status from Pi
       }
-    //state needs to return tickets that need to be dispensed, current score, current ball count, solenoid status, lamps status, beacon status,meter status
-  }
-  
+   }
 }
 
 void parseGameState(byte* state){
@@ -127,6 +125,7 @@ void idler(){
   shifter.idle();
   //need to handle the light flashing here too
   idleFlash.enable();
+  beaconTimer.enable();
 }
 
 void idleFlashOn(){
@@ -142,9 +141,9 @@ void idleFlashOff(){
    gameOverLightTimer.disable();
    freeGameLightTimer.disable();
    winLightTimer.disable();
-   digitalWrite(gameOverLight, LOW);
-   digitalWrite(freeGameLight,LOW);
-   digitalWrite(winLight,LOW); //make sure the lights are turned off
+   digitalWrite(gameOverLight, HIGH);
+   digitalWrite(freeGameLight,HIGH);
+   digitalWrite(winLight,HIGH); //make sure the lights are turned off
    idleOff.disable(); 
    idleFlash.reset();
    idleFlash.enable();
@@ -154,19 +153,14 @@ void solenoidOff(){
   solenoidTimer.disable();
 }
 
-//there has to be a generic way to write this
-
-
-
 void gameOverLightBlink(){
-  if(digitalRead(gameOverLight)){
+  if(digitalRead(gameOverLight) == HIGH){
     digitalWrite(gameOverLight, LOW);
   }
   else{
     digitalWrite(gameOverLight,HIGH);
   }
 }
-
 
 void freeGameLightBlink(){
   if(digitalRead(freeGameLight)){
@@ -186,10 +180,14 @@ void winLightBlink(){
   }
 }
 
-
 void beaconOff(){
-  digitalWrite(beacon, HIGH);
-  beaconTimer.disable();
+  if(digitalRead(beacon)==HIGH){
+  digitalWrite(beacon, LOW);
+  
+  }
+  else{
+    digitalWrite(beacon,HIGH);
+  }
 }
 
 void ticketMeterClick(){

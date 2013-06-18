@@ -7,5 +7,4 @@ void poll_inputs(){
   checkButtonInput(hundredDebounce);
   checkButtonInput(coinDebounce);
   checkButtonInput(ballCountDebounce);
-  
 }

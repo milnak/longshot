@@ -50,7 +50,7 @@ TimedAction coinMeterTimer = TimedAction(500, coinMeterClick);
 TimedAction gameOverLightTimer = TimedAction(2000, gameOverLightBlink);
 TimedAction freeGameLightTimer = TimedAction(2000, freeGameLightBlink);
 TimedAction winLightTimer = TimedAction(2000, winLightBlink);
-TimedAction beaconTimer = TimedAction(50 * 1000, beaconOff);
+TimedAction beaconTimer = TimedAction(5 * 1000, beaconOff);
 TimedAction idleFlash = TimedAction(50 * 1000, idleFlashOn);
 TimedAction idleOff = TimedAction (50*1000, idleFlashOff);
 
@@ -118,11 +118,24 @@ void setup(){
 }
 
 void loop(){
-  poll_inputs();
-  getGameStatus();
+  //TimedAction checks//
   solenoidTimer.check();
   idle.check();
+ // gameOverLightTimer.check();
+ // winLightTimer.check();
+  //freeGameLightTimer.check();
+  beaconTimer.check();
+  //idleFlash.check();
+ // idleOff.check();
+  /////////////////////////////////////
   
+  digitalWrite(freeGameLight,LOW);
+  digitalWrite(winLight,HIGH);
+  digitalWrite(gameOverLight,LOW);
+  poll_inputs(); //get switch states
+  updateGame(); //pull the state from Pi, push switches to pi, parse out state
+  
+
 
  if ((dispense - ticketsDispensed)>0){
    dispense_tickets();
