@@ -168,6 +168,8 @@ int InitMachine() {
     return 1;
   }
 
+  SDL_PauseAudio(0);
+
   gMachineOut.switches  = 0;
   gMachineOut.dispense  = 0;
   gMachineOut.score     = 0;
