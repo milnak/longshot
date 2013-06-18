@@ -17,5 +17,7 @@ int main ()
   }
  
   
+  ExitMachine();
+
   return 0 ;
 }

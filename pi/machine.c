@@ -7,6 +7,8 @@
 
 #include <wiringPi.h>
 #include <wiringSerial.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_audio.h>
 
 enum {
   LOGICSTATE_SETUP,
@@ -23,7 +25,7 @@ int gOptionValues[SETUP_OPTION_MAX] = {
   4,    // SETUP_OPTION_COINCOUNT,
   0,    // SETUP_OPTION_TICKETTABLE,
   0,    // SETUP_OPTION_FREEGAME,
-  999, // SETUP_OPTION_FREEGAME_SCORE,
+  900, // SETUP_OPTION_FREEGAME_SCORE,
   9,    // SETUP_OPTION_BALLCOUNT,
   0,    // SETUP_OPTION_SAVED1,
   0,    // SETUP_OPTION_SAVED2,
@@ -131,16 +133,42 @@ int InitMachine() {
     // open our USB connection
   if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
   {
-    fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
+    fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno));
     return 1 ;
   }
 
   // see if wiringPi is DTF
   if (wiringPiSetup() == -1)
   {
-    fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
-    return 1 ;
+    fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno));
+    return 1;
   }
+
+  // see if SDL is DTF
+  if (SDL_Init( SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) 
+  {
+    fprintf (stdout, "Unable to start SDL: %s\n", SDL_GetError() );
+    return 1;
+  }
+
+  extern void mixaudio(void *unused, Uint8 *stream, int len);
+  SDL_AudioSpec fmt;
+
+  /* Set 16-bit mono audio at 22Khz */
+  fmt.freq = 22050;
+  fmt.format = AUDIO_S16;
+  fmt.channels = 1;
+  fmt.samples = 512; /* A good value for games */
+  fmt.callback = mixaudio;
+  fmt.userdata = NULL;
+
+  /* Open the audio device and start playing sound! */
+  if ( SDL_OpenAudio(&fmt, NULL) < 0 ) {
+    fprintf(stderr, "Unable to open SDL audio: %sn", SDL_GetError());
+    return 1;
+  }
+
+  SDL_PauseAudio(0);
 
   gMachineOut.switches  = 0;
   gMachineOut.dispense  = 0;
@@ -148,6 +176,80 @@ int InitMachine() {
   gMachineOut.ballCount = 0;
   gMachineInPrev.scoreClicks = 0;
   return 0;
+}
+
+#define NUM_SOUNDS 2
+struct sample {
+  Uint8 *data;
+  Uint32 dpos;
+  Uint32 dlen;
+} sounds[NUM_SOUNDS];
+
+void PlaySound(char *file)
+{
+  int index;
+  SDL_AudioSpec wave;
+  Uint8 *data;
+  Uint32 dlen;
+  SDL_AudioCVT cvt;
+
+  /* Look for an empty (or finished) sound slot */
+  for ( index=0; index<NUM_SOUNDS; ++index ) {
+    if ( sounds[index].dpos == sounds[index].dlen ) {
+      break;
+    }
+  }
+  if ( index == NUM_SOUNDS )
+    return;
+
+  /* Load the sound file and convert it to 16-bit stereo at 22kHz */
+  if ( SDL_LoadWAV(file, &wave, &data, &dlen) == NULL ) {
+    fprintf(stderr, "Couldn't load %s: %sn", file,
+    SDL_GetError());
+    return;
+  }
+  SDL_BuildAudioCVT(&cvt, wave.format, wave.channels, wave.freq, AUDIO_S16, 2, 22050);
+  cvt.buf = malloc(dlen*cvt.len_mult);
+  memcpy(cvt.buf, data, dlen);
+  cvt.len = dlen;
+  SDL_ConvertAudio(&cvt);
+  SDL_FreeWAV(data);
+
+  /* Put the sound data in the slot (it starts playing immediately) */
+  if ( sounds[index].data ) {
+    free(sounds[index].data);
+  }
+  SDL_LockAudio();
+  sounds[index].data = cvt.buf;
+  sounds[index].dlen = cvt.len_cvt;
+  sounds[index].dpos = 0;
+  SDL_UnlockAudio();
+}
+
+void mixaudio(void *unused, Uint8 *stream, int len)
+{
+  int i;
+  Uint32 amount;
+  for ( i=0; i<NUM_SOUNDS; ++i ) {
+    amount = (sounds[i].dlen-sounds[i].dpos);
+    if ( amount > len ) {
+      amount = len;
+    }
+    SDL_MixAudio(stream, &sounds[i].data[sounds[i].dpos], amount, SDL_MIX_MAXVOLUME);
+    sounds[i].dpos += amount;
+  }
+}
+
+///////////////////////////////////////////////
+int ExitMachine() {
+  int index = 0;
+  for ( index=0; index<NUM_SOUNDS; ++index ) {
+    if ( sounds[index].data )
+      free(sounds[index].data);
+  }
+
+  SDL_CloseAudio();
+  SDL_Quit();
 }
 
 ///////////////////////////////////////////////
@@ -184,7 +286,6 @@ void writeBytes(unsigned char* ptr, unsigned int length) {
 
 ///////////////////////////////////////////////
 int UpdateMachine() {
-
     // write our requests
     gMachineOutPrev = gMachineOut;
     //writeBytes((unsigned char*)&gMachineOut,  sizeof(gMachineOut));
@@ -264,6 +365,12 @@ int UpdateMachine() {
     
     return 1;
     delay(300);
+}
+
+
+///////////////////////////////////////////////
+void PlayWAV(const char* wavFilePath) {
+  
 }
 
 ///////////////////////////////////////////////

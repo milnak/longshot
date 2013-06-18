@@ -1,7 +1,6 @@
 #include "machine.h"
 #include "longshot.h"
 
-
 enum {
   GAMESTATE_IDLE,
   GAMESTATE_GAME
@@ -53,12 +52,9 @@ void InitLongshot() {
 
 void UpdateLongshot() {
 
-    if (gGameState == GAMESTATE_IDLE) {
-       gMachineOut.ballCount = gMachineIn.coinClicks;
-       if (gMachineIn.coinClicks >= gOptionValues[SETUP_OPTION_COINCOUNT])
+    if (gMachineIn.coinClicks >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
           StartNewGame();
-      
-      return;
+          return;
     }
 
     // clear the ball solenoid
@@ -66,9 +62,11 @@ void UpdateLongshot() {
       gMachineOut.switches &= ~(1 << SWITCH_SOLENOID);
 
     // score up
-    if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
+    if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks) {
+        PlaySound("./assets/audio/tpir.wav");
         gMachineOut.score += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
-    
+    }
+
     // score up
     if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
         gMachineOut.score += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));

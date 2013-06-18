@@ -55,3 +55,6 @@ extern struct MachineInState gMachineInPrev;
 
 int InitMachine();
 int UpdateMachine();
+int ExitMachine();
+
+void PlayWAV(const char* wavFilePath);
