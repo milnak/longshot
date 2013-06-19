@@ -160,7 +160,7 @@ void solenoidOff(){
 }
 
 void gameOverLightBlink(){
-  if(digitalRead(gameOverLight) == HIGH){
+  if(bitRead(PORTC, 5)){
     digitalWrite(gameOverLight, LOW);
   }
   else{
@@ -169,7 +169,7 @@ void gameOverLightBlink(){
 }
 
 void freeGameLightBlink(){
-  if(digitalRead(freeGameLight)==HIGH){
+  if(bitRead(PORTC, 6)==HIGH){
     digitalWrite(freeGameLight, LOW);
   }
   else{
@@ -178,7 +178,7 @@ void freeGameLightBlink(){
 }
 
 void winLightBlink(){
-  if(digitalRead(winLight)==HIGH){
+  if(bitRead(PORTC, 7)){
     digitalWrite(winLight, LOW);
   }
   else{
@@ -187,7 +187,7 @@ void winLightBlink(){
 }
 
 void beaconOff(){
-  if(digitalRead(beacon)==HIGH){
+  if(digitalRead(beacon)==HIGH){//why does this work? confused
     digitalWrite(beacon, LOW);
   }
   else{
