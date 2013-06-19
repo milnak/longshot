@@ -47,12 +47,12 @@ TimedAction idle = TimedAction(100,idler);
 TimedAction solenoidTimer = TimedAction(10 * 1000,solenoidOff);
 TimedAction ticketMeterTimer = TimedAction(500, ticketMeterClick);
 TimedAction coinMeterTimer = TimedAction(500, coinMeterClick);
-TimedAction gameOverLightTimer = TimedAction(2000, gameOverLightBlink);
-TimedAction freeGameLightTimer = TimedAction(2000, freeGameLightBlink);
-TimedAction winLightTimer = TimedAction(2000, winLightBlink);
-TimedAction beaconTimer = TimedAction(5 * 1000, beaconOff);
-TimedAction idleFlash = TimedAction(50 * 1000, idleFlashOn);
-TimedAction idleOff = TimedAction (50*1000, idleFlashOff);
+TimedAction gameOverLightTimer = TimedAction(100, gameOverLightBlink);
+TimedAction freeGameLightTimer = TimedAction(100, freeGameLightBlink);
+TimedAction winLightTimer = TimedAction(200, winLightBlink);
+TimedAction beaconTimer = TimedAction(10 * 1000, beaconOff);
+TimedAction idleFlash = TimedAction(3 * 1000, idleFlashOn);
+TimedAction idleOff = TimedAction (3*1000, idleFlashOff);
 
 //////////////ticket dispensor variables///////////////////
 int dispense = 0;
@@ -121,17 +121,17 @@ void loop(){
   //TimedAction checks//
   solenoidTimer.check();
   idle.check();
- // gameOverLightTimer.check();
- // winLightTimer.check();
-  //freeGameLightTimer.check();
+  gameOverLightTimer.check();
+  winLightTimer.check();
+  freeGameLightTimer.check();
   beaconTimer.check();
-  //idleFlash.check();
- // idleOff.check();
+  idleFlash.check();
+  idleOff.check();
   /////////////////////////////////////
   
-  digitalWrite(freeGameLight,LOW);
-  digitalWrite(winLight,HIGH);
-  digitalWrite(gameOverLight,LOW);
+  //digitalWrite(freeGameLight,LOW);
+  //digitalWrite(winLight,HIGH);
+  //digitalWrite(gameOverLight,LOW);
   poll_inputs(); //get switch states
   updateGame(); //pull the state from Pi, push switches to pi, parse out state
   

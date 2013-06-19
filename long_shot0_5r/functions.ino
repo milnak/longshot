@@ -124,11 +124,17 @@ void buttonDebounce(Bounce &theButton){
 void idler(){
   shifter.idle();
   //need to handle the light flashing here too
-  idleFlash.enable();
+ // idleFlash.enable();
   beaconTimer.enable();
+   gameOverLightTimer.enable();
+  freeGameLightTimer.enable();
+  winLightTimer.enable();
 }
 
 void idleFlashOn(){
+  gameOverLightTimer.reset();
+  winLightTimer.reset();
+  freeGameLightTimer.reset();
   gameOverLightTimer.enable();
   freeGameLightTimer.enable();
   winLightTimer.enable();
@@ -141,9 +147,9 @@ void idleFlashOff(){
    gameOverLightTimer.disable();
    freeGameLightTimer.disable();
    winLightTimer.disable();
-   digitalWrite(gameOverLight, HIGH);
-   digitalWrite(freeGameLight,HIGH);
-   digitalWrite(winLight,HIGH); //make sure the lights are turned off
+   //digitalWrite(gameOverLight, LOW);
+   //digitalWrite(freeGameLight,LOW);
+   //digitalWrite(winLight,LOW); //make sure the lights are turned off
    idleOff.disable(); 
    idleFlash.reset();
    idleFlash.enable();
@@ -163,7 +169,7 @@ void gameOverLightBlink(){
 }
 
 void freeGameLightBlink(){
-  if(digitalRead(freeGameLight)){
+  if(digitalRead(freeGameLight)==HIGH){
     digitalWrite(freeGameLight, LOW);
   }
   else{
@@ -172,7 +178,7 @@ void freeGameLightBlink(){
 }
 
 void winLightBlink(){
-  if(digitalRead(winLight)){
+  if(digitalRead(winLight)==HIGH){
     digitalWrite(winLight, LOW);
   }
   else{
@@ -182,8 +188,7 @@ void winLightBlink(){
 
 void beaconOff(){
   if(digitalRead(beacon)==HIGH){
-  digitalWrite(beacon, LOW);
-  
+    digitalWrite(beacon, LOW);
   }
   else{
     digitalWrite(beacon,HIGH);
