@@ -65,12 +65,14 @@ void parseGameState(byte* state){
   
    if(bitRead(switches,4) == 1){
      //turn coin meter on
+     digitalWrite(coinMeter,LOW);
      coinMeterTimer.reset();
      coinMeterTimer.enable();
    }
    
    if(bitRead(switches,5) == 1){
      //turn ticket meter on
+     digitalWrite(ticketMeter,LOW);
      ticketMeterTimer.reset();
      ticketMeterTimer.enable();
    }
@@ -92,6 +94,8 @@ void parseGameState(byte* state){
      
      coinDebounce.setClicks(0);
      if(gameState == false){
+       coinMeterTimer.reset();
+       coinMeterTimer.enable();
        scoreDebounce.setClicks(0);
        hundredDebounce.setClicks(0);
        ballCountDebounce.setClicks(0);
@@ -196,11 +200,11 @@ void beaconOff(){
 }
 
 void ticketMeterClick(){
-   digitalWrite(ticketMeter, LOW);
+   digitalWrite(ticketMeter, HIGH);
    ticketMeterTimer.disable(); 
 }
 
 void coinMeterClick(){
-   digitalWrite(coinMeter, LOW);
+   digitalWrite(coinMeter, HIGH);
    coinMeterTimer.disable(); 
 }

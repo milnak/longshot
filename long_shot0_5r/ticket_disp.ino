@@ -4,6 +4,8 @@ int dispense_tickets(){
     digitalWrite(ticketDispenser, HIGH);
     checkButtonInput(ticketDebounce);
     ticketsDispensed = ticketsDispensed + ticketDebounce.getClicks();
+    ticketMeterTimer.reset();
+    ticketMeterTimer.enable();
     ticketDebounce.setClicks(0);
             }
    if((dispense - ticketsDispensed) == 0){

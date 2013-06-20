@@ -127,6 +127,8 @@ void loop(){
   beaconTimer.check();
   idleFlash.check();
   idleOff.check();
+  ticketMeterTimer.check();
+  coinMeterTimer.check();
   /////////////////////////////////////
   
   //digitalWrite(freeGameLight,LOW);
