@@ -45,8 +45,8 @@ int switches = 0;
 
 TimedAction idle = TimedAction(100,idler);
 TimedAction solenoidTimer = TimedAction(10 * 1000,solenoidOff);
-TimedAction ticketMeterTimer = TimedAction(500, ticketMeterClick);
-TimedAction coinMeterTimer = TimedAction(500, coinMeterClick);
+TimedAction ticketMeterTimer = TimedAction(1000, ticketMeterClick);
+TimedAction coinMeterTimer = TimedAction(1000, coinMeterClick);
 TimedAction gameOverLightTimer = TimedAction(1000, gameOverLightBlink);
 TimedAction freeGameLightTimer = TimedAction(1000, freeGameLightBlink);
 TimedAction winLightTimer = TimedAction(1000, winLightBlink);
