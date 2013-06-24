@@ -134,7 +134,7 @@ void UpdateLongshot() {
     // balls played
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
     {
-        gMachineOut.score += gScoreAccumulator
+        gMachineOut.score += gScoreAccumulator;
 
         // play the appropriate SFX
         if (gScoreAccumulator <= 10) PlaySound(SFX_10_POINTS);
