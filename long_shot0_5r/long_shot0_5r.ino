@@ -45,8 +45,8 @@ int switches = 0;
 
 TimedAction idle = TimedAction(100,idler);
 TimedAction solenoidTimer = TimedAction(10 * 1000,solenoidOff);
-TimedAction ticketMeterTimer = TimedAction(1000, ticketMeterClick);
-TimedAction coinMeterTimer = TimedAction(1000, coinMeterClick);
+TimedAction ticketMeterTimer = TimedAction(25, ticketMeterClick);
+TimedAction coinMeterTimer = TimedAction(25, coinMeterClick);
 TimedAction gameOverLightTimer = TimedAction(1000, gameOverLightBlink);
 TimedAction freeGameLightTimer = TimedAction(1000, freeGameLightBlink);
 TimedAction winLightTimer = TimedAction(1000, winLightBlink);
@@ -58,7 +58,8 @@ TimedAction idleOff = TimedAction (3*1000, idleFlashOff);
 int dispense = 0;
 int notchRead = 111;
 int ticketsDispensed = 0;
-
+int ticketMeterClicks = 0;
+int ticketTimer = 0;
 /////////////////////////////////////////////////////////// 
 
 //////////////////Score Vars////////////////////////////
