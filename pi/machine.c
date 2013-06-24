@@ -261,7 +261,7 @@ void PreloadSound(const char* file, int slot) {
     return;
   }
 
-  printf(" length: %d bytes\n", &dlen );
+  printf(" length: %d bytes\n", dlen );
 
   SDL_BuildAudioCVT(cvt, wave.format, wave.channels, wave.freq, kAUDIO_FMT, kAUDIO_CHANNELS, kAUDIO_FREQ);
   cvt->buf = malloc(dlen * cvt->len_mult);
@@ -446,10 +446,6 @@ int UpdateMachine() {
 }
 
 
-///////////////////////////////////////////////
-void PlayWAV(const char* wavFilePath) {
-  
-}
 
 ///////////////////////////////////////////////
 void DumpMachineOutState() {
