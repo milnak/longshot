@@ -172,7 +172,7 @@ void UpdateLongshot() {
                 int diff = ticketsEarned - gTicketsDispensed;
                 
                 if (diff > 0 && gTicketsDispensed == 0) {
-                  PlaySound(SFX_WINNER_SONG);
+                  //PlaySound(SFX_WINNER_SONG);
                 }
 
                 gMachineOut.dispense = diff;
