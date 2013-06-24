@@ -168,21 +168,21 @@ int InitMachine() {
     // open our USB connection
   if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
   {
-    fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno));
+    printf("Unable to open serial device: %s\n", strerror (errno));
     return 1 ;
   }
 
   // see if wiringPi is DTF
   if (wiringPiSetup() == -1)
   {
-    fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno));
+    printf( "Unable to start wiringPi: %s\n", strerror (errno));
     return 1;
   }
 
   // see if SDL is DTF
   if (SDL_Init( SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) 
   {
-    fprintf (stdout, "Unable to start SDL: %s\n", SDL_GetError() );
+    printf( "Unable to start SDL: %s\n", SDL_GetError() );
     return 1;
   }
 
@@ -253,16 +253,16 @@ void PreloadSound(const char* file, int slot) {
   }
 
   sprintf(filePath, "%s/%s", get_current_dir_name(), file);
-  fprintf (stdout, "Preloading sound: %s in slot %d... ", &filePath, slot );
+  printf( "Preloading sound: %s in slot %d... ", &filePath, slot );
 
   /* Load the sound file and convert it to 16-bit stereo at 22kHz */
   if ( SDL_LoadWAV(filePath, &wave, &data, &dlen) == NULL ) {
     fprintf(stderr, "Couldn't load %s: %sn", filePath, SDL_GetError());
-    fprintf (stdout, " failed.\n", &dlen );
+    printf(" failed.\n", &dlen );
     return;
   }
 
-  fprintf (stdout, " length: %d bytes\n", &dlen );
+  printf(" length: %d bytes\n", &dlen );
 
   SDL_BuildAudioCVT(cvt, wave.format, wave.channels, wave.freq, kAUDIO_FMT, kAUDIO_CHANNELS, kAUDIO_FREQ);
   cvt->buf = malloc(dlen * cvt->len_mult);
