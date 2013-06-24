@@ -47,7 +47,7 @@ struct MachineInState gMachineIn, gMachineInPrev;
 #define kAUDIO_FMT AUDIO_S16
 #define kAUDIO_CHANNELS 1
 
-#define NUM_ACTIVE_SOUNDS 2
+#define NUM_ACTIVE_SOUNDS 8
 struct sample {
   Uint8 *data;
   Uint32 dpos;
@@ -274,6 +274,7 @@ void PreloadSound(const char* file, int slot) {
 ///////////////////////////////////////////////
 void PlaySound(int sound)
 {
+  printf("Playing sound: %d\n", sound );
   SDL_AudioCVT* cvt = &preloadedSounds[sound];
   int index;
 
