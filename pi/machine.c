@@ -224,14 +224,12 @@ void FreeSoundSlots() {
     if ( activeSounds[index].data )
       free(activeSounds[index].data);
 
-    activeSounds[index].data = activeSounds[index].dlen = 0;
+    activeSounds[index].dlen = 0;
   }
 
   for ( index=0; index<NUM_PRELOADED_SOUNDS; ++index ) {
-    if ( preloadedSounds[index].buf ) {
+    if ( preloadedSounds[index].buf )
       free(preloadedSounds[index].buf);
-      preloadedSounds[index].buf = preloadedSounds[index].len = 0;
-    }
 
     preloadedSounds[index].len = 0;
   }
