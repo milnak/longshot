@@ -163,6 +163,9 @@ void LoadConfig() {
 
 ///////////////////////////////////////////////
 int InitMachine() {
+
+  LoadConfig();
+  
   int index = 0;
 
     // open our USB connection
