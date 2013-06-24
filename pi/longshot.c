@@ -1,5 +1,6 @@
 #include "machine.h"
 #include "longshot.h"
+#include <cstdio.h>
 
 enum {
   GAMESTATE_IDLE,
@@ -67,37 +68,37 @@ void LoadSounds() {
   const char* basePath = "assets/audio/";
   char fullPath[512];
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "nopoints.wav")
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "nopoints.wav");
   PreloadSound(fullPath, SFX_NO_POINTS);
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "10points.wav")
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "10points.wav");
   PreloadSound(fullPath, SFX_10_POINTS);
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "20points.wav")
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "20points.wav");
   PreloadSound(fullPath, SFX_20_POINTS);
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "30points.wav")
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "30points.wav");
   PreloadSound(fullPath, SFX_30_POINTS);
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "40points.wav")
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "40points.wav");
   PreloadSound(fullPath, SFX_40_POINTS);
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "50points.wav")
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "50points.wav");
   PreloadSound(fullPath, SFX_50_POINTS);
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "100points.wav")
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "100points.wav");
   PreloadSound(fullPath, SFX_100_POINTS);
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "winner.wav")
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "winner.wav");
   PreloadSound(fullPath, SFX_WINNER_SONG);
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "attendant.wav")
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "attendant.wav");
   PreloadSound(fullPath, SFX_CALL_ATTENDANT);
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "freegame.wav")
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "freegame.wav");
   PreloadSound(fullPath, SFX_FREE_GAME);
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "attract.wav")
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "attract.wav");
   PreloadSound(fullPath, SFX_ATTRACT_SONG);
 }
 
