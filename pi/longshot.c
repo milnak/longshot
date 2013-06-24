@@ -37,7 +37,7 @@ int gTickMatrix[9][9] = {
 
 int gTicketsDispensed = 0;
 int gGameState = GAMESTATE_IDLE;
-
+int gScoreAccumulator = 0;
 
 
 void StartNewGame() {
@@ -46,6 +46,7 @@ void StartNewGame() {
     gMachineOut.switches |=  (1 << SWITCH_SOLENOID);
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
+    gScoreAccumulator = 0;
 }
 
 void EndGame() {
@@ -65,7 +66,7 @@ void EndGame() {
 void LoadSounds() {
   FreeSoundSlots();
 
-  const char* basePath = "assets/audio";
+  const char* basePath = "assets/audio/";
   char fullPath[512];
 
   sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "nopoints.wav");
@@ -126,20 +127,30 @@ void UpdateLongshot() {
 
     // score up
     if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks) {
-
-        gMachineOut.score += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
-    
-        // play the appropriate
-        int newScore = gMachineOut.score - gMachineOutPrev.score;
-        if (newScore <= 10) PlaySound(SFX_10_POINTS);
-        else if (newScore <= 20)  PlaySound(SFX_20_POINTS);
-        else if (newScore <= 30)  PlaySound(SFX_30_POINTS);
-        else if (newScore <= 40)  PlaySound(SFX_40_POINTS);
-        else if (newScore <= 50)  PlaySound(SFX_50_POINTS);
-        else if (newScore <= 100) PlaySound(SFX_100_POINTS);
+        gScoreAccumulator += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
     }
 
-    
+
+    // balls played
+    if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
+    {
+        gMachineOut.score += gScoreAccumulator
+
+        // play the appropriate SFX
+        if (gScoreAccumulator <= 10) PlaySound(SFX_10_POINTS);
+        else if (gScoreAccumulator <= 20 ) PlaySound(SFX_20_POINTS);
+        else if (gScoreAccumulator <= 30 ) PlaySound(SFX_30_POINTS);
+        else if (gScoreAccumulator <= 40 ) PlaySound(SFX_40_POINTS);
+        else if (gScoreAccumulator <= 50 ) PlaySound(SFX_50_POINTS);
+        else if (gScoreAccumulator <= 100) PlaySound(SFX_100_POINTS);
+
+        gScoreAccumulator = 0;
+
+        gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
+        if (gMachineOut.ballCount >= gOptionValues[SETUP_OPTION_BALLCOUNT]) 
+          EndGame();
+    }
+
     // we haz points! we can haz tix?
     gMachineOut.dispense = 0;
     if (gMachineOut.score > gMachineOutPrev.score) {
@@ -169,13 +180,5 @@ void UpdateLongshot() {
                 gTicketsDispensed += diff;
             }
         }
-    }
-
-    // balls played
-    if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
-    {
-        gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
-        if (gMachineOut.ballCount >= gOptionValues[SETUP_OPTION_BALLCOUNT]) 
-          EndGame();
     }
 }

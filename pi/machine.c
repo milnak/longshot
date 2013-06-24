@@ -23,7 +23,7 @@ enum {
 };
 
 int gOptionValues[SETUP_OPTION_MAX] = {
-  4,    // SETUP_OPTION_COINCOUNT,
+  1,    // SETUP_OPTION_COINCOUNT,
   0,    // SETUP_OPTION_TICKETTABLE,
   0,    // SETUP_OPTION_FREEGAME,
   900, // SETUP_OPTION_FREEGAME_SCORE,
@@ -165,7 +165,7 @@ void LoadConfig() {
 int InitMachine() {
 
   LoadConfig();
-  
+
   int index = 0;
 
     // open our USB connection
