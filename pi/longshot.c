@@ -121,8 +121,7 @@ void UpdateLongshot() {
 
     // score up
     if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks) {
-        PlaySound(SFX_100_POINTS);
-        gMachineOut.score += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
+        gScoreAccumulator += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
     }
 
     // score up
