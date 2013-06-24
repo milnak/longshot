@@ -1,7 +1,6 @@
 #include "machine.h"
 
 #include <stdio.h>
-#include <cstdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>

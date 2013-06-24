@@ -1,6 +1,6 @@
 #include "machine.h"
 #include "longshot.h"
-#include <cstdio.h>
+#include <stdio.h>
 
 enum {
   GAMESTATE_IDLE,
