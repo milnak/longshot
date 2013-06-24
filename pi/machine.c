@@ -249,7 +249,7 @@ void PreloadSound(const char* file, int slot) {
 
   if ( cvt->len ) {
     free(cvt->buf);
-    cvt->buf = cvt->len = 0;
+    cvt->len = 0;
   }
 
   sprintf(filePath, "%s/%s", get_current_dir_name(), file);
@@ -313,7 +313,7 @@ void _MixAudio(void *unused, Uint8 *stream, int len)
     }
     float volScale = ((float)gOptionValues[SETUP_OPTION_VOLUME])/10.0f;
     SDL_MixAudio(stream, &activeSounds[i].data[activeSounds[i].dpos], amount, (int)(volScale * 128.0f) );
-    sounds[i].dpos += amount;
+    activeSounds[i].dpos += amount;
   }
 }
 
