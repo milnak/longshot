@@ -36,9 +36,9 @@ enum {
   SETUP_OPTION_FREEGAME,
   SETUP_OPTION_FREEGAME_SCORE,
   SETUP_OPTION_BALLCOUNT,
+  SETUP_OPTION_VOLUME,
+  SETUP_OPTION_SOUND_SET,
   //
-  SETUP_OPTION_SAVED1,
-  SETUP_OPTION_SAVED2,
   SETUP_OPTION_SAVED3,
   SETUP_OPTION_SAVED4,
   SETUP_OPTION_MAX
@@ -57,4 +57,6 @@ int InitMachine();
 int UpdateMachine();
 int ExitMachine();
 
-void PlayWAV(const char* wavFilePath);
+void PreloadSound(const char* wavFilePath, int slot);
+void PlaySound(int sound);
+void FreeSoundSlots();

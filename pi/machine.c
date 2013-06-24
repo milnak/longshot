@@ -1,6 +1,8 @@
 #include "machine.h"
 
 #include <stdio.h>
+#include <cstdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -27,7 +29,7 @@ int gOptionValues[SETUP_OPTION_MAX] = {
   0,    // SETUP_OPTION_FREEGAME,
   900, // SETUP_OPTION_FREEGAME_SCORE,
   9,    // SETUP_OPTION_BALLCOUNT,
-  0,    // SETUP_OPTION_SAVED1,
+  5,    // SETUP_OPTION_VOLUME,
   0,    // SETUP_OPTION_SAVED2,
   0,    // SETUP_OPTION_SAVED3,
   0,    // SETUP_OPTION_SAVED4,
@@ -40,6 +42,22 @@ int gSetupMenu = 0;
 int gMachineCommPort = -1;
 struct MachineOutState gMachineOut, gMachineOutPrev;
 struct MachineInState gMachineIn, gMachineInPrev;
+
+// Audio stuff
+#define kAUDIO_FREQ 22050
+#define kAUDIO_FMT AUDIO_S16
+#define kAUDIO_CHANNELS 1
+
+#define NUM_ACTIVE_SOUNDS 2
+struct sample {
+  Uint8 *data;
+  Uint32 dpos;
+  Uint32 dlen;
+} activeSounds[NUM_ACTIVE_SOUNDS];
+
+#define NUM_PRELOADED_SOUNDS 128
+SDL_AudioCVT preloadedSounds[NUM_PRELOADED_SOUNDS];
+int gNumLoadedSounds = 0;
 
 
 ///////////////////////////////////////////////
@@ -66,6 +84,14 @@ int IncConfigVal(int val) {
 
     case SETUP_OPTION_BALLCOUNT:
       return ++val > 10 ? 1 : val;
+      break;
+
+    case SETUP_OPTION_VOLUME:
+      return ++val >= 10 ? 0 : val;
+      break;
+
+    case SETUP_OPTION_SOUND_SET:
+      return ++val > 4 ? 1 : val;
       break;
 
     default:
@@ -96,7 +122,15 @@ int DecConfigVal(int val) {
       break;
 
     case SETUP_OPTION_BALLCOUNT:
-      return --val < 0 ? 9 : val;
+      return --val < 1 ? 10 : val;
+      break;
+
+    case SETUP_OPTION_VOLUME:
+      return --val < -1 ? 10 : val;
+      break;
+
+    case SETUP_OPTION_SOUND_SET:
+      return --val < 1 ? 4 : val;
       break;
 
     default:
@@ -130,6 +164,8 @@ void LoadConfig() {
 
 ///////////////////////////////////////////////
 int InitMachine() {
+  int index = 0;
+
     // open our USB connection
   if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
   {
@@ -151,15 +187,17 @@ int InitMachine() {
     return 1;
   }
 
-  extern void mixaudio(void *unused, Uint8 *stream, int len);
+  FreeSoundSlots();
+
+  extern void _MixAudio(void *unused, Uint8 *stream, int len);
   SDL_AudioSpec fmt;
 
   /* Set 16-bit mono audio at 22Khz */
-  fmt.freq = 22050;
-  fmt.format = AUDIO_S16;
-  fmt.channels = 1;
+  fmt.freq = kAUDIO_FREQ;
+  fmt.format = kAUDIO_FMT;
+  fmt.channels = kAUDIO_CHANNELS;
   fmt.samples = 512; /* A good value for games */
-  fmt.callback = mixaudio;
+  fmt.callback = _MixAudio;
   fmt.userdata = NULL;
 
   /* Open the audio device and start playing sound! */
@@ -178,64 +216,106 @@ int InitMachine() {
   return 0;
 }
 
-#define NUM_SOUNDS 2
-struct sample {
-  Uint8 *data;
-  Uint32 dpos;
-  Uint32 dlen;
-} sounds[NUM_SOUNDS];
+///////////////////////////////////////////////
+void FreeSoundSlots() {
+  // clear out the audio slots
+  for ( index=0; index<NUM_ACTIVE_SOUNDS; ++index ) {
+    if ( activeSounds[index].data )
+      free(activeSounds[index].data);
 
-void PlaySound(char *file)
-{
+    activeSounds[index].data = activeSounds[index].dlen = 0;
+  }
+
+  for ( index=0; index<NUM_PRELOADED_SOUNDS; ++index ) {
+    if ( preloadedSounds[index].buf ) {
+      free(preloadedSounds[index].buf);
+      preloadedSounds[index].buf = preloadedSounds[index].len = 0;
+    }
+
+    preloadedSounds[index].len = 0;
+  }
+}
+
+///////////////////////////////////////////////
+void PreloadSound(char* file, int slot) {
   int index;
   SDL_AudioSpec wave;
   Uint8 *data;
   Uint32 dlen;
-  SDL_AudioCVT cvt;
+  SDL_AudioCVT* cvt = &preloadedSounds[slot];
+  char filePath[1024];
 
+
+
+  if ( slot < 0 || slot >= NUM_PRELOADED_SOUNDS )
+    return;
+
+  if ( cvt->buf ) {
+    free(cvt->buf);
+    cvt->buf = cvt->len = 0;
+  }
+
+  sprintf(filePath, "%s/%s", get_current_dir_name(), file);
+  fprintf (stdout, "Preloading sound: %s in slot %d... ", &filePath, slot );
+
+  /* Load the sound file and convert it to 16-bit stereo at 22kHz */
+  if ( SDL_LoadWAV(&filePath, &wave, &data, &dlen) == NULL ) {
+    fprintf(stderr, "Couldn't load %s: %sn", file, SDL_GetError());
+    fprintf (stdout, " failed.\n", &dlen );
+    return;
+  }
+
+  fprintf (stdout, " length: %d bytes\n", &dlen );
+
+  SDL_BuildAudioCVT(cvt, wave.format, wave.channels, wave.freq, kAUDIO_FMT, kAUDIO_CHANNELS, kAUDIO_FREQ);
+  cvt->buf = malloc(dlen * cvt->len_mult);
+  memcpy(cvt->buf, data, dlen);
+  cvt->len = dlen;
+  SDL_ConvertAudio(cvt);
+  SDL_FreeWAV(data);
+}
+
+///////////////////////////////////////////////
+void PlaySound(int sound)
+{
+  SDL_AudioCVT* cvt = &preloadedSounds[sound];
+  int index;
+
+  if (sound < 0 || sound >= NUM_PRELOADED_SOUNDS || cvt->len == 0)
+    return;
+ 
   /* Look for an empty (or finished) sound slot */
-  for ( index=0; index<NUM_SOUNDS; ++index ) {
-    if ( sounds[index].dpos == sounds[index].dlen ) {
+  for ( index=0; index<NUM_ACTIVE_SOUNDS; ++index ) {
+    if ( activeSounds[index].dpos == activeSounds[index].dlen ) {
       break;
     }
   }
-  if ( index == NUM_SOUNDS )
+  if ( index == NUM_ACTIVE_SOUNDS )
     return;
 
-  /* Load the sound file and convert it to 16-bit stereo at 22kHz */
-  if ( SDL_LoadWAV(file, &wave, &data, &dlen) == NULL ) {
-    fprintf(stderr, "Couldn't load %s: %sn", file,
-    SDL_GetError());
-    return;
-  }
-  SDL_BuildAudioCVT(&cvt, wave.format, wave.channels, wave.freq, AUDIO_S16, 2, 22050);
-  cvt.buf = malloc(dlen*cvt.len_mult);
-  memcpy(cvt.buf, data, dlen);
-  cvt.len = dlen;
-  SDL_ConvertAudio(&cvt);
-  SDL_FreeWAV(data);
+  if ( activeSounds[index].data )
+    free(activeSounds[index].data);
+  
 
-  /* Put the sound data in the slot (it starts playing immediately) */
-  if ( sounds[index].data ) {
-    free(sounds[index].data);
-  }
   SDL_LockAudio();
-  sounds[index].data = cvt.buf;
-  sounds[index].dlen = cvt.len_cvt;
-  sounds[index].dpos = 0;
+  activeSounds[index].data = cvt->buf;
+  activeSounds[index].dlen = cvt->len_cvt;
+  activeSounds[index].dpos = 0;
   SDL_UnlockAudio();
 }
 
-void mixaudio(void *unused, Uint8 *stream, int len)
+///////////////////////////////////////////////
+void _MixAudio(void *unused, Uint8 *stream, int len)
 {
   int i;
   Uint32 amount;
-  for ( i=0; i<NUM_SOUNDS; ++i ) {
-    amount = (sounds[i].dlen-sounds[i].dpos);
+  for ( i=0; i<NUM_ACTIVE_SOUNDS; ++i ) {
+    amount = (activeSounds[i].dlen-activeSounds[i].dpos);
     if ( amount > len ) {
       amount = len;
     }
-    SDL_MixAudio(stream, &sounds[i].data[sounds[i].dpos], amount, SDL_MIX_MAXVOLUME);
+    float volScale = ((float)gOptionValues[SETUP_OPTION_VOLUME])/10.0f;
+    SDL_MixAudio(stream, &activeSounds[i].data[activeSounds[i].dpos], amount, (int)(volScale * 128.0f) );
     sounds[i].dpos += amount;
   }
 }
@@ -243,13 +323,15 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 ///////////////////////////////////////////////
 int ExitMachine() {
   int index = 0;
-  for ( index=0; index<NUM_SOUNDS; ++index ) {
-    if ( sounds[index].data )
-      free(sounds[index].data);
+  for ( index=0; index<NUM_ACTIVE_SOUNDS; ++index ) {
+    if ( activeSounds[index].data )
+      free(activeSounds[index].data);
   }
 
   SDL_CloseAudio();
   SDL_Quit();
+
+  FreeSoundSlots();
 }
 
 ///////////////////////////////////////////////
