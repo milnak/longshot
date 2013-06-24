@@ -217,6 +217,8 @@ int InitMachine() {
 
 ///////////////////////////////////////////////
 void FreeSoundSlots() {
+  int index = 0;
+
   // clear out the audio slots
   for ( index=0; index<NUM_ACTIVE_SOUNDS; ++index ) {
     if ( activeSounds[index].data )
@@ -236,7 +238,7 @@ void FreeSoundSlots() {
 }
 
 ///////////////////////////////////////////////
-void PreloadSound(char* file, int slot) {
+void PreloadSound(const char* file, int slot) {
   int index;
   SDL_AudioSpec wave;
   Uint8 *data;
@@ -244,12 +246,10 @@ void PreloadSound(char* file, int slot) {
   SDL_AudioCVT* cvt = &preloadedSounds[slot];
   char filePath[1024];
 
-
-
   if ( slot < 0 || slot >= NUM_PRELOADED_SOUNDS )
     return;
 
-  if ( cvt->buf ) {
+  if ( cvt->len ) {
     free(cvt->buf);
     cvt->buf = cvt->len = 0;
   }
@@ -258,8 +258,8 @@ void PreloadSound(char* file, int slot) {
   fprintf (stdout, "Preloading sound: %s in slot %d... ", &filePath, slot );
 
   /* Load the sound file and convert it to 16-bit stereo at 22kHz */
-  if ( SDL_LoadWAV(&filePath, &wave, &data, &dlen) == NULL ) {
-    fprintf(stderr, "Couldn't load %s: %sn", file, SDL_GetError());
+  if ( SDL_LoadWAV(filePath, &wave, &data, &dlen) == NULL ) {
+    fprintf(stderr, "Couldn't load %s: %sn", filePath, SDL_GetError());
     fprintf (stdout, " failed.\n", &dlen );
     return;
   }
