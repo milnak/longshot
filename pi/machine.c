@@ -29,7 +29,7 @@ int gOptionValues[SETUP_OPTION_MAX] = {
   900, // SETUP_OPTION_FREEGAME_SCORE,
   9,    // SETUP_OPTION_BALLCOUNT,
   5,    // SETUP_OPTION_VOLUME,
-  0,    // SETUP_OPTION_SAVED2,
+  1,    // SETUP_OPTION_SOUND_SET,
   0,    // SETUP_OPTION_SAVED3,
   0,    // SETUP_OPTION_SAVED4,
 };
@@ -257,8 +257,7 @@ void PreloadSound(const char* file, int slot) {
 
   /* Load the sound file and convert it to 16-bit stereo at 22kHz */
   if ( SDL_LoadWAV(filePath, &wave, &data, &dlen) == NULL ) {
-    fprintf(stderr, "Couldn't load %s: %sn", filePath, SDL_GetError());
-    printf(" failed.\n", &dlen );
+    printf(" failed. %s\n", SDL_GetError());
     return;
   }
 

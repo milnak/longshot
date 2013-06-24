@@ -65,7 +65,7 @@ void EndGame() {
 void LoadSounds() {
   FreeSoundSlots();
 
-  const char* basePath = "assets/audio/";
+  const char* basePath = "assets/audio";
   char fullPath[512];
 
   sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "nopoints.wav");
