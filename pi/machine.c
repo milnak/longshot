@@ -108,7 +108,7 @@ int DecConfigVal(int val) {
       break;
 
     case SETUP_OPTION_TICKETTABLE:
-      return --val < 0 ? 9 : val;
+      return --val < 0 ? 10 : val;
       break;
 
     case SETUP_OPTION_FREEGAME:
