@@ -1,6 +1,8 @@
 #include "machine.h"
 #include "longshot.h"
 
+#import <stdio.h>
+
 int main(int argc, int *argv[])
 {
   int dumpState = 0;
