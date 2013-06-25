@@ -33,7 +33,7 @@ int gTickMatrix[10][9] = {
   { 2,4,6,11,17,24,32,48,60     },
   { 3,6,10,15,21,28,42,70,100   },
   { 3,6,10,15,21,28,36,72,100   },
-  { 0,0,0,0,0,0,0,0,0 }
+  { 0,0,0,0,0,0,0,0,0           }
 };
 
 int gTicketsDispensed = 0;
@@ -64,44 +64,27 @@ void EndGame() {
       StartNewGame();
 }
 
-void LoadSounds() {
+#define PRELOAD_SOUND(id, f) \
+  sprintf(fullPath, "%s/%d/%s.wav", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], f); \
+  PreloadSound(fullPath, id);
+
+void LoadSounds() 
   FreeSoundSlots();
 
   const char* basePath = "assets/audio/";
   char fullPath[512];
 
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "nopoints.wav");
-  PreloadSound(fullPath, SFX_NO_POINTS);
-
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "10points.wav");
-  PreloadSound(fullPath, SFX_10_POINTS);
-
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "20points.wav");
-  PreloadSound(fullPath, SFX_20_POINTS);
-
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "30points.wav");
-  PreloadSound(fullPath, SFX_30_POINTS);
-
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "40points.wav");
-  PreloadSound(fullPath, SFX_40_POINTS);
-
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "50points.wav");
-  PreloadSound(fullPath, SFX_50_POINTS);
-
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "100points.wav");
-  PreloadSound(fullPath, SFX_100_POINTS);
-
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "winner.wav");
-  PreloadSound(fullPath, SFX_WINNER_SONG);
-
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "attendant.wav");
-  PreloadSound(fullPath, SFX_CALL_ATTENDANT);
-
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "freegame.wav");
-  PreloadSound(fullPath, SFX_FREE_GAME);
-
-  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "attract.wav");
-  PreloadSound(fullPath, SFX_ATTRACT_SONG);
+  PRELOAD_SOUND(SFX_NO_POINTS,      "nopoints");
+  PRELOAD_SOUND(SFX_10_POINTS,      "10points");
+  PRELOAD_SOUND(SFX_20_POINTS,      "20points");
+  PRELOAD_SOUND(SFX_30_POINTS,      "30points");
+  PRELOAD_SOUND(SFX_40_POINTS,      "40points");
+  PRELOAD_SOUND(SFX_50_POINTS,      "50points");
+  PRELOAD_SOUND(SFX_100_POINTS,     "100points");
+  PRELOAD_SOUND(SFX_WINNER_SONG,    "winner");
+  PRELOAD_SOUND(SFX_CALL_ATTENDANT, "attendant");
+  PRELOAD_SOUND(SFX_FREE_GAME,      "freegame");
+  PRELOAD_SOUND(SFX_ATTRACT_SONG,   "attract");
 }
 
 void InitLongshot() {

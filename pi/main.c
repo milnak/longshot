@@ -4,7 +4,6 @@
 int main(int argc, int *argv[])
 {
   int dumpState = 0;
-  int index;
   int c;
 
   while ((c = getopt (argc, argv, "v:")) != -1) {
