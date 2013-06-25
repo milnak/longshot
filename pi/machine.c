@@ -212,8 +212,6 @@ int InitMachine() {
 
 ///////////////////////////////////////////////
 void ResetMachine() {
-  FreeSoundSlots();
-
   gMachineOut.switches  = 0;
   gMachineOut.dispense  = 0;
   gMachineOut.score     = 0;
@@ -231,6 +229,8 @@ void ResetMachine() {
 
 ///////////////////////////////////////////////
 int ExitMachine() {
+  FreeSoundSlots();
+  
   SDL_CloseAudio();
   SDL_Quit();
 }
