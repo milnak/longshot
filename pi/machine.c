@@ -138,21 +138,32 @@ int DecConfigVal(int val) {
 }
 
 
+
 ///////////////////////////////////////////////
 void SaveConfig() {
+  char filePath[1024];
+  sprintf(filePath, "%s/options.dbm", get_current_dir_name());
+
   FILE *f;
-  f = fopen("options.dbm", "wb");
+  f = fopen(filePath, "wb");
   fwrite(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
   fclose(f);
+
+  printf("Saved config: %s\n", filePath);
 }
 
 ///////////////////////////////////////////////
 void LoadConfig() {
+
+  char filePath[1024];
+  sprintf(filePath, "%s/options.dbm", get_current_dir_name());
+
   FILE *f;
-  f = fopen("options.dbm", "rb");
+  f = fopen(filePath, "rb");
   if (f != NULL) {
     fread(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
     fclose(f);
+    printf("Read config: %s\n", filePath);
   } else {
     // defaults 
     SaveConfig();
@@ -212,7 +223,9 @@ int InitMachine() {
 
 ///////////////////////////////////////////////
 void ResetMachine() {
-  FreeSoundSlots();
+  gLogicState == LOGICSTATE_GAME;
+  gSetupMode = SETUP_MODE_MENUSELECT;
+  gSetupMenu = 0;
 
   gMachineOut.switches  = 0;
   gMachineOut.dispense  = 0;
@@ -220,11 +233,17 @@ void ResetMachine() {
   gMachineOut.ballCount = 0;
   gMachineInPrev.scoreClicks = 0;
 
-  serialFlush( gMachineCommPort );
+  memset(&gMachineOut, 0, sizeof(gMachineOut));
+  memset(&gMachineOutPrev, 0, sizeof(gMachineOutPrev));
+
+  memset(&gMachineIn, 0, sizeof(gMachineIn));
+  memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
 }
 
 ///////////////////////////////////////////////
 int ExitMachine() {
+  FreeSoundSlots();
+
   SDL_CloseAudio();
   SDL_Quit();
 }
@@ -263,22 +282,17 @@ void writeBytes(unsigned char* ptr, unsigned int length) {
 
 ///////////////////////////////////////////////
 int UpdateMachine() {
-    // write our requests
+  
+    // save off the last state
     gMachineOutPrev = gMachineOut;
-    //writeBytes((unsigned char*)&gMachineOut,  sizeof(gMachineOut));
+    gMachineInPrev = gMachineIn; 
+
     writeInt(gMachineOut.score);
     writeInt(gMachineOut.switches);
     writeInt(gMachineOut.dispense);
     writeInt(gMachineOut.ballCount);
-    //writeByte(gMachineOut._terminator);
     
     int command = readInt(gMachineCommPort);
-
-    if (command == COMMAND_RESET)
-      return -1;
-
-    // read in the current state
-    gMachineInPrev = gMachineIn; // save off the last state
     gMachineIn.ticketsDispensed = readInt(gMachineCommPort);
     gMachineIn.scoreClicks = readInt(gMachineCommPort);
     gMachineIn.hundredClicks = readInt(gMachineCommPort);
@@ -332,9 +346,6 @@ int UpdateMachine() {
         gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
         SaveConfig();
       }
-
-      return 0;
-
     } else {
 
        // enter Setup mode
@@ -345,7 +356,7 @@ int UpdateMachine() {
     
     }
     
-    return 1;
+    return command;
     delay(300);
 }
 

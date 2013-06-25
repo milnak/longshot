@@ -39,6 +39,7 @@ int gTickMatrix[10][9] = {
 int gTicketsDispensed = 0;
 int gGameState = GAMESTATE_IDLE;
 int gScoreAccumulator = 0;
+int gSoundsLoaded = 0;
 
 
 void StartNewGame() {
@@ -84,10 +85,14 @@ void LoadSounds() {
   PRELOAD_SOUND(SFX_CALL_ATTENDANT, "attendant");
   PRELOAD_SOUND(SFX_FREE_GAME,      "freegame");
   PRELOAD_SOUND(SFX_ATTRACT_SONG,   "attract");
+
+  gSoundsLoaded = 1;
 }
 
 void InitLongshot() {
-  LoadSounds();
+  if (gSoundsLoaded == 0)
+    LoadSounds();
+  
   EndGame();
 }
 
