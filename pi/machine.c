@@ -230,7 +230,7 @@ void ResetMachine() {
 ///////////////////////////////////////////////
 int ExitMachine() {
   FreeSoundSlots();
-  
+
   SDL_CloseAudio();
   SDL_Quit();
 }
@@ -277,8 +277,6 @@ int UpdateMachine() {
     //writeByte(gMachineOut._terminator);
     
     int command = readInt(gMachineCommPort);
-    if (command == COMMAND_RESET)
-      return -1;
 
     // save off the last state
     gMachineOutPrev = gMachineOut;
@@ -350,7 +348,7 @@ int UpdateMachine() {
     
     }
     
-    return 1;
+    return command;
     delay(300);
 }
 
