@@ -117,8 +117,7 @@ void setup(){
   pinMode(setupButton, INPUT);
   pinMode(selectButton,INPUT);
  
- // solenoidTimer.enable();
-}
+ }
 
 void loop(){
   //TimedAction checks//
@@ -134,25 +133,15 @@ void loop(){
   coinMeterTimer.check();
   /////////////////////////////////////
   
-  //digitalWrite(freeGameLight,LOW);
-  //digitalWrite(winLight,HIGH);
-  //digitalWrite(gameOverLight,LOW);
   poll_inputs(); //get switch states
   updateGame(); //pull the state from Pi, push switches to pi, parse out state
   
-
-
  if ((dispense - ticketsDispensed)>0){
    dispense_tickets();
   }
   
-     // if(score > 0){gameState=true;}
-
  if(gameState ==false){
-     // idle.check();
-     // idle.disable();
-     // score = 111;
-      //shifter.display(score,ballCount);
+     
      }
    
  if(gameState==true){
