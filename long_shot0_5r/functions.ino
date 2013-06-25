@@ -12,7 +12,7 @@ void sendGameState(){
                   upDebounce.getClicks(),downDebounce.getClicks(),
                   selectDebounce.getClicks(),setupDebounce.getClicks()  };
   
-  for(int x = 0; x<=8; x++){
+  for(int x = 0; x<=9; x++){
     byte statusByte[4];
     integerToBytes(b[x], statusByte);
     Serial.write(statusByte,sizeof(statusByte));
