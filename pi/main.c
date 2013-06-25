@@ -6,7 +6,7 @@ int main(int argc, int *argv[])
   int dumpState = 0;
   int c;
 
-  while ((c = getopt (argc, argv, "v:")) != -1) {
+  while ((c = getopt (argc, argv, "v")) != -1) {
     switch (c)
     {
       case 'v':
