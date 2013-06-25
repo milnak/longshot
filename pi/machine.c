@@ -274,7 +274,7 @@ int UpdateMachine() {
     
     int command = readInt(gMachineCommPort);
 
-    if (command = COMMAND_RESET)
+    if (command == COMMAND_RESET)
       return -1;
 
     // read in the current state

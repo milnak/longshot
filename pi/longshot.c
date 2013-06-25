@@ -69,8 +69,6 @@ void EndGame() {
   PreloadSound(fullPath, id);
 
 void LoadSounds() {
-  
-  FreeSoundSlots();
 
   const char* basePath = "assets/audio/";
   char fullPath[512];
