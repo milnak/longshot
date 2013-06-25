@@ -282,19 +282,17 @@ void writeBytes(unsigned char* ptr, unsigned int length) {
 
 ///////////////////////////////////////////////
 int UpdateMachine() {
-    //writeBytes((unsigned char*)&gMachineOut,  sizeof(gMachineOut));
+  
+    // save off the last state
+    gMachineOutPrev = gMachineOut;
+    gMachineInPrev = gMachineIn; 
+
     writeInt(gMachineOut.score);
     writeInt(gMachineOut.switches);
     writeInt(gMachineOut.dispense);
     writeInt(gMachineOut.ballCount);
-    //writeByte(gMachineOut._terminator);
     
     int command = readInt(gMachineCommPort);
-
-    // save off the last state
-    gMachineOutPrev = gMachineOut;
-    gMachineInPrev = gMachineIn; 
-    
     gMachineIn.ticketsDispensed = readInt(gMachineCommPort);
     gMachineIn.scoreClicks = readInt(gMachineCommPort);
     gMachineIn.hundredClicks = readInt(gMachineCommPort);
@@ -306,7 +304,7 @@ int UpdateMachine() {
     gMachineIn.setupClicks = readInt(gMachineCommPort);
 
     // Setup Mode
-    if (command > 0 && gLogicState == LOGICSTATE_SETUP) {
+    if (gLogicState == LOGICSTATE_SETUP) {
       // Select a menu/config option
       if (gSetupMode == SETUP_MODE_MENUSELECT) {
         if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
@@ -348,9 +346,6 @@ int UpdateMachine() {
         gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
         SaveConfig();
       }
-
-      return 0;
-
     } else {
 
        // enter Setup mode
