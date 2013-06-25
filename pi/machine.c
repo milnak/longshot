@@ -148,6 +148,8 @@ void SaveConfig() {
   f = fopen(filePath, "wb");
   fwrite(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
   fclose(f);
+
+  printf("Saved config: %s\n", filePath);
 }
 
 ///////////////////////////////////////////////
@@ -161,6 +163,7 @@ void LoadConfig() {
   if (f != NULL) {
     fread(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
     fclose(f);
+    printf("Read config: %s\n", filePath);
   } else {
     // defaults 
     SaveConfig();
@@ -231,8 +234,6 @@ void ResetMachine() {
 
   memset(&gMachineIn, 0, sizeof(gMachineIn));
   memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
-
-  //serialFlush( gMachineCommPort );
 }
 
 ///////////////////////////////////////////////
