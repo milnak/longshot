@@ -7,7 +7,7 @@ void integerToBytes(long val, byte b[4]) {
 
 
 void sendGameState(){
-  int b[9] = { ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
+  int b[10] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
                   ballCountDebounce.getClicks(),coinDebounce.getClicks(),
                   upDebounce.getClicks(),downDebounce.getClicks(),
                   selectDebounce.getClicks(),setupDebounce.getClicks()  };
