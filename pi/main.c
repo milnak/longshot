@@ -33,6 +33,7 @@ int main(int argc, int *argv[])
         }
       }
       else if (result == -1) {
+        printf("******** RESET ********\n");
         ResetMachine();
         InitLongshot();
       }
