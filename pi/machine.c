@@ -269,8 +269,6 @@ void writeBytes(unsigned char* ptr, unsigned int length) {
 
 ///////////////////////////////////////////////
 int UpdateMachine() {
-    // write our requests
-    gMachineOutPrev = gMachineOut;
     //writeBytes((unsigned char*)&gMachineOut,  sizeof(gMachineOut));
     writeInt(gMachineOut.score);
     writeInt(gMachineOut.switches);
@@ -279,12 +277,13 @@ int UpdateMachine() {
     //writeByte(gMachineOut._terminator);
     
     int command = readInt(gMachineCommPort);
-
     if (command == COMMAND_RESET)
       return -1;
 
-    // read in the current state
-    gMachineInPrev = gMachineIn; // save off the last state
+    // save off the last state
+    gMachineOutPrev = gMachineOut;
+    gMachineInPrev = gMachineIn; 
+    
     gMachineIn.ticketsDispensed = readInt(gMachineCommPort);
     gMachineIn.scoreClicks = readInt(gMachineCommPort);
     gMachineIn.hundredClicks = readInt(gMachineCommPort);
