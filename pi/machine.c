@@ -223,6 +223,10 @@ int InitMachine() {
 
 ///////////////////////////////////////////////
 void ResetMachine() {
+  gLogicState == LOGICSTATE_GAME;
+  gSetupMode = SETUP_MODE_MENUSELECT;
+  gSetupMenu = 0;
+
   gMachineOut.switches  = 0;
   gMachineOut.dispense  = 0;
   gMachineOut.score     = 0;
@@ -302,7 +306,7 @@ int UpdateMachine() {
     gMachineIn.setupClicks = readInt(gMachineCommPort);
 
     // Setup Mode
-    if (command > 0 && gLogicState == LOGICSTATE_SETUP) {
+    if (gLogicState == LOGICSTATE_SETUP) {
       // Select a menu/config option
       if (gSetupMode == SETUP_MODE_MENUSELECT) {
         if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
