@@ -61,7 +61,7 @@ int ticketsDispensed = 0;
 int ticketMeterClicks = 0;
 int ticketTimer = 0;
 /////////////////////////////////////////////////////////// 
-int commandByte = 1;
+int commandByte = -1;
 //////////////////Score Vars////////////////////////////
 int scoreClicks = 0;
 int hundredClicks = 0;
@@ -91,8 +91,9 @@ Bounce downDebounce = Bounce(downButton,20);
 void setup(){
   Serial.begin(57600);
  // Serial.println("Hi!");
+ poll_inputs();
  sendGameState();
- commandByte = 0;
+ commandByte = 1;
   idle.enable();
   solenoidTimer.disable();
   pinMode(gameOverLight, OUTPUT);

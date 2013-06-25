@@ -99,6 +99,8 @@ void parseGameState(byte* state){
        scoreDebounce.setClicks(0);
        hundredDebounce.setClicks(0);
        ballCountDebounce.setClicks(0);
+      
+       
      }
      gameState = true;
    }
