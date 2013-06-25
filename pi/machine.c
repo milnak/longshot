@@ -138,8 +138,6 @@ int DecConfigVal(int val) {
 }
 
 
-
-
 ///////////////////////////////////////////////
 void SaveConfig() {
   FILE *f;
@@ -183,13 +181,11 @@ int InitMachine() {
   }
 
   // see if SDL is DTF
-  if (SDL_Init( SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) 
+  if (SDL_Init( SDL_INIT_AUDIO | SDL_INIT_TIMER ) != 0) 
   {
     printf( "Unable to start SDL: %s\n", SDL_GetError() );
     return 1;
   }
-
-  FreeSoundSlots();
 
   extern void _MixAudio(void *unused, Uint8 *stream, int len);
   SDL_AudioSpec fmt;
@@ -210,13 +206,149 @@ int InitMachine() {
 
   SDL_PauseAudio(0);
 
+  ResetMachine();
+  return 0;
+}
+
+///////////////////////////////////////////////
+void ResetMachine() {
+  FreeSoundSlots();
+
   gMachineOut.switches  = 0;
   gMachineOut.dispense  = 0;
   gMachineOut.score     = 0;
   gMachineOut.ballCount = 0;
   gMachineInPrev.scoreClicks = 0;
-  return 0;
+
+  serialFlush( gMachineCommPort );
 }
+
+///////////////////////////////////////////////
+int ExitMachine() {
+  SDL_CloseAudio();
+  SDL_Quit();
+}
+
+///////////////////////////////////////////////
+int readInt() {
+  int i = 0;
+  int value = 0;
+  for (i = 0; i < sizeof(int); i++)
+  {
+     unsigned int lastByte = serialGetchar(gMachineCommPort);
+     value |= lastByte << (24 - (8 * i));
+  }
+  return value;
+}
+
+///////////////////////////////////////////////
+void writeByte(unsigned char b) {
+  serialPutchar(gMachineCommPort, b);
+}
+
+///////////////////////////////////////////////
+void writeInt(unsigned int value) {
+  writeByte( (value >> 24) & 0xff );
+  writeByte( (value >> 16) & 0xff );
+  writeByte( (value >> 8) & 0xff );
+  writeByte( (value & 0xff) );
+}
+
+///////////////////////////////////////////////
+void writeBytes(unsigned char* ptr, unsigned int length) {
+    int i = 0;
+    for (i = 0; i < length; i++, ptr++)
+      serialPutchar(gMachineCommPort, *ptr);
+}
+
+///////////////////////////////////////////////
+int UpdateMachine() {
+    // write our requests
+    gMachineOutPrev = gMachineOut;
+    //writeBytes((unsigned char*)&gMachineOut,  sizeof(gMachineOut));
+    writeInt(gMachineOut.score);
+    writeInt(gMachineOut.switches);
+    writeInt(gMachineOut.dispense);
+    writeInt(gMachineOut.ballCount);
+    //writeByte(gMachineOut._terminator);
+    
+    int command = readInt(gMachineCommPort);
+
+    if (command = COMMAND_RESET)
+      return -1;
+
+    // read in the current state
+    gMachineInPrev = gMachineIn; // save off the last state
+    gMachineIn.ticketsDispensed = readInt(gMachineCommPort);
+    gMachineIn.scoreClicks = readInt(gMachineCommPort);
+    gMachineIn.hundredClicks = readInt(gMachineCommPort);
+    gMachineIn.ballClicks = readInt(gMachineCommPort);
+    gMachineIn.coinClicks = readInt(gMachineCommPort);
+    gMachineIn.upClicks = readInt(gMachineCommPort);
+    gMachineIn.downClicks = readInt(gMachineCommPort);
+    gMachineIn.selectClicks = readInt(gMachineCommPort);
+    gMachineIn.setupClicks = readInt(gMachineCommPort);
+
+    // Setup Mode
+    if (gLogicState == LOGICSTATE_SETUP) {
+      // Select a menu/config option
+      if (gSetupMode == SETUP_MODE_MENUSELECT) {
+        if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
+          if (++gSetupMenu >= SETUP_OPTION_MAX) gSetupMenu = 0;
+        }
+
+        if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0){
+          if (--gSetupMenu < 0) gSetupMenu = SETUP_OPTION_MAX - 1;
+        }
+
+        if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0)
+          gSetupMode = SETUP_MODE_VALUESELECT;
+      }
+      // Select a value for an option
+      else if (gSetupMode == SETUP_MODE_VALUESELECT) {
+        if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
+          gOptionValues[gSetupMenu] = IncConfigVal(gOptionValues[gSetupMenu]);
+        }
+
+        if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0) {
+          gOptionValues[gSetupMenu] = DecConfigVal(gOptionValues[gSetupMenu]);
+        }
+
+        //gOptionValues[gSetupMenu] = ValidateConfigVal(gOptionValues[gSetupMenu]);
+
+        if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0) {
+          gSetupMode = SETUP_MODE_MENUSELECT;
+          SaveConfig();
+        }
+      }
+
+      gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
+      gMachineOut.ballCount = gSetupMenu;
+      gMachineOut.score = gOptionValues[gSetupMenu];
+
+      // exit setup mode if necessary
+      if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
+        gLogicState = LOGICSTATE_GAME;
+        gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
+        SaveConfig();
+      }
+
+      return 0;
+
+    } else {
+
+       // enter Setup mode
+       if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
+          gLogicState = LOGICSTATE_SETUP;
+          LoadConfig();
+       }
+    
+    }
+    
+    return 1;
+    delay(300);
+}
+
 
 ///////////////////////////////////////////////
 void FreeSoundSlots() {
@@ -312,135 +444,6 @@ void _MixAudio(void *unused, Uint8 *stream, int len)
     SDL_MixAudio(stream, &activeSounds[i].data[activeSounds[i].dpos], amount, (int)(volScale * 128.0f) );
     activeSounds[i].dpos += amount;
   }
-}
-
-///////////////////////////////////////////////
-int ExitMachine() {
-  int index = 0;
-  for ( index=0; index<NUM_ACTIVE_SOUNDS; ++index ) {
-    if ( activeSounds[index].data )
-      free(activeSounds[index].data);
-  }
-
-  SDL_CloseAudio();
-  SDL_Quit();
-
-  FreeSoundSlots();
-}
-
-///////////////////////////////////////////////
-int readInt() {
-  int i = 0;
-  int value = 0;
-  for (i = 0; i < sizeof(int); i++)
-  {
-     unsigned int lastByte = serialGetchar(gMachineCommPort);
-     value |= lastByte << (24 - (8 * i));
-  }
-  return value;
-}
-
-///////////////////////////////////////////////
-void writeByte(unsigned char b) {
-  serialPutchar(gMachineCommPort, b);
-}
-
-///////////////////////////////////////////////
-void writeInt(unsigned int value) {
-  writeByte( (value >> 24) & 0xff );
-  writeByte( (value >> 16) & 0xff );
-  writeByte( (value >> 8) & 0xff );
-  writeByte( (value & 0xff) );
-}
-
-///////////////////////////////////////////////
-void writeBytes(unsigned char* ptr, unsigned int length) {
-    int i = 0;
-    for (i = 0; i < length; i++, ptr++)
-      serialPutchar(gMachineCommPort, *ptr);
-}
-
-///////////////////////////////////////////////
-int UpdateMachine() {
-    // write our requests
-    gMachineOutPrev = gMachineOut;
-    //writeBytes((unsigned char*)&gMachineOut,  sizeof(gMachineOut));
-    writeInt(gMachineOut.score);
-    writeInt(gMachineOut.switches);
-    writeInt(gMachineOut.dispense);
-    writeInt(gMachineOut.ballCount);
-    //writeByte(gMachineOut._terminator);
-    
-    // read in the current state
-    gMachineInPrev = gMachineIn; // save off the last state
-    gMachineIn.ticketsDispensed = readInt(gMachineCommPort);
-    gMachineIn.scoreClicks = readInt(gMachineCommPort);
-    gMachineIn.hundredClicks = readInt(gMachineCommPort);
-    gMachineIn.ballClicks = readInt(gMachineCommPort);
-    gMachineIn.coinClicks = readInt(gMachineCommPort);
-    gMachineIn.upClicks = readInt(gMachineCommPort);
-    gMachineIn.downClicks = readInt(gMachineCommPort);
-    gMachineIn.selectClicks = readInt(gMachineCommPort);
-    gMachineIn.setupClicks = readInt(gMachineCommPort);
-
-    // Setup Mode
-    if (gLogicState == LOGICSTATE_SETUP) {
-      // Select a menu/config option
-      if (gSetupMode == SETUP_MODE_MENUSELECT) {
-        if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
-          if (++gSetupMenu >= SETUP_OPTION_MAX) gSetupMenu = 0;
-        }
-
-        if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0){
-          if (--gSetupMenu < 0) gSetupMenu = SETUP_OPTION_MAX - 1;
-        }
-
-        if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0)
-          gSetupMode = SETUP_MODE_VALUESELECT;
-      }
-      // Select a value for an option
-      else if (gSetupMode == SETUP_MODE_VALUESELECT) {
-        if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
-          gOptionValues[gSetupMenu] = IncConfigVal(gOptionValues[gSetupMenu]);
-        }
-
-        if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0) {
-          gOptionValues[gSetupMenu] = DecConfigVal(gOptionValues[gSetupMenu]);
-        }
-
-        //gOptionValues[gSetupMenu] = ValidateConfigVal(gOptionValues[gSetupMenu]);
-
-        if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0) {
-          gSetupMode = SETUP_MODE_MENUSELECT;
-          SaveConfig();
-        }
-      }
-
-      gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
-      gMachineOut.ballCount = gSetupMenu;
-      gMachineOut.score = gOptionValues[gSetupMenu];
-
-      // exit setup mode if necessary
-      if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
-        gLogicState = LOGICSTATE_GAME;
-        gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
-        SaveConfig();
-      }
-
-      return 0;
-
-    } else {
-
-       // enter Setup mode
-       if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
-          gLogicState = LOGICSTATE_SETUP;
-          LoadConfig();
-       }
-    
-    }
-    
-    return 1;
-    delay(300);
 }
 
 

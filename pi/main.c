@@ -15,23 +15,31 @@ int main(int argc, int *argv[])
     }
   }
 
+
   InitMachine();  
   InitLongshot();
 
   // kick off the update loop
   while (1)
   {
-     if (UpdateMachine())
+      int result = UpdateMachine();
+
+      if (result == 1) {
         UpdateLongshot();
 
-    if (dumpState) {
-      DumpMachineInState();
-      DumpMachineOutState();
-    }
+        if (dumpState) {
+          DumpMachineInState();
+          DumpMachineOutState();
+        }
+      }
+      else if (result == -1) {
+        ResetMachine();
+        InitLongshot();
+      }
+
+      
   }
  
-  
   ExitMachine();
-
   return 0 ;
 }
