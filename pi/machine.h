@@ -44,6 +44,11 @@ enum {
   SETUP_OPTION_MAX
 };
 
+enum {
+  COMMAND_NONE,
+  COMMAND_RESET
+};
+
 extern int gOptionValues[SETUP_OPTION_MAX];
 
 extern struct MachineOutState gMachineOut;
@@ -52,11 +57,19 @@ extern struct MachineInState gMachineIn;
 extern struct MachineOutState gMachineOutPrev;
 extern struct MachineInState gMachineInPrev;
 
-
+// Call this to bootstrap the machine and comms
 int InitMachine();
+
+// Call this to update the states and comms
 int UpdateMachine();
+
+// End comms
 int ExitMachine();
 
+// Call this to clear all states and start fresh
+void ResetMachine();
+
+// Audio Helpers
 void PreloadSound(const char* wavFilePath, int slot);
 void PlaySound(int sound);
 void FreeSoundSlots();
