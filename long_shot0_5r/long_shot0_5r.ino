@@ -139,17 +139,11 @@ void loop(){
  if ((dispense - ticketsDispensed)>0){
    dispense_tickets();
   }
-  
- if(gameState ==false){
-     
-     }
    
  if(gameState==true){
         idle.disable();
         shifter.display(score,ballCount);
-        
      }
-
  }
   
 
