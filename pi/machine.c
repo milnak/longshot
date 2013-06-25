@@ -224,9 +224,6 @@ void FreeSoundSlots() {
 
   // clear out the audio slots
   for ( index=0; index<NUM_ACTIVE_SOUNDS; ++index ) {
-    if ( activeSounds[index].data )
-      free(activeSounds[index].data);
-
     activeSounds[index].dlen = 0;
   }
 
@@ -291,11 +288,7 @@ void PlaySound(int sound)
     }
   }
   if ( index == NUM_ACTIVE_SOUNDS )
-    return;
-
-  if ( activeSounds[index].data )
-    free(activeSounds[index].data);
-  
+    return; 
 
   SDL_LockAudio();
   activeSounds[index].data = cvt->buf;
@@ -314,6 +307,7 @@ void _MixAudio(void *unused, Uint8 *stream, int len)
     if ( amount > len ) {
       amount = len;
     }
+
     float volScale = ((float)gOptionValues[SETUP_OPTION_VOLUME])/10.0f;
     SDL_MixAudio(stream, &activeSounds[i].data[activeSounds[i].dpos], amount, (int)(volScale * 128.0f) );
     activeSounds[i].dpos += amount;
