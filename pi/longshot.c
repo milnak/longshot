@@ -1,12 +1,28 @@
 #include "machine.h"
 #include "longshot.h"
+#include <stdio.h>
 
 enum {
   GAMESTATE_IDLE,
   GAMESTATE_GAME
 };
 
-int gTickMatrix[9][9] = { 
+enum {
+  SFX_NO_POINTS,
+  SFX_10_POINTS,
+  SFX_20_POINTS,
+  SFX_30_POINTS,
+  SFX_40_POINTS,
+  SFX_50_POINTS,
+  SFX_100_POINTS,
+  SFX_WINNER_SONG,
+  SFX_CALL_ATTENDANT,
+  SFX_FREE_GAME,
+  SFX_ATTRACT_SONG,
+  SFX_MAX
+};
+
+int gTickMatrix[10][9] = { 
   //0-50,60-100,110-200,210-300,310-400,410-500,510-600,610-700,700+//
   { 1,2,3,4,5,9,13,18,30        },
   { 0,1,2,4,7,11,16,22,30       },
@@ -16,12 +32,13 @@ int gTickMatrix[9][9] = {
   { 2,4,6,10,15,22,33,44,55     },
   { 2,4,6,11,17,24,32,48,60     },
   { 3,6,10,15,21,28,42,70,100   },
-  { 3,6,10,15,21,28,36,72,100   }
+  { 3,6,10,15,21,28,36,72,100   },
+  { 0,0,0,0,0,0,0,0,0 }
 };
 
 int gTicketsDispensed = 0;
 int gGameState = GAMESTATE_IDLE;
-
+int gScoreAccumulator = 0;
 
 
 void StartNewGame() {
@@ -30,6 +47,7 @@ void StartNewGame() {
     gMachineOut.switches |=  (1 << SWITCH_SOLENOID);
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
+    gScoreAccumulator = 0;
 }
 
 void EndGame() {
@@ -46,7 +64,48 @@ void EndGame() {
       StartNewGame();
 }
 
+void LoadSounds() {
+  FreeSoundSlots();
+
+  const char* basePath = "assets/audio/";
+  char fullPath[512];
+
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "nopoints.wav");
+  PreloadSound(fullPath, SFX_NO_POINTS);
+
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "10points.wav");
+  PreloadSound(fullPath, SFX_10_POINTS);
+
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "20points.wav");
+  PreloadSound(fullPath, SFX_20_POINTS);
+
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "30points.wav");
+  PreloadSound(fullPath, SFX_30_POINTS);
+
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "40points.wav");
+  PreloadSound(fullPath, SFX_40_POINTS);
+
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "50points.wav");
+  PreloadSound(fullPath, SFX_50_POINTS);
+
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "100points.wav");
+  PreloadSound(fullPath, SFX_100_POINTS);
+
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "winner.wav");
+  PreloadSound(fullPath, SFX_WINNER_SONG);
+
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "attendant.wav");
+  PreloadSound(fullPath, SFX_CALL_ATTENDANT);
+
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "freegame.wav");
+  PreloadSound(fullPath, SFX_FREE_GAME);
+
+  sprintf(fullPath, "%s/%d/%s", basePath, gOptionValues[SETUP_OPTION_SOUND_SET], "attract.wav");
+  PreloadSound(fullPath, SFX_ATTRACT_SONG);
+}
+
 void InitLongshot() {
+  LoadSounds();
   EndGame();
 }
 
@@ -63,15 +122,35 @@ void UpdateLongshot() {
 
     // score up
     if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks) {
-        PlaySound("./assets/audio/tpir.wav");
-        gMachineOut.score += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
+        gScoreAccumulator += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
     }
 
     // score up
-    if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
-        gMachineOut.score += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
+    if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks) {
+        gScoreAccumulator += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
+    }
 
-    
+
+    // balls played
+    if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
+    {
+        gMachineOut.score += gScoreAccumulator;
+
+        // play the appropriate SFX
+        if (gScoreAccumulator <= 10) PlaySound(SFX_10_POINTS);
+        else if (gScoreAccumulator <= 20 ) PlaySound(SFX_20_POINTS);
+        else if (gScoreAccumulator <= 30 ) PlaySound(SFX_30_POINTS);
+        else if (gScoreAccumulator <= 40 ) PlaySound(SFX_40_POINTS);
+        else if (gScoreAccumulator <= 50 ) PlaySound(SFX_50_POINTS);
+        else if (gScoreAccumulator <= 100) PlaySound(SFX_100_POINTS);
+
+        gScoreAccumulator = 0;
+
+        gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
+        if (gMachineOut.ballCount >= gOptionValues[SETUP_OPTION_BALLCOUNT]) 
+          EndGame();
+    }
+
     // we haz points! we can haz tix?
     gMachineOut.dispense = 0;
     if (gMachineOut.score > gMachineOutPrev.score) {
@@ -92,17 +171,14 @@ void UpdateLongshot() {
             ticketsEarned = gTickMatrix[gOptionValues[SETUP_OPTION_TICKETTABLE]][tableIndex];
             if (ticketsEarned > gTicketsDispensed) {
                 int diff = ticketsEarned - gTicketsDispensed;
+                
+                if (diff > 0 && gTicketsDispensed == 0) {
+                  //PlaySound(SFX_WINNER_SONG);
+                }
+
                 gMachineOut.dispense = diff;
                 gTicketsDispensed += diff;
             }
         }
-    }
-
-    // balls played
-    if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
-    {
-        gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
-        if (gMachineOut.ballCount >= gOptionValues[SETUP_OPTION_BALLCOUNT]) 
-          EndGame();
     }
 }

@@ -1,8 +1,21 @@
 #include "machine.h"
 #include "longshot.h"
 
-int main ()
+int main(int argc, int *argv[])
 {
+  int dumpState = 0;
+  int index;
+  int c;
+
+  while ((c = getopt (argc, argv, "v:")) != -1) {
+    switch (c)
+    {
+      case 'v':
+        dumpState = 1;
+        break;
+    }
+  }
+
   InitMachine();  
   InitLongshot();
 
@@ -12,8 +25,10 @@ int main ()
      if (UpdateMachine())
         UpdateLongshot();
 
-    DumpMachineInState();
-    DumpMachineOutState();
+    if (dumpState) {
+      DumpMachineInState();
+      DumpMachineOutState();
+    }
   }
  
   

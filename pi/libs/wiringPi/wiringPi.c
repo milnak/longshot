@@ -526,7 +526,7 @@ int wiringPiFailure (int fatal, const char *message, ...)
     vsnprintf (buffer, 1023, message, argp) ;
   va_end (argp) ;
 
-  fprintf (stderr, "%s", buffer) ;
+  printf( "%s", buffer) ;
   exit (EXIT_FAILURE) ;
 
   return 0 ;
@@ -561,10 +561,10 @@ int wiringPiFailure (int fatal, const char *message, ...)
 
 static void piBoardRevOops (const char *why)
 {
-  fprintf (stderr, "piBoardRev: Unable to determine board revision from /proc/cpuinfo\n") ;
-  fprintf (stderr, " -> %s\n", why) ;
-  fprintf (stderr, " ->  You may want to check:\n") ;
-  fprintf (stderr, " ->  http://www.raspberrypi.org/phpBB3/viewtopic.php?p=184410#p184410\n") ;
+  printf( "piBoardRev: Unable to determine board revision from /proc/cpuinfo\n") ;
+  printf( " -> %s\n", why) ;
+  printf( " ->  You may want to check:\n") ;
+  printf( " ->  http://www.raspberrypi.org/phpBB3/viewtopic.php?p=184410#p184410\n") ;
   exit (EXIT_FAILURE) ;
 }
 
