@@ -45,7 +45,7 @@ enum {
 };
 
 enum {
-  COMMAND_NONE,
+  COMMAND_NONE = 0,
   COMMAND_RESET
 };
 
