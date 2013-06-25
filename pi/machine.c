@@ -166,19 +166,6 @@ int InitMachine() {
 
   int index = 0;
 
-    // open our USB connection
-  if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
-  {
-    printf("Unable to open serial device: %s\n", strerror (errno));
-    return 1 ;
-  }
-
-  // see if wiringPi is DTF
-  if (wiringPiSetup() == -1)
-  {
-    printf( "Unable to start wiringPi: %s\n", strerror (errno));
-    return 1;
-  }
 
   // see if SDL is DTF
   if (SDL_Init( SDL_INIT_AUDIO | SDL_INIT_TIMER ) != 0) 
@@ -212,6 +199,20 @@ int InitMachine() {
 
 ///////////////////////////////////////////////
 void ResetMachine() {
+
+  if (gMachineCommPort != -1) 
+    serialClose(gMachineCommPort);
+
+   // open our USB connection
+  if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
+    printf("Unable to open serial device: %s\n", strerror (errno));
+
+
+  // see if wiringPi is DTF
+  if (wiringPiSetup() == -1)
+    printf( "Unable to start wiringPi: %s\n", strerror (errno));
+
+
   gMachineOut.switches  = 0;
   gMachineOut.dispense  = 0;
   gMachineOut.score     = 0;
