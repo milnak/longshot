@@ -224,7 +224,7 @@ void ResetMachine() {
   memset(&gMachineIn, 0, sizeof(gMachineIn));
   memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
 
-  serialFlush( gMachineCommPort );
+  //serialFlush( gMachineCommPort );
 }
 
 ///////////////////////////////////////////////
@@ -293,7 +293,7 @@ int UpdateMachine() {
     gMachineIn.setupClicks = readInt(gMachineCommPort);
 
     // Setup Mode
-    if (gLogicState == LOGICSTATE_SETUP) {
+    if (command > 0 && gLogicState == LOGICSTATE_SETUP) {
       // Select a menu/config option
       if (gSetupMode == SETUP_MODE_MENUSELECT) {
         if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
