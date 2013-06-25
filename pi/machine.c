@@ -220,6 +220,12 @@ void ResetMachine() {
   gMachineOut.ballCount = 0;
   gMachineInPrev.scoreClicks = 0;
 
+  memset(&gMachineOut, 0, sizeof(gMachineOut));
+  memset(&gMachineOutPrev, 0, sizeof(gMachineOutPrev));
+
+  memset(&gMachineIn, 0, sizeof(gMachineIn));
+  memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
+
   serialFlush( gMachineCommPort );
 }
 
