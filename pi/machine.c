@@ -328,7 +328,7 @@ int UpdateMachine() {
     if (readInt(&gMachineIn.selectClicks) < 0) return RESET_VAL;
     if (readInt(&gMachineIn.setupClicks) < 0) return RESET_VAL;
 
-    if (gDebug) printf("Command: %d\n", command);
+    //if (gDebug) printf("Command: %d\n", command);
 
     // Setup Mode
     if (gLogicState == LOGICSTATE_SETUP) {
