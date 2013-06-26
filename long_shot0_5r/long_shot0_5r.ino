@@ -1,8 +1,5 @@
 #include <Shifter.h>
-#include <avr/pgmspace.h>
-#include <EEPROM.h> //not sure if we still need this
 #include <TimedAction.h>
-#include <Wire.h> //not sure if we still need this
 #include <Bounce.h>
 
 ///////////////////pin defs////////////////////////////////
@@ -61,7 +58,7 @@ int ticketsDispensed = 0;
 int ticketMeterClicks = 0;
 int ticketTimer = 0;
 /////////////////////////////////////////////////////////// 
-int commandByte = -1;
+int commandByte = 255;
 //////////////////Score Vars////////////////////////////
 int scoreClicks = 0;
 int hundredClicks = 0;
@@ -71,8 +68,7 @@ int upClicks = 0;
 int downClicks = 0;
 int selectClicks = 0;
 int setupClicks = 0;
-int setState = 0;
-int lastSetState = 0;
+
 
 Bounce scoreDebounce = Bounce(scoreSwitch,25);
 Bounce coinDebounce = Bounce(coinSwitch,50);
@@ -90,10 +86,8 @@ Bounce downDebounce = Bounce(downButton,20);
 
 void setup(){
   Serial.begin(57600);
+  //Serial.flush();
  // Serial.println("Hi!");
- poll_inputs();
- sendGameState();
- commandByte = 1;
   idle.enable();
   solenoidTimer.disable();
   pinMode(gameOverLight, OUTPUT);

@@ -17,6 +17,7 @@ void sendGameState(){
     integerToBytes(b[x], statusByte);
     Serial.write(statusByte,sizeof(statusByte));
   }
+  commandByte = 1;
 }
 
 void updateGame(){
@@ -24,7 +25,7 @@ void updateGame(){
       if(Serial.readBytes((char *)state,16)){ //read in the 16 byte game status from Pi
         sendGameState(); //send out the current switch states
         parseGameState(state); //act on the game status from Pi
-      }
+       }
    }
 }
 
