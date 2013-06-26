@@ -361,6 +361,7 @@ int UpdateMachine() {
     
     }
     
+    serialFlush(gMachineCommPort);
     delay(300);
     return command;
 }
