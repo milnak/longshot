@@ -33,7 +33,7 @@ int main(int argc, int *argv[])
         DumpMachineInState();
         DumpMachineOutState();
       }
-      else if (result == -1) {
+      else if (result == 255) {
         // if we got a reset request, then let's reset the hardware
         // and reset the game state
         if (gDebug) printf("******** RESET ********\n");
