@@ -49,6 +49,7 @@ enum {
   COMMAND_RESET
 };
 
+extern int gDebug;
 extern int gOptionValues[SETUP_OPTION_MAX];
 
 extern struct MachineOutState gMachineOut;

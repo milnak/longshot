@@ -22,6 +22,8 @@ enum {
   SETUP_MODE_MAX
 };
 
+int gDebug = 0;
+
 int gOptionValues[SETUP_OPTION_MAX] = {
   1,    // SETUP_OPTION_COINCOUNT,
   0,    // SETUP_OPTION_TICKETTABLE,
@@ -223,7 +225,7 @@ int InitMachine() {
 
 ///////////////////////////////////////////////
 void ResetMachine() {
-  gLogicState == LOGICSTATE_GAME;
+  gLogicState = LOGICSTATE_GAME;
   gSetupMode = SETUP_MODE_MENUSELECT;
   gSetupMenu = 0;
 
@@ -344,6 +346,7 @@ int UpdateMachine() {
       if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
         gLogicState = LOGICSTATE_GAME;
         gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
+        if (gDebug) printf("*** GAME MODE ***\n");
         SaveConfig();
       }
     } else {
@@ -351,6 +354,7 @@ int UpdateMachine() {
        // enter Setup mode
        if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
           gLogicState = LOGICSTATE_SETUP;
+          if (gDebug) printf("*** SETUP MODE ***\n");
           LoadConfig();
        }
     
@@ -396,15 +400,19 @@ void PreloadSound(const char* file, int slot) {
   }
 
   sprintf(filePath, "%s/%s", get_current_dir_name(), file);
-  printf( "Preloading sound: %s in slot %d... ", &filePath, slot );
+
+  if (gDebug)
+    printf( "Preloading sound: %s in slot %d... ", &filePath, slot );
 
   /* Load the sound file and convert it to 16-bit stereo at 22kHz */
   if ( SDL_LoadWAV(filePath, &wave, &data, &dlen) == NULL ) {
-    printf(" failed. %s\n", SDL_GetError());
+    if (gDebug)
+      printf(" failed. %s\n", SDL_GetError());
     return;
   }
 
-  printf(" length: %d bytes\n", dlen );
+  if (gDebug)
+    printf(" length: %d bytes\n", dlen );
 
   SDL_BuildAudioCVT(cvt, wave.format, wave.channels, wave.freq, kAUDIO_FMT, kAUDIO_CHANNELS, kAUDIO_FREQ);
   cvt->buf = malloc(dlen * cvt->len_mult);
@@ -417,7 +425,9 @@ void PreloadSound(const char* file, int slot) {
 ///////////////////////////////////////////////
 void PlaySound(int sound)
 {
-  printf("Playing sound: %d\n", sound );
+  if (gDebug)
+    printf("Playing sound: %d\n", sound );
+  
   SDL_AudioCVT* cvt = &preloadedSounds[sound];
   int index;
 
@@ -461,22 +471,45 @@ void _MixAudio(void *unused, Uint8 *stream, int len)
 
 ///////////////////////////////////////////////
 void DumpMachineOutState() {
-    printf("Score: %d\n", gMachineOut.score);
-    printf("Switches: %d\n", gMachineOut.switches);
-    printf("Dispense: %d\n", gMachineOut.dispense);
-    printf("Ball Count: %d\n", gMachineOut.ballCount);
-    printf("--------------------------\n");
+    if (gDebug) {
+      if (gMachineOutPrev.score != gMachineIn.score) 
+        printf("CHANGED: Score: %d\n", gMachineOut.score);
+      if (gMachineOutPrev.switches != gMachineIn.switches) 
+        printf("CHANGED: Switches: %d\n", gMachineOut.switches);
+      if (gMachineOutPrev.dispense != gMachineIn.dispense) 
+        printf("CHANGED: Dispense: %d\n", gMachineOut.dispense);
+      if (gMachineOutPrev.ballCount != gMachineIn.ballCount) 
+        printf("CHANGED: Ball Count: %d\n", gMachineOut.ballCount);
+    }
 }
 
 void DumpMachineInState() {
-    printf("Tickets Dispensed: %d\n", gMachineIn.ticketsDispensed);
-    printf("Score Clicks: %d\n", gMachineIn.scoreClicks);
-    printf("Hundred Clicks: %d\n", gMachineIn.hundredClicks);
-    printf("Ball Clicks: %d\n", gMachineIn.ballClicks);
-    printf("Coin Clicks: %d\n", gMachineIn.coinClicks);
-    printf("Up Clicks: %d\n", gMachineIn.upClicks);
-    printf("Down Clicks: %d\n", gMachineIn.downClicks);
-    printf("Select Clicks: %d\n", gMachineIn.selectClicks);
-    printf("Setup Clicks: %d\n", gMachineIn.setupClicks);
-    printf("--------------------------\n");
+    if (gDebug) {
+      if (gMachineInPrev.ticketsDispensed != gMachineOutPrev.ticketsDispensed) 
+        printf("CHANGED: Tickets Dispensed: %d\n", gMachineIn.ticketsDispensed);
+
+      if (gMachineInPrev.scoreClicks != gMachineOutPrev.scoreClicks) 
+        printf("CHANGED: Score Clicks: %d\n", gMachineIn.scoreClicks);
+      
+      if (gMachineInPrev.hundredClicks != gMachineOutPrev.hundredClicks) 
+        printf("CHANGED: Hundred Clicks: %d\n", gMachineIn.hundredClicks);
+      
+      if (gMachineInPrev.ballClicks != gMachineOutPrev.ballClicks) 
+        printf("CHANGED: Ball Clicks: %d\n", gMachineIn.ballClicks);
+      
+      if (gMachineInPrev.coinClicks != gMachineOutPrev.coinClicks) 
+        printf("CHANGED: Coin Clicks: %d\n", gMachineIn.coinClicks);
+      
+      if (gMachineInPrev.upClicks != gMachineOutPrev.upClicks) 
+        printf("CHANGED: Up Clicks: %d\n", gMachineIn.upClicks);
+      
+      if (gMachineInPrev.downClicks != gMachineOutPrev.downClicks) 
+        printf("CHANGED: Down Clicks: %d\n", gMachineIn.downClicks);
+      
+      if (gMachineInPrev.selectClicks != gMachineOutPrev.selectClicks) 
+        printf("CHANGED: Select Clicks: %d\n", gMachineIn.selectClicks);
+      
+      if (gMachineInPrev.setupClicks != gMachineOutPrev.setupClicks) 
+        printf("CHANGED: Setup Clicks: %d\n", gMachineIn.setupClicks);
+    }
 }

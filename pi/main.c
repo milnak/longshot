@@ -3,16 +3,16 @@
 
 #import <stdio.h>
 
+
 int main(int argc, int *argv[])
 {
-  int dumpState = 0;
   int c;
 
-  while ((c = getopt (argc, argv, "v")) != -1) {
+  while ((c = getopt (argc, argv, "d")) != -1) {
     switch (c)
     {
-      case 'v':
-        dumpState = 1;
+      case 'd':
+        gDebug = 1;
         break;
     }
   }
