@@ -29,6 +29,7 @@ int main(int argc, int *argv[])
       if (result == 1) {
         UpdateLongshot();
 
+        // do these after the game logic update so we can show changes
         DumpMachineInState();
         DumpMachineOutState();
       }
