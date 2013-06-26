@@ -485,31 +485,31 @@ void DumpMachineOutState() {
 
 void DumpMachineInState() {
     if (gDebug) {
-      if (gMachineInPrev.ticketsDispensed != gMachineOutPrev.ticketsDispensed) 
+      if (gMachineInPrev.ticketsDispensed != gMachineIn.ticketsDispensed) 
         printf("CHANGED: Tickets Dispensed: %d\n", gMachineIn.ticketsDispensed);
 
-      if (gMachineInPrev.scoreClicks != gMachineOutPrev.scoreClicks) 
+      if (gMachineInPrev.scoreClicks != gMachineIn.scoreClicks) 
         printf("CHANGED: Score Clicks: %d\n", gMachineIn.scoreClicks);
       
-      if (gMachineInPrev.hundredClicks != gMachineOutPrev.hundredClicks) 
+      if (gMachineInPrev.hundredClicks != gMachineIn.hundredClicks) 
         printf("CHANGED: Hundred Clicks: %d\n", gMachineIn.hundredClicks);
       
-      if (gMachineInPrev.ballClicks != gMachineOutPrev.ballClicks) 
+      if (gMachineInPrev.ballClicks != gMachineIn.ballClicks) 
         printf("CHANGED: Ball Clicks: %d\n", gMachineIn.ballClicks);
       
-      if (gMachineInPrev.coinClicks != gMachineOutPrev.coinClicks) 
+      if (gMachineInPrev.coinClicks != gMachineIn.coinClicks) 
         printf("CHANGED: Coin Clicks: %d\n", gMachineIn.coinClicks);
       
-      if (gMachineInPrev.upClicks != gMachineOutPrev.upClicks) 
+      if (gMachineInPrev.upClicks != gMachineIn.upClicks) 
         printf("CHANGED: Up Clicks: %d\n", gMachineIn.upClicks);
       
-      if (gMachineInPrev.downClicks != gMachineOutPrev.downClicks) 
+      if (gMachineInPrev.downClicks != gMachineIn.downClicks) 
         printf("CHANGED: Down Clicks: %d\n", gMachineIn.downClicks);
       
-      if (gMachineInPrev.selectClicks != gMachineOutPrev.selectClicks) 
+      if (gMachineInPrev.selectClicks != gMachineIn.selectClicks) 
         printf("CHANGED: Select Clicks: %d\n", gMachineIn.selectClicks);
       
-      if (gMachineInPrev.setupClicks != gMachineOutPrev.setupClicks) 
+      if (gMachineInPrev.setupClicks != gMachineIn.setupClicks) 
         printf("CHANGED: Setup Clicks: %d\n", gMachineIn.setupClicks);
     }
 }
