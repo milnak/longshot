@@ -172,11 +172,10 @@ void LoadConfig() {
 }
 
 ///////////////////////////////////////////////
-int InitMachine() {
+int InitSerial() {
 
-  LoadConfig();
-
-  int index = 0;
+  if (gMachineCommPort >= 0)
+    serialClose(gMachineCommPort)
 
     // open our USB connection
   if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
@@ -191,6 +190,15 @@ int InitMachine() {
     printf( "Unable to start wiringPi: %s\n", strerror (errno));
     return 1;
   }
+
+  return 0;
+}
+
+///////////////////////////////////////////////
+int InitMachine() {
+
+  LoadConfig();
+  int index = 0;
 
   // see if SDL is DTF
   if (SDL_Init( SDL_INIT_AUDIO | SDL_INIT_TIMER ) != 0) 
@@ -222,23 +230,27 @@ int InitMachine() {
   return 0;
 }
 
+
+
 ///////////////////////////////////////////////
 void ResetMachine() {
-  gLogicState = LOGICSTATE_GAME;
-  gSetupMode = SETUP_MODE_MENUSELECT;
-  gSetupMenu = 0;
+  if (InitSerial() == 0) {
+    gLogicState = LOGICSTATE_GAME;
+    gSetupMode = SETUP_MODE_MENUSELECT;
+    gSetupMenu = 0;
 
-  gMachineOut.switches  = 0;
-  gMachineOut.dispense  = 0;
-  gMachineOut.score     = 0;
-  gMachineOut.ballCount = 0;
-  gMachineInPrev.scoreClicks = 0;
+    gMachineOut.switches  = 0;
+    gMachineOut.dispense  = 0;
+    gMachineOut.score     = 0;
+    gMachineOut.ballCount = 0;
+    gMachineInPrev.scoreClicks = 0;
 
-  memset(&gMachineOut, 0, sizeof(gMachineOut));
-  memset(&gMachineOutPrev, 0, sizeof(gMachineOutPrev));
+    memset(&gMachineOut, 0, sizeof(gMachineOut));
+    memset(&gMachineOutPrev, 0, sizeof(gMachineOutPrev));
 
-  memset(&gMachineIn, 0, sizeof(gMachineIn));
-  memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
+    memset(&gMachineIn, 0, sizeof(gMachineIn));
+    memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
+  }
 }
 
 ///////////////////////////////////////////////
@@ -255,7 +267,15 @@ int readInt() {
   int value = 0;
   for (i = 0; i < sizeof(int); i++)
   {
-     unsigned int lastByte = serialGetchar(gMachineCommPort);
+     int c = serialGetchar(gMachineCommPort);
+     
+     if (c < 0) {
+        if (gDebug) printf("### SERIAL ERROR ### Resetting Everything...\n");
+        ResetMachine();
+        return RESET_VAL;
+     }
+
+     unsigned int lastByte = (unsigned int)c;
      value |= lastByte << (24 - (8 * i));
   }
   return value;
