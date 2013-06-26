@@ -472,13 +472,13 @@ void _MixAudio(void *unused, Uint8 *stream, int len)
 ///////////////////////////////////////////////
 void DumpMachineOutState() {
     if (gDebug) {
-      if (gMachineOutPrev.score != gMachineIn.score) 
+      if (gMachineOutPrev.score != gMachineOut.score) 
         printf("CHANGED: Score: %d\n", gMachineOut.score);
-      if (gMachineOutPrev.switches != gMachineIn.switches) 
+      if (gMachineOutPrev.switches != gMachineOut.switches) 
         printf("CHANGED: Switches: %d\n", gMachineOut.switches);
-      if (gMachineOutPrev.dispense != gMachineIn.dispense) 
+      if (gMachineOutPrev.dispense != gMachineOut.dispense) 
         printf("CHANGED: Dispense: %d\n", gMachineOut.dispense);
-      if (gMachineOutPrev.ballCount != gMachineIn.ballCount) 
+      if (gMachineOutPrev.ballCount != gMachineOut.ballCount) 
         printf("CHANGED: Ball Count: %d\n", gMachineOut.ballCount);
     }
 }

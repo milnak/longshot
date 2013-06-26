@@ -35,7 +35,8 @@ int main(int argc, int *argv[])
         }
       }
       else if (result == -1) {
-        printf("******** RESET ********\n");
+        if (gDebug) printf("******** RESET ********\n");
+        
         ResetMachine();
         InitLongshot();
       }
