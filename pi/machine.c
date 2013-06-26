@@ -317,16 +317,19 @@ int UpdateMachine() {
     
     int command = 0;
 
-    if (readInt(&command) < 0) command = RESET_VAL;
-    if (readInt(&gMachineIn.ticketsDispensed) < 0) command = RESET_VAL;
-    if (readInt(&gMachineIn.scoreClicks) < 0)     command = RESET_VAL;
-    if (readInt(&gMachineIn.hundredClicks) < 0)   command = RESET_VAL;
-    if (readInt(&gMachineIn.ballClicks) < 0)      command = RESET_VAL;
-    if (readInt(&gMachineIn.coinClicks) < 0)      command = RESET_VAL;
-    if (readInt(&gMachineIn.upClicks) < 0)        command = RESET_VAL;
-    if (readInt(&gMachineIn.downClicks) < 0)      command = RESET_VAL;
-    if (readInt(&gMachineIn.selectClicks) < 0)    command = RESET_VAL;
-    if (readInt(&gMachineIn.setupClicks) < 0)     command = RESET_VAL;
+    if (!((readInt(&command) >= 0) 
+      && (readInt(&gMachineIn.ticketsDispensed) >= 0)
+      && (readInt(&gMachineIn.scoreClicks) >= 0)
+      && (readInt(&gMachineIn.hundredClicks) >= 0) 
+      && (readInt(&gMachineIn.ballClicks) >= 0)
+      && (readInt(&gMachineIn.coinClicks) >= 0)
+      && (readInt(&gMachineIn.upClicks) >= 0)
+      && (readInt(&gMachineIn.downClicks) >= 0)
+      && (readInt(&gMachineIn.selectClicks) >= 0)
+      && (readInt(&gMachineIn.setupClicks) >= 0))) 
+    {
+      command = RESET_VAL;
+    }
 
     //if (gDebug) printf("Command: %d\n", command);
 
@@ -385,8 +388,7 @@ int UpdateMachine() {
     
     }
     
-    serialFlush(gMachineCommPort);
-    delay(300);
+    //serialFlush(gMachineCommPort);
     return command;
 }
 
