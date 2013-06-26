@@ -175,7 +175,7 @@ void LoadConfig() {
 int InitSerial() {
 
   if (gMachineCommPort >= 0)
-    serialClose(gMachineCommPort)
+    serialClose(gMachineCommPort);
 
     // open our USB connection
   if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
