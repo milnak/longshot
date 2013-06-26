@@ -3,44 +3,43 @@
 
 #import <stdio.h>
 
+
 int main(int argc, int *argv[])
 {
-  int dumpState = 0;
+  // parse args
   int c;
 
-  while ((c = getopt (argc, argv, "v")) != -1) {
+  while ((c = getopt (argc, argv, "d")) != -1) {
     switch (c)
     {
-      case 'v':
-        dumpState = 1;
+      case 'd':
+        gDebug = 1;
         break;
     }
   }
 
-
+  // setup the hardware and game
   InitMachine();  
   InitLongshot();
 
   // kick off the update loop
-  while (1)
-  {
+  while (1) {
       int result = UpdateMachine();
 
       if (result == 1) {
         UpdateLongshot();
 
-        if (dumpState) {
-          DumpMachineInState();
-          DumpMachineOutState();
-        }
+        // do these after the game logic update so we can show changes
+        DumpMachineInState();
+        DumpMachineOutState();
       }
-      else if (result == -1) {
-        printf("******** RESET ********\n");
+      else if (result == RESET_VAL) {
+        // if we got a reset request, then let's reset the hardware
+        // and reset the game state
+        if (gDebug) printf("******** RESET ********\n");
         ResetMachine();
         InitLongshot();
       }
-
-      
   }
  
   ExitMachine();

@@ -12,7 +12,7 @@
 #include <SDL/SDL_audio.h>
 
 enum {
-  LOGICSTATE_SETUP,
+  LOGICSTATE_SETUP = 1,
   LOGICSTATE_GAME
 };
 
@@ -21,6 +21,8 @@ enum {
   SETUP_MODE_VALUESELECT,
   SETUP_MODE_MAX
 };
+
+int gDebug = 0;
 
 int gOptionValues[SETUP_OPTION_MAX] = {
   1,    // SETUP_OPTION_COINCOUNT,
@@ -46,18 +48,17 @@ struct MachineInState gMachineIn, gMachineInPrev;
 #define kAUDIO_FREQ 22050
 #define kAUDIO_FMT AUDIO_S16
 #define kAUDIO_CHANNELS 1
-
 #define NUM_ACTIVE_SOUNDS 8
+#define NUM_PRELOADED_SOUNDS 128
+
 struct sample {
   Uint8 *data;
   Uint32 dpos;
   Uint32 dlen;
 } activeSounds[NUM_ACTIVE_SOUNDS];
 
-#define NUM_PRELOADED_SOUNDS 128
 SDL_AudioCVT preloadedSounds[NUM_PRELOADED_SOUNDS];
 int gNumLoadedSounds = 0;
-
 
 ///////////////////////////////////////////////
 int IncConfigVal(int val) {
@@ -149,7 +150,7 @@ void SaveConfig() {
   fwrite(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
   fclose(f);
 
-  printf("Saved config: %s\n", filePath);
+  if (gDebug) printf("Saved Config: %s\n", filePath);
 }
 
 ///////////////////////////////////////////////
@@ -163,7 +164,7 @@ void LoadConfig() {
   if (f != NULL) {
     fread(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
     fclose(f);
-    printf("Read config: %s\n", filePath);
+    if (gDebug) printf("Read Config: %s\n", filePath);
   } else {
     // defaults 
     SaveConfig();
@@ -171,11 +172,10 @@ void LoadConfig() {
 }
 
 ///////////////////////////////////////////////
-int InitMachine() {
+int InitSerial() {
 
-  LoadConfig();
-
-  int index = 0;
+  if (gMachineCommPort >= 0)
+    serialClose(gMachineCommPort);
 
     // open our USB connection
   if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
@@ -190,6 +190,15 @@ int InitMachine() {
     printf( "Unable to start wiringPi: %s\n", strerror (errno));
     return 1;
   }
+
+  return 0;
+}
+
+///////////////////////////////////////////////
+int InitMachine() {
+
+  LoadConfig();
+  int index = 0;
 
   // see if SDL is DTF
   if (SDL_Init( SDL_INIT_AUDIO | SDL_INIT_TIMER ) != 0) 
@@ -221,23 +230,27 @@ int InitMachine() {
   return 0;
 }
 
+
+
 ///////////////////////////////////////////////
 void ResetMachine() {
-  gLogicState == LOGICSTATE_GAME;
-  gSetupMode = SETUP_MODE_MENUSELECT;
-  gSetupMenu = 0;
+  if (InitSerial() == 0) {
+    gLogicState = LOGICSTATE_GAME;
+    gSetupMode = SETUP_MODE_MENUSELECT;
+    gSetupMenu = 0;
 
-  gMachineOut.switches  = 0;
-  gMachineOut.dispense  = 0;
-  gMachineOut.score     = 0;
-  gMachineOut.ballCount = 0;
-  gMachineInPrev.scoreClicks = 0;
+    gMachineOut.switches  = 0;
+    gMachineOut.dispense  = 0;
+    gMachineOut.score     = 0;
+    gMachineOut.ballCount = 0;
+    gMachineInPrev.scoreClicks = 0;
 
-  memset(&gMachineOut, 0, sizeof(gMachineOut));
-  memset(&gMachineOutPrev, 0, sizeof(gMachineOutPrev));
+    memset(&gMachineOut, 0, sizeof(gMachineOut));
+    memset(&gMachineOutPrev, 0, sizeof(gMachineOutPrev));
 
-  memset(&gMachineIn, 0, sizeof(gMachineIn));
-  memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
+    memset(&gMachineIn, 0, sizeof(gMachineIn));
+    memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
+  }
 }
 
 ///////////////////////////////////////////////
@@ -254,7 +267,15 @@ int readInt() {
   int value = 0;
   for (i = 0; i < sizeof(int); i++)
   {
-     unsigned int lastByte = serialGetchar(gMachineCommPort);
+     int c = serialGetchar(gMachineCommPort);
+     
+     if (c < 0) {
+        if (gDebug) printf("### SERIAL ERROR ### Resetting Everything...\n");
+        ResetMachine();
+        return RESET_VAL;
+     }
+
+     unsigned int lastByte = (unsigned int)c;
      value |= lastByte << (24 - (8 * i));
   }
   return value;
@@ -303,6 +324,8 @@ int UpdateMachine() {
     gMachineIn.selectClicks = readInt(gMachineCommPort);
     gMachineIn.setupClicks = readInt(gMachineCommPort);
 
+    if (gDebug) printf("Command: %d\n", command);
+
     // Setup Mode
     if (gLogicState == LOGICSTATE_SETUP) {
       // Select a menu/config option
@@ -344,6 +367,7 @@ int UpdateMachine() {
       if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
         gLogicState = LOGICSTATE_GAME;
         gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
+        if (gDebug) printf("*** GAME MODE ***\n");
         SaveConfig();
       }
     } else {
@@ -351,13 +375,15 @@ int UpdateMachine() {
        // enter Setup mode
        if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
           gLogicState = LOGICSTATE_SETUP;
+          if (gDebug) printf("*** SETUP MODE ***\n");
           LoadConfig();
        }
     
     }
     
-    return command;
+    serialFlush(gMachineCommPort);
     delay(300);
+    return command;
 }
 
 
@@ -396,15 +422,19 @@ void PreloadSound(const char* file, int slot) {
   }
 
   sprintf(filePath, "%s/%s", get_current_dir_name(), file);
-  printf( "Preloading sound: %s in slot %d... ", &filePath, slot );
+
+  if (gDebug)
+    printf( "Preloading sound: %s in slot %d... ", &filePath, slot );
 
   /* Load the sound file and convert it to 16-bit stereo at 22kHz */
   if ( SDL_LoadWAV(filePath, &wave, &data, &dlen) == NULL ) {
-    printf(" failed. %s\n", SDL_GetError());
+    if (gDebug)
+      printf(" failed. %s\n", SDL_GetError());
     return;
   }
 
-  printf(" length: %d bytes\n", dlen );
+  if (gDebug)
+    printf(" length: %d bytes\n", dlen );
 
   SDL_BuildAudioCVT(cvt, wave.format, wave.channels, wave.freq, kAUDIO_FMT, kAUDIO_CHANNELS, kAUDIO_FREQ);
   cvt->buf = malloc(dlen * cvt->len_mult);
@@ -417,7 +447,9 @@ void PreloadSound(const char* file, int slot) {
 ///////////////////////////////////////////////
 void PlaySound(int sound)
 {
-  printf("Playing sound: %d\n", sound );
+  if (gDebug)
+    printf("Playing sound: %d\n", sound );
+  
   SDL_AudioCVT* cvt = &preloadedSounds[sound];
   int index;
 
@@ -461,22 +493,45 @@ void _MixAudio(void *unused, Uint8 *stream, int len)
 
 ///////////////////////////////////////////////
 void DumpMachineOutState() {
-    printf("Score: %d\n", gMachineOut.score);
-    printf("Switches: %d\n", gMachineOut.switches);
-    printf("Dispense: %d\n", gMachineOut.dispense);
-    printf("Ball Count: %d\n", gMachineOut.ballCount);
-    printf("--------------------------\n");
+    if (gDebug) {
+      if (gMachineOutPrev.score != gMachineOut.score) 
+        printf("CHANGED: Score: %d\n", gMachineOut.score);
+      if (gMachineOutPrev.switches != gMachineOut.switches) 
+        printf("CHANGED: Switches: %d\n", gMachineOut.switches);
+      if (gMachineOutPrev.dispense != gMachineOut.dispense) 
+        printf("CHANGED: Dispense: %d\n", gMachineOut.dispense);
+      if (gMachineOutPrev.ballCount != gMachineOut.ballCount) 
+        printf("CHANGED: Ball Count: %d\n", gMachineOut.ballCount);
+    }
 }
 
 void DumpMachineInState() {
-    printf("Tickets Dispensed: %d\n", gMachineIn.ticketsDispensed);
-    printf("Score Clicks: %d\n", gMachineIn.scoreClicks);
-    printf("Hundred Clicks: %d\n", gMachineIn.hundredClicks);
-    printf("Ball Clicks: %d\n", gMachineIn.ballClicks);
-    printf("Coin Clicks: %d\n", gMachineIn.coinClicks);
-    printf("Up Clicks: %d\n", gMachineIn.upClicks);
-    printf("Down Clicks: %d\n", gMachineIn.downClicks);
-    printf("Select Clicks: %d\n", gMachineIn.selectClicks);
-    printf("Setup Clicks: %d\n", gMachineIn.setupClicks);
-    printf("--------------------------\n");
+    if (gDebug) {
+      if (gMachineInPrev.ticketsDispensed != gMachineIn.ticketsDispensed) 
+        printf("CHANGED: Tickets Dispensed: %d\n", gMachineIn.ticketsDispensed);
+
+      if (gMachineInPrev.scoreClicks != gMachineIn.scoreClicks) 
+        printf("CHANGED: Score Clicks: %d\n", gMachineIn.scoreClicks);
+      
+      if (gMachineInPrev.hundredClicks != gMachineIn.hundredClicks) 
+        printf("CHANGED: Hundred Clicks: %d\n", gMachineIn.hundredClicks);
+      
+      if (gMachineInPrev.ballClicks != gMachineIn.ballClicks) 
+        printf("CHANGED: Ball Clicks: %d\n", gMachineIn.ballClicks);
+      
+      if (gMachineInPrev.coinClicks != gMachineIn.coinClicks) 
+        printf("CHANGED: Coin Clicks: %d\n", gMachineIn.coinClicks);
+      
+      if (gMachineInPrev.upClicks != gMachineIn.upClicks) 
+        printf("CHANGED: Up Clicks: %d\n", gMachineIn.upClicks);
+      
+      if (gMachineInPrev.downClicks != gMachineIn.downClicks) 
+        printf("CHANGED: Down Clicks: %d\n", gMachineIn.downClicks);
+      
+      if (gMachineInPrev.selectClicks != gMachineIn.selectClicks) 
+        printf("CHANGED: Select Clicks: %d\n", gMachineIn.selectClicks);
+      
+      if (gMachineInPrev.setupClicks != gMachineIn.setupClicks) 
+        printf("CHANGED: Setup Clicks: %d\n", gMachineIn.setupClicks);
+    }
 }
