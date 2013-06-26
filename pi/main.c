@@ -6,6 +6,7 @@
 
 int main(int argc, int *argv[])
 {
+  // parse args
   int c;
 
   while ((c = getopt (argc, argv, "d")) != -1) {
@@ -17,13 +18,12 @@ int main(int argc, int *argv[])
     }
   }
 
-
+  // setup the hardware and game
   InitMachine();  
   InitLongshot();
 
   // kick off the update loop
-  while (1)
-  {
+  while (1) {
       int result = UpdateMachine();
 
       if (result == 1) {
@@ -34,13 +34,12 @@ int main(int argc, int *argv[])
         DumpMachineOutState();
       }
       else if (result == -1) {
+        // if we got a reset request, then let's reset the hardware
+        // and reset the game state
         if (gDebug) printf("******** RESET ********\n");
-
         ResetMachine();
         InitLongshot();
       }
-
-      
   }
  
   ExitMachine();
