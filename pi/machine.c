@@ -26,7 +26,7 @@ int gDebug = 0;
 
 int gOptionValues[SETUP_OPTION_MAX] = {
   1,    // SETUP_OPTION_COINCOUNT,
-  0,    // SETUP_OPTION_TICKETTABLE,
+  9,    // SETUP_OPTION_TICKETTABLE,
   0,    // SETUP_OPTION_FREEGAME,
   900, // SETUP_OPTION_FREEGAME_SCORE,
   9,    // SETUP_OPTION_BALLCOUNT,
@@ -317,16 +317,16 @@ int UpdateMachine() {
     
     int command = 0;
 
-    if (readInt(&command) < 0) return RESET_VAL;
-    if (readInt(&gMachineIn.ticketsDispensed) < 0) return RESET_VAL;
-    if (readInt(&gMachineIn.scoreClicks) < 0) return RESET_VAL;
-    if (readInt(&gMachineIn.hundredClicks) < 0) return RESET_VAL;
-    if (readInt(&gMachineIn.ballClicks) < 0) return RESET_VAL;
-    if (readInt(&gMachineIn.coinClicks) < 0) return RESET_VAL;
-    if (readInt(&gMachineIn.upClicks) < 0) return RESET_VAL;
-    if (readInt(&gMachineIn.downClicks) < 0) return RESET_VAL;
-    if (readInt(&gMachineIn.selectClicks) < 0) return RESET_VAL;
-    if (readInt(&gMachineIn.setupClicks) < 0) return RESET_VAL;
+    if (readInt(&command) < 0) command = RESET_VAL;
+    if (readInt(&gMachineIn.ticketsDispensed) < 0) command = RESET_VAL;
+    if (readInt(&gMachineIn.scoreClicks) < 0)     command = RESET_VAL;
+    if (readInt(&gMachineIn.hundredClicks) < 0)   command = RESET_VAL;
+    if (readInt(&gMachineIn.ballClicks) < 0)      command = RESET_VAL;
+    if (readInt(&gMachineIn.coinClicks) < 0)      command = RESET_VAL;
+    if (readInt(&gMachineIn.upClicks) < 0)        command = RESET_VAL;
+    if (readInt(&gMachineIn.downClicks) < 0)      command = RESET_VAL;
+    if (readInt(&gMachineIn.selectClicks) < 0)    command = RESET_VAL;
+    if (readInt(&gMachineIn.setupClicks) < 0)     command = RESET_VAL;
 
     //if (gDebug) printf("Command: %d\n", command);
 
