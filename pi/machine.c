@@ -174,8 +174,10 @@ void LoadConfig() {
 ///////////////////////////////////////////////
 int InitSerial() {
 
-  if (gMachineCommPort >= 0)
+  if (gMachineCommPort >= 0) {
+    serialFlush(gMachineCommPort);
     serialClose(gMachineCommPort);
+  }
 
     // open our USB connection
   if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
@@ -183,6 +185,8 @@ int InitSerial() {
     printf("Unable to open serial device: %s\n", strerror (errno));
     return 1 ;
   }
+
+  if (gDebug) printf("---[ SERIAL SUCCESS ]---\n");
 
   // see if wiringPi is DTF
   if (wiringPiSetup() == -1)
@@ -262,7 +266,7 @@ int ExitMachine() {
 }
 
 ///////////////////////////////////////////////
-int readInt() {
+int readInt(int& value) {
   int i = 0;
   int value = 0;
   for (i = 0; i < sizeof(int); i++)
@@ -270,15 +274,14 @@ int readInt() {
      int c = serialGetchar(gMachineCommPort);
      
      if (c < 0) {
-        if (gDebug) printf("### SERIAL ERROR ### Resetting Everything...\n");
-        ResetMachine();
-        return RESET_VAL;
+        if (gDebug) printf("### SERIAL ERROR ###\n");
+        return -1;
      }
 
      unsigned int lastByte = (unsigned int)c;
      value |= lastByte << (24 - (8 * i));
   }
-  return value;
+  return 0;
 }
 
 ///////////////////////////////////////////////
@@ -313,16 +316,18 @@ int UpdateMachine() {
     writeInt(gMachineOut.dispense);
     writeInt(gMachineOut.ballCount);
     
-    int command = readInt(gMachineCommPort);
-    gMachineIn.ticketsDispensed = readInt(gMachineCommPort);
-    gMachineIn.scoreClicks = readInt(gMachineCommPort);
-    gMachineIn.hundredClicks = readInt(gMachineCommPort);
-    gMachineIn.ballClicks = readInt(gMachineCommPort);
-    gMachineIn.coinClicks = readInt(gMachineCommPort);
-    gMachineIn.upClicks = readInt(gMachineCommPort);
-    gMachineIn.downClicks = readInt(gMachineCommPort);
-    gMachineIn.selectClicks = readInt(gMachineCommPort);
-    gMachineIn.setupClicks = readInt(gMachineCommPort);
+    int command = 0;
+
+    if (readInt(command) < 0) return RESET_VAL;
+    if (readInt(gMachineIn.ticketsDispensed) < 0) return RESET_VAL;
+    if (readInt(gMachineIn.scoreClicks) < 0) return RESET_VAL;
+    if (readInt(gMachineIn.hundredClicks) < 0) return RESET_VAL;
+    if (readInt(gMachineIn.ballClicks) < 0) return RESET_VAL;
+    if (readInt(gMachineIn.coinClicks) < 0) return RESET_VAL;
+    if (readInt(gMachineIn.upClicks) < 0) return RESET_VAL;
+    if (readInt(gMachineIn.downClicks) < 0) return RESET_VAL;
+    if (readInt(gMachineIn.selectClicks) < 0) return RESET_VAL;
+    if (readInt(gMachineIn.setupClicks) < 0) return RESET_VAL;
 
     if (gDebug) printf("Command: %d\n", command);
 
