@@ -266,9 +266,8 @@ int ExitMachine() {
 }
 
 ///////////////////////////////////////////////
-int readInt(int& value) {
+int readInt(int* value) {
   int i = 0;
-  int value = 0;
   for (i = 0; i < sizeof(int); i++)
   {
      int c = serialGetchar(gMachineCommPort);
@@ -279,7 +278,7 @@ int readInt(int& value) {
      }
 
      unsigned int lastByte = (unsigned int)c;
-     value |= lastByte << (24 - (8 * i));
+     *value |= lastByte << (24 - (8 * i));
   }
   return 0;
 }
@@ -318,16 +317,16 @@ int UpdateMachine() {
     
     int command = 0;
 
-    if (readInt(command) < 0) return RESET_VAL;
-    if (readInt(gMachineIn.ticketsDispensed) < 0) return RESET_VAL;
-    if (readInt(gMachineIn.scoreClicks) < 0) return RESET_VAL;
-    if (readInt(gMachineIn.hundredClicks) < 0) return RESET_VAL;
-    if (readInt(gMachineIn.ballClicks) < 0) return RESET_VAL;
-    if (readInt(gMachineIn.coinClicks) < 0) return RESET_VAL;
-    if (readInt(gMachineIn.upClicks) < 0) return RESET_VAL;
-    if (readInt(gMachineIn.downClicks) < 0) return RESET_VAL;
-    if (readInt(gMachineIn.selectClicks) < 0) return RESET_VAL;
-    if (readInt(gMachineIn.setupClicks) < 0) return RESET_VAL;
+    if (readInt(&command) < 0) return RESET_VAL;
+    if (readInt(&gMachineIn.ticketsDispensed) < 0) return RESET_VAL;
+    if (readInt(&gMachineIn.scoreClicks) < 0) return RESET_VAL;
+    if (readInt(&gMachineIn.hundredClicks) < 0) return RESET_VAL;
+    if (readInt(&gMachineIn.ballClicks) < 0) return RESET_VAL;
+    if (readInt(&gMachineIn.coinClicks) < 0) return RESET_VAL;
+    if (readInt(&gMachineIn.upClicks) < 0) return RESET_VAL;
+    if (readInt(&gMachineIn.downClicks) < 0) return RESET_VAL;
+    if (readInt(&gMachineIn.selectClicks) < 0) return RESET_VAL;
+    if (readInt(&gMachineIn.setupClicks) < 0) return RESET_VAL;
 
     if (gDebug) printf("Command: %d\n", command);
 
