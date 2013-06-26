@@ -304,6 +304,8 @@ int UpdateMachine() {
     gMachineIn.selectClicks = readInt(gMachineCommPort);
     gMachineIn.setupClicks = readInt(gMachineCommPort);
 
+    if (gDebug) printf("Command: %d\n", command);
+
     // Setup Mode
     if (gLogicState == LOGICSTATE_SETUP) {
       // Select a menu/config option
@@ -359,8 +361,8 @@ int UpdateMachine() {
     
     }
     
-    return command;
     delay(300);
+    return command;
 }
 
 
