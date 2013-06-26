@@ -29,14 +29,12 @@ int main(int argc, int *argv[])
       if (result == 1) {
         UpdateLongshot();
 
-        if (dumpState) {
-          DumpMachineInState();
-          DumpMachineOutState();
-        }
+        DumpMachineInState();
+        DumpMachineOutState();
       }
       else if (result == -1) {
         if (gDebug) printf("******** RESET ********\n");
-        
+
         ResetMachine();
         InitLongshot();
       }
