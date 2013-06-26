@@ -12,7 +12,7 @@
 #include <SDL/SDL_audio.h>
 
 enum {
-  LOGICSTATE_SETUP,
+  LOGICSTATE_SETUP = 1,
   LOGICSTATE_GAME
 };
 
@@ -48,18 +48,17 @@ struct MachineInState gMachineIn, gMachineInPrev;
 #define kAUDIO_FREQ 22050
 #define kAUDIO_FMT AUDIO_S16
 #define kAUDIO_CHANNELS 1
-
 #define NUM_ACTIVE_SOUNDS 8
+#define NUM_PRELOADED_SOUNDS 128
+
 struct sample {
   Uint8 *data;
   Uint32 dpos;
   Uint32 dlen;
 } activeSounds[NUM_ACTIVE_SOUNDS];
 
-#define NUM_PRELOADED_SOUNDS 128
 SDL_AudioCVT preloadedSounds[NUM_PRELOADED_SOUNDS];
 int gNumLoadedSounds = 0;
-
 
 ///////////////////////////////////////////////
 int IncConfigVal(int val) {
@@ -151,7 +150,7 @@ void SaveConfig() {
   fwrite(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
   fclose(f);
 
-  printf("Saved config: %s\n", filePath);
+  if (gDebug) printf("Saved Config: %s\n", filePath);
 }
 
 ///////////////////////////////////////////////
@@ -165,7 +164,7 @@ void LoadConfig() {
   if (f != NULL) {
     fread(&gOptionValues, sizeof(int), SETUP_OPTION_MAX, f);
     fclose(f);
-    printf("Read config: %s\n", filePath);
+    if (gDebug) printf("Read Config: %s\n", filePath);
   } else {
     // defaults 
     SaveConfig();
