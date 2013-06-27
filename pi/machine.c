@@ -281,10 +281,10 @@ int _readInt(int* value) {
   {
      int c = serialGetchar(gMachineCommPort);
      
-     if (c < 0) {
-        if (gDebug) printf("### SERIAL ERROR ###\n");
-        return -1;
-     }
+     // if (c < 0) {
+     //    if (gDebug) printf("### SERIAL ERROR ###\n");
+     //    return -1;
+     // }
 
      unsigned int lastByte = (unsigned int)c;
      *value |= lastByte << (24 - (8 * i));
@@ -406,7 +406,6 @@ int UpdateMachine() {
     return command;
 }
 
-
 ///////////////////////////////////////////////
 void FreeSoundSlots() {
   int index = 0;
@@ -509,14 +508,12 @@ void _MixAudio(void *unused, Uint8 *stream, int len)
   }
 }
 
-
-
 ///////////////////////////////////////////////
 void DumpMachineOutState() {
     if (gDebug) {
       if (gMachineOutPrev.score != gMachineOut.score) 
         printf("CHANGED: Score: %d\n", gMachineOut.score);
-      
+
       if (gMachineOutPrev.switches != gMachineOut.switches) 
         printf("CHANGED: Switches: %d\n", gMachineOut.switches);
 
