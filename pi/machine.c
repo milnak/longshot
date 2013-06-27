@@ -60,38 +60,47 @@ struct sample {
 SDL_AudioCVT preloadedSounds[NUM_PRELOADED_SOUNDS];
 int gNumLoadedSounds = 0;
 
+// increment the value and roll over to the low value
+#define INC_AND_WRAP(val, inc, top, bottom) \
+  val += inc; \
+  return val > top ? bottom : val;
+
+// decrement the value and wrap to the top value
+#define DEC_AND_WRAP(val, inc, top, bottom) \
+  val -= inc; \
+  return val < bottom ? top : val;
+
 ///////////////////////////////////////////////
 int IncConfigVal(int val) {
   
   switch (gSetupMenu) 
   {
     case SETUP_OPTION_COINCOUNT:
-      return ++val > 10 ? 0 : val;
+      INC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_TICKETTABLE:
-      return ++val > 10 ? 10 : val;
+      INC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_FREEGAME:
-      return ++val > 1 ? 0 : val;
+      INC_AND_WRAP(val, 1, 1, 0)
       break;
 
     case SETUP_OPTION_FREEGAME_SCORE:
-      val += 10;
-      return val > 900 ? 1 : val;
+      INC_AND_WRAP(val, 10, 900, 1)
       break;
 
     case SETUP_OPTION_BALLCOUNT:
-      return ++val > 10 ? 1 : val;
+      INC_AND_WRAP(val, 1, 10, 1)
       break;
 
     case SETUP_OPTION_VOLUME:
-      return ++val >= 10 ? 0 : val;
+      INC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_SOUND_SET:
-      return ++val > 4 ? 1 : val;
+      INC_AND_WRAP(val, 1, 4, 1)
       break;
 
     default:
@@ -105,40 +114,37 @@ int DecConfigVal(int val) {
   switch (gSetupMenu) 
   {
     case SETUP_OPTION_COINCOUNT:
-      return --val < 0 ? 10 : val;
+      DEC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_TICKETTABLE:
-      return --val < 0 ? 10 : val;
+      DEC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_FREEGAME:
-      return --val < 0 ? 1 : val;
+      DEC_AND_WRAP(val, 1, 1, 0)
       break;
 
     case SETUP_OPTION_FREEGAME_SCORE:
-      val -= 10;
-      return val < 1 ? 900 : val;
+      DEC_AND_WRAP(val, 10, 900, 1)
       break;
 
     case SETUP_OPTION_BALLCOUNT:
-      return --val < 1 ? 10 : val;
+      DEC_AND_WRAP(val, 1, 10, 1)
       break;
 
     case SETUP_OPTION_VOLUME:
-      return --val < -1 ? 10 : val;
+      DEC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_SOUND_SET:
-      return --val < 1 ? 4 : val;
+      DEC_AND_WRAP(val, 1, 4, 1)
       break;
 
     default:
-      return --val;
+      return ++val;
   }
 }
-
-
 
 ///////////////////////////////////////////////
 void SaveConfig() {
@@ -155,7 +161,6 @@ void SaveConfig() {
 
 ///////////////////////////////////////////////
 void LoadConfig() {
-
   char filePath[1024];
   sprintf(filePath, "%s/options.dbm", get_current_dir_name());
 
@@ -179,7 +184,7 @@ int InitSerial() {
     serialClose(gMachineCommPort);
   }
 
-    // open our USB connection
+  // open our USB connection
   if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
   {
     printf("Unable to open serial device: %s\n", strerror (errno));
@@ -317,16 +322,16 @@ int UpdateMachine() {
     
     int command = 0;
 
-    if (!((readInt(&command) >= 0) 
-      && (readInt(&gMachineIn.ticketsDispensed) >= 0)
-      && (readInt(&gMachineIn.scoreClicks) >= 0)
-      && (readInt(&gMachineIn.hundredClicks) >= 0) 
-      && (readInt(&gMachineIn.ballClicks) >= 0)
-      && (readInt(&gMachineIn.coinClicks) >= 0)
-      && (readInt(&gMachineIn.upClicks) >= 0)
-      && (readInt(&gMachineIn.downClicks) >= 0)
-      && (readInt(&gMachineIn.selectClicks) >= 0)
-      && (readInt(&gMachineIn.setupClicks) >= 0))) 
+    if (((readInt(&command) < 0) 
+      && (readInt(&gMachineIn.ticketsDispensed) < 0)
+      && (readInt(&gMachineIn.scoreClicks) < 0)
+      && (readInt(&gMachineIn.hundredClicks) < 0) 
+      && (readInt(&gMachineIn.ballClicks) < 0)
+      && (readInt(&gMachineIn.coinClicks) < 0)
+      && (readInt(&gMachineIn.upClicks) < 0)
+      && (readInt(&gMachineIn.downClicks) < 0)
+      && (readInt(&gMachineIn.selectClicks) < 0)
+      && (readInt(&gMachineIn.setupClicks) < 0))) 
     {
       command = RESET_VAL;
     }
@@ -357,8 +362,6 @@ int UpdateMachine() {
         if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0) {
           gOptionValues[gSetupMenu] = DecConfigVal(gOptionValues[gSetupMenu]);
         }
-
-        //gOptionValues[gSetupMenu] = ValidateConfigVal(gOptionValues[gSetupMenu]);
 
         if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0) {
           gSetupMode = SETUP_MODE_MENUSELECT;
