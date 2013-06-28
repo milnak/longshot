@@ -64,7 +64,6 @@ void GoIdle() {
 
 void EndGame() {
     gGameState = GAMESTATE_ENDGAME;
-    gMachineOut.ballCount = 0;
     gTicketsDispensed = 0;
     gettimeofday(&gEndGameTime,NULL);    
 }
