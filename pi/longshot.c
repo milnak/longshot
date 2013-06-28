@@ -1,10 +1,12 @@
 #include "machine.h"
 #include "longshot.h"
 #include <stdio.h>
+#include <time.h>
 
 enum {
   GAMESTATE_IDLE,
-  GAMESTATE_GAME
+  GAMESTATE_GAME,
+  GAMESTATE_ENDGAME
 };
 
 enum {
@@ -40,7 +42,8 @@ int gTicketsDispensed = 0;
 int gGameState = GAMESTATE_IDLE;
 int gScoreAccumulator = 0;
 int gSoundsLoaded = 0;
-
+int gHoldScoreTimer = 0;
+struct timeval gEndGameTime;
 
 void StartNewGame() {
     gGameState = GAMESTATE_GAME;
@@ -49,20 +52,22 @@ void StartNewGame() {
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
     gScoreAccumulator = 0;
+    gEndGameTime = 0;
+}
+
+void GoIdle() {
+  gGameState = GAMESTATE_IDLE;
+  gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
+  gMachineOut.score = 0;
+  gMachineOut.ballCount = 0;
+  gTicketsDispensed = 0;
 }
 
 void EndGame() {
-
-    int score = gMachineOut.score;
-
-    gGameState = GAMESTATE_IDLE;
-    gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
-    gMachineOut.score = 0;
+    gGameState = GAMESTATE_ENDGAME;
     gMachineOut.ballCount = 0;
     gTicketsDispensed = 0;
-
-    if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) 
-      StartNewGame();
+    gettimeofday(&gEndGameTime,NULL);    
 }
 
 #define PRELOAD_SOUND(id, f) \
@@ -93,30 +98,48 @@ void InitLongshot() {
   if (gSoundsLoaded == 0)
     LoadSounds();
   
-  EndGame();
+  GoIdle();
 }
 
 void UpdateLongshot() {
+
+  if (gGameState == GAMESTATE_IDLE) {
 
     if (gMachineIn.coinClicks >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
           StartNewGame();
           return;
     }
 
+  } else if (gGameState == GAMESTATE_ENDGAME) {
+
+    //if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) 
+    //  StartNewGame();
+
+    //if (gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD] > 0)
+    {
+      struct timeval cur_time;
+      gettimeofday(&cur_time,NULL);
+
+      if ((cur_time.tv_sec - gEndGameTime.tv_sec) > gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD]) {
+           GoIdle();
+           return;
+      }
+    }
+
+  } else if (gGameState == GAMESTATE_GAME) {
+
     // clear the ball solenoid
     if (gMachineOut.switches & (1 << SWITCH_SOLENOID))
       gMachineOut.switches &= ~(1 << SWITCH_SOLENOID);
 
     // score up
-    if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks) {
-        gScoreAccumulator += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
-    }
+    if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
+      gScoreAccumulator += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
 
     // score up
-    if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks) {
-        gScoreAccumulator += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
-    }
-
+    if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
+      gScoreAccumulator += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
+    
 
     // balls played
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
@@ -168,4 +191,5 @@ void UpdateLongshot() {
             }
         }
     }
+  }
 }

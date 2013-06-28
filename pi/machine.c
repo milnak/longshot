@@ -109,6 +109,10 @@ int IncConfigVal(int val) {
       INC_AND_WRAP(val, 1, 4, 1)
       break;
 
+    case SETUP_OPTION_LAST_SCORE_HOLD:
+      INC_AND_WRAP(val, 10, 90, 10)
+      break;
+
     default:
       return ++val;
   }
@@ -145,6 +149,10 @@ int DecConfigVal(int val) {
 
     case SETUP_OPTION_SOUND_SET:
       DEC_AND_WRAP(val, 1, 4, 1)
+      break;
+
+    case SETUP_OPTION_LAST_SCORE_HOLD:
+      DEC_AND_WRAP(val, 10, 90, 10)
       break;
 
     default:
