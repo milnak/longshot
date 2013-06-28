@@ -110,14 +110,13 @@ void UpdateLongshot() {
           return;
     }
 
-    {
-      struct timeval cur_time;
-      gettimeofday(&cur_time,NULL);
+    struct timeval cur_time;
+    gettimeofday(&cur_time,NULL);
 
-      if ((cur_time.tv_sec - gEndGameTime.tv_sec) > (60 * gOptionValues[SETUP_OPTION_ATTRACT_MODE_TIME_MINS])) {
-        PlaySound(SFX_ATTRACT_SONG);
-        gettimeofday(&gIdleAttractTime,NULL);
-      }
+    if ((cur_time.tv_sec - gEndGameTime.tv_sec) > (60 * gOptionValues[SETUP_OPTION_ATTRACT_MODE_TIME_MINS])) {
+      PlaySound(SFX_ATTRACT_SONG);
+      gettimeofday(&gIdleAttractTime,NULL);
+    }
 
   } else if (gGameState == GAMESTATE_ENDGAME) {
 
