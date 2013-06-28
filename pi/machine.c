@@ -11,24 +11,27 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_audio.h>
 
+// The machine side has these operating modes
 enum {
   LOGICSTATE_SETUP = 1,
   LOGICSTATE_GAME
 };
 
+// The setup mode has these operating modes
 enum {
   SETUP_MODE_MENUSELECT,
   SETUP_MODE_VALUESELECT,
   SETUP_MODE_MAX
 };
 
+// this is used for printing debug stuff 
 int gDebug = 0;
 
 int gOptionValues[SETUP_OPTION_MAX] = {
   1,    // SETUP_OPTION_COINCOUNT,
-  0,    // SETUP_OPTION_TICKETTABLE,
+  9,    // SETUP_OPTION_TICKETTABLE,
   0,    // SETUP_OPTION_FREEGAME,
-  900, // SETUP_OPTION_FREEGAME_SCORE,
+  900,  // SETUP_OPTION_FREEGAME_SCORE,
   9,    // SETUP_OPTION_BALLCOUNT,
   5,    // SETUP_OPTION_VOLUME,
   1,    // SETUP_OPTION_SOUND_SET,
@@ -36,10 +39,12 @@ int gOptionValues[SETUP_OPTION_MAX] = {
   0,    // SETUP_OPTION_SAVED4,
 };
 
+// Initial states
 int gLogicState = LOGICSTATE_GAME;
 int gSetupMode = SETUP_MODE_MENUSELECT;
 int gSetupMenu = 0;
 
+// Our state and data that gets passed to and from the machine
 int gMachineCommPort = -1;
 struct MachineOutState gMachineOut, gMachineOutPrev;
 struct MachineInState gMachineIn, gMachineInPrev;
@@ -61,37 +66,47 @@ SDL_AudioCVT preloadedSounds[NUM_PRELOADED_SOUNDS];
 int gNumLoadedSounds = 0;
 
 ///////////////////////////////////////////////
+
+// increment the value and roll over to the low value
+#define INC_AND_WRAP(val, inc, top, bottom) \
+  val += inc; \
+  return val > top ? bottom : val;
+
+// decrement the value and wrap to the top value
+#define DEC_AND_WRAP(val, inc, top, bottom) \
+  val -= inc; \
+  return val < bottom ? top : val;
+
 int IncConfigVal(int val) {
   
   switch (gSetupMenu) 
   {
     case SETUP_OPTION_COINCOUNT:
-      return ++val > 10 ? 0 : val;
+      INC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_TICKETTABLE:
-      return ++val > 10 ? 10 : val;
+      INC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_FREEGAME:
-      return ++val > 1 ? 0 : val;
+      INC_AND_WRAP(val, 1, 1, 0)
       break;
 
     case SETUP_OPTION_FREEGAME_SCORE:
-      val += 10;
-      return val > 900 ? 1 : val;
+      INC_AND_WRAP(val, 10, 900, 1)
       break;
 
     case SETUP_OPTION_BALLCOUNT:
-      return ++val > 10 ? 1 : val;
+      INC_AND_WRAP(val, 1, 10, 1)
       break;
 
     case SETUP_OPTION_VOLUME:
-      return ++val >= 10 ? 0 : val;
+      INC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_SOUND_SET:
-      return ++val > 4 ? 1 : val;
+      INC_AND_WRAP(val, 1, 4, 1)
       break;
 
     default:
@@ -105,40 +120,37 @@ int DecConfigVal(int val) {
   switch (gSetupMenu) 
   {
     case SETUP_OPTION_COINCOUNT:
-      return --val < 0 ? 10 : val;
+      DEC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_TICKETTABLE:
-      return --val < 0 ? 10 : val;
+      DEC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_FREEGAME:
-      return --val < 0 ? 1 : val;
+      DEC_AND_WRAP(val, 1, 1, 0)
       break;
 
     case SETUP_OPTION_FREEGAME_SCORE:
-      val -= 10;
-      return val < 1 ? 900 : val;
+      DEC_AND_WRAP(val, 10, 900, 1)
       break;
 
     case SETUP_OPTION_BALLCOUNT:
-      return --val < 1 ? 10 : val;
+      DEC_AND_WRAP(val, 1, 10, 1)
       break;
 
     case SETUP_OPTION_VOLUME:
-      return --val < -1 ? 10 : val;
+      DEC_AND_WRAP(val, 1, 10, 0)
       break;
 
     case SETUP_OPTION_SOUND_SET:
-      return --val < 1 ? 4 : val;
+      DEC_AND_WRAP(val, 1, 4, 1)
       break;
 
     default:
-      return --val;
+      return ++val;
   }
 }
-
-
 
 ///////////////////////////////////////////////
 void SaveConfig() {
@@ -155,7 +167,6 @@ void SaveConfig() {
 
 ///////////////////////////////////////////////
 void LoadConfig() {
-
   char filePath[1024];
   sprintf(filePath, "%s/options.dbm", get_current_dir_name());
 
@@ -174,15 +185,20 @@ void LoadConfig() {
 ///////////////////////////////////////////////
 int InitSerial() {
 
-  if (gMachineCommPort >= 0)
+  // if we have had a port from before, clean it up
+  if (gMachineCommPort >= 0) {
+    serialFlush(gMachineCommPort);
     serialClose(gMachineCommPort);
+  }
 
-    // open our USB connection
+  // open our USB connection
   if ((gMachineCommPort = serialOpen("/dev/ttyUSB0", 57600)) < 0)
   {
     printf("Unable to open serial device: %s\n", strerror (errno));
     return 1 ;
   }
+
+  if (gDebug) printf("---[ SERIAL SUCCESS ]---\n");
 
   // see if wiringPi is DTF
   if (wiringPiSetup() == -1)
@@ -207,10 +223,9 @@ int InitMachine() {
     return 1;
   }
 
+  // Set up our Audio device for SFX
   extern void _MixAudio(void *unused, Uint8 *stream, int len);
   SDL_AudioSpec fmt;
-
-  /* Set 16-bit mono audio at 22Khz */
   fmt.freq = kAUDIO_FREQ;
   fmt.format = kAUDIO_FMT;
   fmt.channels = kAUDIO_CHANNELS;
@@ -218,7 +233,6 @@ int InitMachine() {
   fmt.callback = _MixAudio;
   fmt.userdata = NULL;
 
-  /* Open the audio device and start playing sound! */
   if ( SDL_OpenAudio(&fmt, NULL) < 0 ) {
     fprintf(stderr, "Unable to open SDL audio: %sn", SDL_GetError());
     return 1;
@@ -256,46 +270,43 @@ void ResetMachine() {
 ///////////////////////////////////////////////
 int ExitMachine() {
   FreeSoundSlots();
-
   SDL_CloseAudio();
   SDL_Quit();
 }
 
 ///////////////////////////////////////////////
-int readInt() {
+int _readInt(int* value) {
   int i = 0;
-  int value = 0;
   for (i = 0; i < sizeof(int); i++)
   {
      int c = serialGetchar(gMachineCommPort);
      
-     if (c < 0) {
-        if (gDebug) printf("### SERIAL ERROR ### Resetting Everything...\n");
-        ResetMachine();
-        return RESET_VAL;
-     }
+     // if (c < 0) {
+     //    if (gDebug) printf("### SERIAL ERROR ###\n");
+     //    return -1;
+     // }
 
      unsigned int lastByte = (unsigned int)c;
-     value |= lastByte << (24 - (8 * i));
+     *value |= lastByte << (24 - (8 * i));
   }
-  return value;
+  return 0;
 }
 
 ///////////////////////////////////////////////
-void writeByte(unsigned char b) {
+void _writeByte(unsigned char b) {
   serialPutchar(gMachineCommPort, b);
 }
 
 ///////////////////////////////////////////////
-void writeInt(unsigned int value) {
-  writeByte( (value >> 24) & 0xff );
-  writeByte( (value >> 16) & 0xff );
-  writeByte( (value >> 8) & 0xff );
-  writeByte( (value & 0xff) );
+void _writeInt(unsigned int value) {
+  _writeByte( (value >> 24) & 0xff );
+  _writeByte( (value >> 16) & 0xff );
+  _writeByte( (value >> 8) & 0xff );
+  _writeByte( (value & 0xff) );
 }
 
 ///////////////////////////////////////////////
-void writeBytes(unsigned char* ptr, unsigned int length) {
+void _writeBytes(unsigned char* ptr, unsigned int length) {
     int i = 0;
     for (i = 0; i < length; i++, ptr++)
       serialPutchar(gMachineCommPort, *ptr);
@@ -308,28 +319,37 @@ int UpdateMachine() {
     gMachineOutPrev = gMachineOut;
     gMachineInPrev = gMachineIn; 
 
-    writeInt(gMachineOut.score);
-    writeInt(gMachineOut.switches);
-    writeInt(gMachineOut.dispense);
-    writeInt(gMachineOut.ballCount);
+    // write out... this should trigger a response from 
+    // the Ardunino side.
+    _writeInt(gMachineOut.score);
+    _writeInt(gMachineOut.switches);
+    _writeInt(gMachineOut.dispense);
+    _writeInt(gMachineOut.ballCount);
     
-    int command = readInt(gMachineCommPort);
-    gMachineIn.ticketsDispensed = readInt(gMachineCommPort);
-    gMachineIn.scoreClicks = readInt(gMachineCommPort);
-    gMachineIn.hundredClicks = readInt(gMachineCommPort);
-    gMachineIn.ballClicks = readInt(gMachineCommPort);
-    gMachineIn.coinClicks = readInt(gMachineCommPort);
-    gMachineIn.upClicks = readInt(gMachineCommPort);
-    gMachineIn.downClicks = readInt(gMachineCommPort);
-    gMachineIn.selectClicks = readInt(gMachineCommPort);
-    gMachineIn.setupClicks = readInt(gMachineCommPort);
+    int command = 0;
 
-    if (gDebug) printf("Command: %d\n", command);
+    // read in from the Arduino side
+    if (((_readInt(&command) < 0) 
+      && (_readInt(&gMachineIn.ticketsDispensed) < 0)
+      && (_readInt(&gMachineIn.scoreClicks) < 0)
+      && (_readInt(&gMachineIn.hundredClicks) < 0) 
+      && (_readInt(&gMachineIn.ballClicks) < 0)
+      && (_readInt(&gMachineIn.coinClicks) < 0)
+      && (_readInt(&gMachineIn.upClicks) < 0)
+      && (_readInt(&gMachineIn.downClicks) < 0)
+      && (_readInt(&gMachineIn.selectClicks) < 0)
+      && (_readInt(&gMachineIn.setupClicks) < 0))) 
+    {
+      // if at any point we detect a serial problem, we fire off a reset
+      command = RESET_VAL;
+    }
 
-    // Setup Mode
+    // Setup Mode: Configure the game
     if (gLogicState == LOGICSTATE_SETUP) {
-      // Select a menu/config option
+
+      // Menu Select Mode: select a menu/config option based on clicks
       if (gSetupMode == SETUP_MODE_MENUSELECT) {
+        
         if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
           if (++gSetupMenu >= SETUP_OPTION_MAX) gSetupMenu = 0;
         }
@@ -341,7 +361,7 @@ int UpdateMachine() {
         if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0)
           gSetupMode = SETUP_MODE_VALUESELECT;
       }
-      // Select a value for an option
+      // Value Select Mode: select a value for an option based on clicks
       else if (gSetupMode == SETUP_MODE_VALUESELECT) {
         if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
           gOptionValues[gSetupMenu] = IncConfigVal(gOptionValues[gSetupMenu]);
@@ -351,14 +371,13 @@ int UpdateMachine() {
           gOptionValues[gSetupMenu] = DecConfigVal(gOptionValues[gSetupMenu]);
         }
 
-        //gOptionValues[gSetupMenu] = ValidateConfigVal(gOptionValues[gSetupMenu]);
-
         if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0) {
           gSetupMode = SETUP_MODE_MENUSELECT;
           SaveConfig();
         }
       }
 
+      // Always update these while in Setup Mode
       gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
       gMachineOut.ballCount = gSetupMenu;
       gMachineOut.score = gOptionValues[gSetupMenu];
@@ -370,6 +389,8 @@ int UpdateMachine() {
         if (gDebug) printf("*** GAME MODE ***\n");
         SaveConfig();
       }
+
+    // Regular Game Mode: Do nothing unless the setup button is pressed
     } else {
 
        // enter Setup mode
@@ -380,12 +401,10 @@ int UpdateMachine() {
        }
     
     }
-    
-    serialFlush(gMachineCommPort);
-    delay(300);
+
+    // Report back to the main loop
     return command;
 }
-
 
 ///////////////////////////////////////////////
 void FreeSoundSlots() {
@@ -489,17 +508,18 @@ void _MixAudio(void *unused, Uint8 *stream, int len)
   }
 }
 
-
-
 ///////////////////////////////////////////////
 void DumpMachineOutState() {
     if (gDebug) {
       if (gMachineOutPrev.score != gMachineOut.score) 
         printf("CHANGED: Score: %d\n", gMachineOut.score);
+
       if (gMachineOutPrev.switches != gMachineOut.switches) 
         printf("CHANGED: Switches: %d\n", gMachineOut.switches);
+
       if (gMachineOutPrev.dispense != gMachineOut.dispense) 
         printf("CHANGED: Dispense: %d\n", gMachineOut.dispense);
+
       if (gMachineOutPrev.ballCount != gMachineOut.ballCount) 
         printf("CHANGED: Ball Count: %d\n", gMachineOut.ballCount);
     }
