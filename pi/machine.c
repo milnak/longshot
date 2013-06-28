@@ -35,8 +35,8 @@ int gOptionValues[SETUP_OPTION_MAX] = {
   9,    // SETUP_OPTION_BALLCOUNT,
   5,    // SETUP_OPTION_VOLUME,
   1,    // SETUP_OPTION_SOUND_SET,
-  0,    // SETUP_OPTION_SAVED3,
-  0,    // SETUP_OPTION_SAVED4,
+  0,    // SETUP_OPTION_LAST_SCORE_HOLD_SECS,
+  3,    // SETUP_OPTION_ATTRACT_MODE_TIME_MINS,
 };
 
 // Initial states
@@ -109,8 +109,12 @@ int IncConfigVal(int val) {
       INC_AND_WRAP(val, 1, 4, 1)
       break;
 
-    case SETUP_OPTION_LAST_SCORE_HOLD:
+    case SETUP_OPTION_LAST_SCORE_HOLD_SECS:
       INC_AND_WRAP(val, 10, 90, 10)
+      break;
+
+    case SETUP_OPTION_ATTRACT_MODE_TIME_MINS:
+      INC_AND_WRAP(val, 1, 10, 1)
       break;
 
     default:
@@ -151,8 +155,12 @@ int DecConfigVal(int val) {
       DEC_AND_WRAP(val, 1, 4, 1)
       break;
 
-    case SETUP_OPTION_LAST_SCORE_HOLD:
+    case SETUP_OPTION_LAST_SCORE_HOLD_SECS:
       DEC_AND_WRAP(val, 10, 90, 10)
+      break;
+
+    case SETUP_OPTION_ATTRACT_MODE_TIME_MINS:
+      DEC_AND_WRAP(val, 1, 10, 1)
       break;
 
     default:

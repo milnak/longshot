@@ -44,6 +44,7 @@ int gScoreAccumulator = 0;
 int gSoundsLoaded = 0;
 int gHoldScoreTimer = 0;
 struct timeval gEndGameTime;
+struct timeval gIdleAttractTime;
 
 void StartNewGame() {
     gGameState = GAMESTATE_GAME;
@@ -60,6 +61,7 @@ void GoIdle() {
   gMachineOut.score = 0;
   gMachineOut.ballCount = 0;
   gTicketsDispensed = 0;
+  gettimeofday(&gIdleAttractTime,NULL);
 }
 
 void EndGame() {
@@ -108,6 +110,15 @@ void UpdateLongshot() {
           return;
     }
 
+    {
+      struct timeval cur_time;
+      gettimeofday(&cur_time,NULL);
+
+      if ((cur_time.tv_sec - gEndGameTime.tv_sec) > (60 * gOptionValues[SETUP_OPTION_ATTRACT_MODE_TIME_MINS])) {
+        PlaySound(SFX_ATTRACT_SONG);
+        gettimeofday(&gIdleAttractTime,NULL);
+      }
+
   } else if (gGameState == GAMESTATE_ENDGAME) {
 
     //if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) 
@@ -118,7 +129,7 @@ void UpdateLongshot() {
       struct timeval cur_time;
       gettimeofday(&cur_time,NULL);
 
-      if ((cur_time.tv_sec - gEndGameTime.tv_sec) > gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD]) {
+      if ((cur_time.tv_sec - gEndGameTime.tv_sec) > gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS]) {
            GoIdle();
            return;
       }
