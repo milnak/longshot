@@ -213,6 +213,8 @@ int InitSerial() {
 ///////////////////////////////////////////////
 int InitMachine() {
 
+  InitSerial();
+
   LoadConfig();
   int index = 0;
 
@@ -248,7 +250,7 @@ int InitMachine() {
 
 ///////////////////////////////////////////////
 void ResetMachine() {
-  if (InitSerial() == 0) {
+  {
     gLogicState = LOGICSTATE_GAME;
     gSetupMode = SETUP_MODE_MENUSELECT;
     gSetupMenu = 0;
@@ -275,21 +277,17 @@ int ExitMachine() {
 }
 
 ///////////////////////////////////////////////
-int _readInt(int* value) {
+int _readInt() {
   int i = 0;
+  int value = 0;
+
   for (i = 0; i < sizeof(int); i++)
   {
      int c = serialGetchar(gMachineCommPort);
-     
-     // if (c < 0) {
-     //    if (gDebug) printf("### SERIAL ERROR ###\n");
-     //    return -1;
-     // }
-
      unsigned int lastByte = (unsigned int)c;
-     *value |= lastByte << (24 - (8 * i));
+     value |= lastByte << (24 - (8 * i));
   }
-  return 0;
+  return value;
 }
 
 ///////////////////////////////////////////////
@@ -329,20 +327,16 @@ int UpdateMachine() {
     int command = 0;
 
     // read in from the Arduino side
-    if (((_readInt(&command) < 0) 
-      && (_readInt(&gMachineIn.ticketsDispensed) < 0)
-      && (_readInt(&gMachineIn.scoreClicks) < 0)
-      && (_readInt(&gMachineIn.hundredClicks) < 0) 
-      && (_readInt(&gMachineIn.ballClicks) < 0)
-      && (_readInt(&gMachineIn.coinClicks) < 0)
-      && (_readInt(&gMachineIn.upClicks) < 0)
-      && (_readInt(&gMachineIn.downClicks) < 0)
-      && (_readInt(&gMachineIn.selectClicks) < 0)
-      && (_readInt(&gMachineIn.setupClicks) < 0))) 
-    {
-      // if at any point we detect a serial problem, we fire off a reset
-      command = RESET_VAL;
-    }
+    command = _readInt();
+    gMachineIn.ticketsDispensed = _readInt();
+    gMachineIn.scoreClicks = _readInt();
+    gMachineIn.hundredClicks = _readInt();
+    gMachineIn.ballClicks = _readInt();
+    gMachineIn.coinClicks = _readInt();
+    gMachineIn.upClicks = _readInt();
+    gMachineIn.downClicks =  _readInt();
+    gMachineIn.selectClicks = _readInt();
+    gMachineIn.setupClicks =  _readInt();
 
     // Setup Mode: Configure the game
     if (gLogicState == LOGICSTATE_SETUP) {
