@@ -5,7 +5,6 @@ void integerToBytes(long val, byte b[4]) {
  b[3] = (byte )(val & 0xff);
 }
 
-
 void sendGameState(){
   int b[10] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
                   ballCountDebounce.getClicks(),coinDebounce.getClicks(),

@@ -32,7 +32,6 @@
 ////////////////////////////////////////////////////////////
 
 boolean gameState=false;
-boolean gameStateChange=false;
 byte state[16];
 int score = 0;
 int ballCount = 0;
@@ -86,8 +85,6 @@ Bounce downDebounce = Bounce(downButton,20);
 
 void setup(){
   Serial.begin(57600);
-  //Serial.flush();
- // Serial.println("Hi!");
   idle.enable();
   solenoidTimer.disable();
   pinMode(gameOverLight, OUTPUT);
@@ -131,9 +128,10 @@ void loop(){
   poll_inputs(); //get switch states
   updateGame(); //pull the state from Pi, push switches to pi, parse out state
   
- if ((dispense - ticketsDispensed)>0){
+ /*if ((dispense - ticketsDispensed)>0){ //temperoarily disable tickets for sanity of coworkers
    dispense_tickets();
   }
+   */
    
  if(gameState==true){
         idle.disable();
