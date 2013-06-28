@@ -287,7 +287,7 @@ int _readInt() {
      unsigned int lastByte = (unsigned int)c;
      value |= lastByte << (24 - (8 * i));
   }
-  return int;
+  return value;
 }
 
 ///////////////////////////////////////////////
