@@ -1,7 +1,7 @@
 #include "machine.h"
 #include "longshot.h"
 #include <stdio.h>
-#include <time.h>
+#include <sys/time.h>
 
 enum {
   GAMESTATE_IDLE,
@@ -52,7 +52,6 @@ void StartNewGame() {
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
     gScoreAccumulator = 0;
-    gEndGameTime = 0;
 }
 
 void GoIdle() {
