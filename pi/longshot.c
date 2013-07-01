@@ -38,7 +38,6 @@ int gTickMatrix[10][9] = {
   { 0,0,0,0,0,0,0,0,0           }
 };
 
-int gTicketsDispensed = 0;
 int gGameState = GAMESTATE_IDLE;
 int gScoreAccumulator = 0;
 int gSoundsLoaded = 0;
@@ -48,8 +47,9 @@ struct timeval gIdleAttractTime;
 
 void StartNewGame() {
     gGameState = GAMESTATE_GAME;
-    gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
-    gMachineOut.switches |=  (1 << SWITCH_SOLENOID);
+    SwitchOff(SWITCH_IDLELIGHT);
+    SwitchOff(SWITCH_GAMEOVERLIGHT);
+    SwitchOn(SWITCH_SOLENOID);
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
     gScoreAccumulator = 0;
@@ -57,16 +57,17 @@ void StartNewGame() {
 
 void GoIdle() {
   gGameState = GAMESTATE_IDLE;
-  gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
+  SwitchOn(SWITCH_IDLELIGHT);
+  SwitchOff(SWITCH_GAMEOVERLIGHT);
+
   gMachineOut.score = 0;
   gMachineOut.ballCount = 0;
-  gTicketsDispensed = 0;
   gettimeofday(&gIdleAttractTime,NULL);
 }
 
 void EndGame() {
+    SwitchOn(SWITCH_GAMEOVERLIGHT);
     gGameState = GAMESTATE_ENDGAME;
-    gTicketsDispensed = 0;
     gettimeofday(&gEndGameTime,NULL);    
 }
 
@@ -105,6 +106,9 @@ void UpdateLongshot() {
 
   if (gGameState == GAMESTATE_IDLE) {
 
+    if (gMachineIn.coinClicks > gMachineInPrev.coinClicks)
+      SwitchOn(SWITCH_COINMETER);
+
     if (gMachineIn.coinClicks >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
           StartNewGame();
           return;
@@ -120,8 +124,10 @@ void UpdateLongshot() {
 
   } else if (gGameState == GAMESTATE_ENDGAME) {
 
-    //if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) 
+    //if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
+    //  SwitchOn(SWITCH_FREEGAMELIGHT);
     //  StartNewGame();
+    //}
 
     //if (gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD] > 0)
     {
@@ -136,9 +142,7 @@ void UpdateLongshot() {
 
   } else if (gGameState == GAMESTATE_GAME) {
 
-    // clear the ball solenoid
-    if (gMachineOut.switches & (1 << SWITCH_SOLENOID))
-      gMachineOut.switches &= ~(1 << SWITCH_SOLENOID);
+    SwitchOff(SWITCH_SOLENOID);
 
     // score up
     if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
@@ -187,15 +191,17 @@ void UpdateLongshot() {
 
         if (tableIndex < 9) {
             ticketsEarned = gTickMatrix[gOptionValues[SETUP_OPTION_TICKETTABLE]][tableIndex];
-            if (ticketsEarned > gTicketsDispensed) {
-                int diff = ticketsEarned - gTicketsDispensed;
+            if (ticketsEarned > gMachineIn.ticketsDispensed) {
+                int diff = ticketsEarned - gMachineIn.ticketsDispensed;
                 
-                if (diff > 0 && gTicketsDispensed == 0) {
+                if (diff > 0 && gMachineIn.ticketsDispensed == 0) {
+
+                  SwitchOn( diff == 1 ? SWITCH_WINNERLIGHT : SWITCH_BEACONLIGHT);
                   //PlaySound(SFX_WINNER_SONG);
                 }
 
                 gMachineOut.dispense = diff;
-                gTicketsDispensed += diff;
+            } else {
             }
         }
     }

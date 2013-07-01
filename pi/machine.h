@@ -75,3 +75,7 @@ void ResetMachine();
 void PreloadSound(const char* wavFilePath, int slot);
 void PlaySound(int sound);
 void FreeSoundSlots();
+
+// Lights
+void SwitchOn(int light);
+void SwitchOff(int light);

@@ -519,6 +519,15 @@ void _MixAudio(void *unused, Uint8 *stream, int len)
 }
 
 ///////////////////////////////////////////////
+void SwitchOn(int light) {
+  gMachineOut.switches |=  (1 << light);
+}
+
+void SwitchOff(int light) {
+  gMachineOut.switches &= ~(1 << light);
+}
+
+///////////////////////////////////////////////
 void DumpMachineOutState() {
     if (gDebug) {
       if (gMachineOutPrev.score != gMachineOut.score) 
