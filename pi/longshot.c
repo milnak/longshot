@@ -60,6 +60,10 @@ void GoIdle() {
   SwitchOn(SWITCH_IDLELIGHT);
   SwitchOff(SWITCH_GAMEOVERLIGHT);
 
+  SwitchOff(SWITCH_WINNERLIGHT);
+  SwitchOff(SWITCH_BEACONLIGHT);
+  SwitchOff(SWITCH_FREEGAMELIGHT);
+
   gMachineOut.score = 0;
   gMachineOut.ballCount = 0;
   gettimeofday(&gIdleAttractTime,NULL);
@@ -128,6 +132,11 @@ void UpdateLongshot() {
     //  SwitchOn(SWITCH_FREEGAMELIGHT);
     //  StartNewGame();
     //}
+
+    if (gMachineIn.coinClicks > gMachineInPrev.coinClicks) {
+      StartNewGame();
+      return;
+    }
 
     //if (gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD] > 0)
     {
