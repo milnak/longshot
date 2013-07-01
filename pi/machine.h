@@ -38,9 +38,8 @@ enum {
   SETUP_OPTION_BALLCOUNT,
   SETUP_OPTION_VOLUME,
   SETUP_OPTION_SOUND_SET,
-  
-  SETUP_OPTION_SAVED3,
-  SETUP_OPTION_SAVED4,
+  SETUP_OPTION_LAST_SCORE_HOLD_SECS,
+  SETUP_OPTION_ATTRACT_MODE_TIME_MINS,
   SETUP_OPTION_MAX
 };
 
@@ -76,3 +75,7 @@ void ResetMachine();
 void PreloadSound(const char* wavFilePath, int slot);
 void PlaySound(int sound);
 void FreeSoundSlots();
+
+// Lights
+void SwitchOn(int light);
+void SwitchOff(int light);

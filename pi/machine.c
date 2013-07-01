@@ -35,8 +35,8 @@ int gOptionValues[SETUP_OPTION_MAX] = {
   9,    // SETUP_OPTION_BALLCOUNT,
   5,    // SETUP_OPTION_VOLUME,
   1,    // SETUP_OPTION_SOUND_SET,
-  0,    // SETUP_OPTION_SAVED3,
-  0,    // SETUP_OPTION_SAVED4,
+  0,    // SETUP_OPTION_LAST_SCORE_HOLD_SECS,
+  3,    // SETUP_OPTION_ATTRACT_MODE_TIME_MINS,
 };
 
 // Initial states
@@ -109,6 +109,14 @@ int IncConfigVal(int val) {
       INC_AND_WRAP(val, 1, 4, 1)
       break;
 
+    case SETUP_OPTION_LAST_SCORE_HOLD_SECS:
+      INC_AND_WRAP(val, 10, 90, 10)
+      break;
+
+    case SETUP_OPTION_ATTRACT_MODE_TIME_MINS:
+      INC_AND_WRAP(val, 1, 10, 1)
+      break;
+
     default:
       return ++val;
   }
@@ -145,6 +153,14 @@ int DecConfigVal(int val) {
 
     case SETUP_OPTION_SOUND_SET:
       DEC_AND_WRAP(val, 1, 4, 1)
+      break;
+
+    case SETUP_OPTION_LAST_SCORE_HOLD_SECS:
+      DEC_AND_WRAP(val, 10, 90, 10)
+      break;
+
+    case SETUP_OPTION_ATTRACT_MODE_TIME_MINS:
+      DEC_AND_WRAP(val, 1, 10, 1)
       break;
 
     default:
@@ -277,17 +293,23 @@ int ExitMachine() {
 }
 
 ///////////////////////////////////////////////
-int _readInt() {
+int _readInt(int* outVal) {
   int i = 0;
   int value = 0;
 
   for (i = 0; i < sizeof(int); i++)
   {
      int c = serialGetchar(gMachineCommPort);
+     if (c < 0) {
+        if (gDebug) printf("### SERIAL ERROR ###\n");
+        return 0;
+     }
+
      unsigned int lastByte = (unsigned int)c;
      value |= lastByte << (24 - (8 * i));
   }
-  return value;
+  *outVal = value;
+  return 1;
 }
 
 ///////////////////////////////////////////////
@@ -327,73 +349,77 @@ int UpdateMachine() {
     int command = 0;
 
     // read in from the Arduino side
-    command = _readInt();
-    gMachineIn.ticketsDispensed = _readInt();
-    gMachineIn.scoreClicks = _readInt();
-    gMachineIn.hundredClicks = _readInt();
-    gMachineIn.ballClicks = _readInt();
-    gMachineIn.coinClicks = _readInt();
-    gMachineIn.upClicks = _readInt();
-    gMachineIn.downClicks =  _readInt();
-    gMachineIn.selectClicks = _readInt();
-    gMachineIn.setupClicks =  _readInt();
-
-    // Setup Mode: Configure the game
-    if (gLogicState == LOGICSTATE_SETUP) {
-
-      // Menu Select Mode: select a menu/config option based on clicks
-      if (gSetupMode == SETUP_MODE_MENUSELECT) {
-        
-        if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
-          if (++gSetupMenu >= SETUP_OPTION_MAX) gSetupMenu = 0;
-        }
-
-        if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0){
-          if (--gSetupMenu < 0) gSetupMenu = SETUP_OPTION_MAX - 1;
-        }
-
-        if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0)
-          gSetupMode = SETUP_MODE_VALUESELECT;
-      }
-      // Value Select Mode: select a value for an option based on clicks
-      else if (gSetupMode == SETUP_MODE_VALUESELECT) {
-        if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
-          gOptionValues[gSetupMenu] = IncConfigVal(gOptionValues[gSetupMenu]);
-        }
-
-        if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0) {
-          gOptionValues[gSetupMenu] = DecConfigVal(gOptionValues[gSetupMenu]);
-        }
-
-        if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0) {
-          gSetupMode = SETUP_MODE_MENUSELECT;
-          SaveConfig();
-        }
-      }
-
-      // Always update these while in Setup Mode
-      gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
-      gMachineOut.ballCount = gSetupMenu;
-      gMachineOut.score = gOptionValues[gSetupMenu];
-
-      // exit setup mode if necessary
-      if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
-        gLogicState = LOGICSTATE_GAME;
-        gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
-        if (gDebug) printf("*** GAME MODE ***\n");
-        SaveConfig();
-      }
-
-    // Regular Game Mode: Do nothing unless the setup button is pressed
+    if (!( _readInt(&command)
+        && _readInt(&gMachineIn.ticketsDispensed)
+        && _readInt(&gMachineIn.scoreClicks)
+        && _readInt(&gMachineIn.hundredClicks)
+        && _readInt(&gMachineIn.ballClicks)
+        && _readInt(&gMachineIn.coinClicks)
+        && _readInt(&gMachineIn.upClicks)
+        && _readInt(&gMachineIn.downClicks)
+        && _readInt(&gMachineIn.selectClicks)
+        && _readInt(&gMachineIn.setupClicks) )) 
+    {
+      command = RESET_VAL;
     } else {
 
-       // enter Setup mode
-       if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
-          gLogicState = LOGICSTATE_SETUP;
-          if (gDebug) printf("*** SETUP MODE ***\n");
-          LoadConfig();
-       }
-    
+      // Setup Mode: Configure the game
+      if (gLogicState == LOGICSTATE_SETUP) {
+
+        // Menu Select Mode: select a menu/config option based on clicks
+        if (gSetupMode == SETUP_MODE_MENUSELECT) {
+          
+          if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
+            if (++gSetupMenu >= SETUP_OPTION_MAX) gSetupMenu = 0;
+          }
+
+          if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0){
+            if (--gSetupMenu < 0) gSetupMenu = SETUP_OPTION_MAX - 1;
+          }
+
+          if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0)
+            gSetupMode = SETUP_MODE_VALUESELECT;
+        }
+        // Value Select Mode: select a value for an option based on clicks
+        else if (gSetupMode == SETUP_MODE_VALUESELECT) {
+          if ((gMachineIn.upClicks - gMachineInPrev.upClicks) > 0) {
+            gOptionValues[gSetupMenu] = IncConfigVal(gOptionValues[gSetupMenu]);
+          }
+
+          if ((gMachineIn.downClicks - gMachineInPrev.downClicks) > 0) {
+            gOptionValues[gSetupMenu] = DecConfigVal(gOptionValues[gSetupMenu]);
+          }
+
+          if ((gMachineIn.selectClicks - gMachineInPrev.selectClicks) > 0) {
+            gSetupMode = SETUP_MODE_MENUSELECT;
+            SaveConfig();
+          }
+        }
+
+        // Always update these while in Setup Mode
+        gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
+        gMachineOut.ballCount = gSetupMenu;
+        gMachineOut.score = gOptionValues[gSetupMenu];
+
+        // exit setup mode if necessary
+        if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
+          gLogicState = LOGICSTATE_GAME;
+          gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
+          if (gDebug) printf("*** GAME MODE ***\n");
+          SaveConfig();
+        }
+
+      // Regular Game Mode: Do nothing unless the setup button is pressed
+      } else {
+
+         // enter Setup mode
+         if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
+            gLogicState = LOGICSTATE_SETUP;
+            if (gDebug) printf("*** SETUP MODE ***\n");
+            LoadConfig();
+         }
+      
+      }
     }
 
     // Report back to the main loop
@@ -500,6 +526,15 @@ void _MixAudio(void *unused, Uint8 *stream, int len)
     SDL_MixAudio(stream, &activeSounds[i].data[activeSounds[i].dpos], amount, (int)(volScale * 128.0f) );
     activeSounds[i].dpos += amount;
   }
+}
+
+///////////////////////////////////////////////
+void SwitchOn(int light) {
+  gMachineOut.switches |=  (1 << light);
+}
+
+void SwitchOff(int light) {
+  gMachineOut.switches &= ~(1 << light);
 }
 
 ///////////////////////////////////////////////

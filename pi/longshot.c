@@ -1,10 +1,12 @@
 #include "machine.h"
 #include "longshot.h"
 #include <stdio.h>
+#include <sys/time.h>
 
 enum {
   GAMESTATE_IDLE,
-  GAMESTATE_GAME
+  GAMESTATE_GAME,
+  GAMESTATE_ENDGAME
 };
 
 enum {
@@ -36,33 +38,37 @@ int gTickMatrix[10][9] = {
   { 0,0,0,0,0,0,0,0,0           }
 };
 
-int gTicketsDispensed = 0;
 int gGameState = GAMESTATE_IDLE;
 int gScoreAccumulator = 0;
 int gSoundsLoaded = 0;
-
+int gHoldScoreTimer = 0;
+struct timeval gEndGameTime;
+struct timeval gIdleAttractTime;
 
 void StartNewGame() {
     gGameState = GAMESTATE_GAME;
-    gMachineOut.switches &= ~(1 << SWITCH_IDLELIGHT);
-    gMachineOut.switches |=  (1 << SWITCH_SOLENOID);
+    SwitchOff(SWITCH_IDLELIGHT);
+    SwitchOff(SWITCH_GAMEOVERLIGHT);
+    SwitchOn(SWITCH_SOLENOID);
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
     gScoreAccumulator = 0;
 }
 
+void GoIdle() {
+  gGameState = GAMESTATE_IDLE;
+  SwitchOn(SWITCH_IDLELIGHT);
+  SwitchOff(SWITCH_GAMEOVERLIGHT);
+
+  gMachineOut.score = 0;
+  gMachineOut.ballCount = 0;
+  gettimeofday(&gIdleAttractTime,NULL);
+}
+
 void EndGame() {
-
-    int score = gMachineOut.score;
-
-    gGameState = GAMESTATE_IDLE;
-    gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
-    gMachineOut.score = 0;
-    gMachineOut.ballCount = 0;
-    gTicketsDispensed = 0;
-
-    if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) 
-      StartNewGame();
+    SwitchOn(SWITCH_GAMEOVERLIGHT);
+    gGameState = GAMESTATE_ENDGAME;
+    gettimeofday(&gEndGameTime,NULL);    
 }
 
 #define PRELOAD_SOUND(id, f) \
@@ -93,30 +99,59 @@ void InitLongshot() {
   if (gSoundsLoaded == 0)
     LoadSounds();
   
-  EndGame();
+  GoIdle();
 }
 
 void UpdateLongshot() {
+
+  if (gGameState == GAMESTATE_IDLE) {
+
+    if (gMachineIn.coinClicks > gMachineInPrev.coinClicks)
+      SwitchOn(SWITCH_COINMETER);
 
     if (gMachineIn.coinClicks >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
           StartNewGame();
           return;
     }
 
-    // clear the ball solenoid
-    if (gMachineOut.switches & (1 << SWITCH_SOLENOID))
-      gMachineOut.switches &= ~(1 << SWITCH_SOLENOID);
+    struct timeval cur_time;
+    gettimeofday(&cur_time,NULL);
 
-    // score up
-    if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks) {
-        gScoreAccumulator += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
+    if ((cur_time.tv_sec - gIdleAttractTime.tv_sec) > (60 * gOptionValues[SETUP_OPTION_ATTRACT_MODE_TIME_MINS])) {
+      PlaySound(SFX_ATTRACT_SONG);
+      gettimeofday(&gIdleAttractTime,NULL);
     }
 
-    // score up
-    if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks) {
-        gScoreAccumulator += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
+  } else if (gGameState == GAMESTATE_ENDGAME) {
+
+    //if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
+    //  SwitchOn(SWITCH_FREEGAMELIGHT);
+    //  StartNewGame();
+    //}
+
+    //if (gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD] > 0)
+    {
+      struct timeval cur_time;
+      gettimeofday(&cur_time,NULL);
+
+      if ((cur_time.tv_sec - gEndGameTime.tv_sec) > gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS]) {
+           GoIdle();
+           return;
+      }
     }
 
+  } else if (gGameState == GAMESTATE_GAME) {
+
+    SwitchOff(SWITCH_SOLENOID);
+
+    // score up
+    if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
+      gScoreAccumulator += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
+
+    // score up
+    if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
+      gScoreAccumulator += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
+    
 
     // balls played
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
@@ -156,16 +191,19 @@ void UpdateLongshot() {
 
         if (tableIndex < 9) {
             ticketsEarned = gTickMatrix[gOptionValues[SETUP_OPTION_TICKETTABLE]][tableIndex];
-            if (ticketsEarned > gTicketsDispensed) {
-                int diff = ticketsEarned - gTicketsDispensed;
+            if (ticketsEarned > gMachineIn.ticketsDispensed) {
+                int diff = ticketsEarned - gMachineIn.ticketsDispensed;
                 
-                if (diff > 0 && gTicketsDispensed == 0) {
+                if (diff > 0 && gMachineIn.ticketsDispensed == 0) {
+
+                  SwitchOn( diff == 1 ? SWITCH_WINNERLIGHT : SWITCH_BEACONLIGHT);
                   //PlaySound(SFX_WINNER_SONG);
                 }
 
                 gMachineOut.dispense = diff;
-                gTicketsDispensed += diff;
+            } else {
             }
         }
     }
+  }
 }
