@@ -1,9 +1,10 @@
 void idler(){
   shifter.idle();
   beaconTimer.enable();
-  gameOverLightTimer.enable();
-  freeGameLightTimer.enable();
-  winLightTimer.enable();
+ // gameOverLightTimer.enable();
+//  freeGameLightTimer.enable();
+ // winLightTimer.enable();
+ idleFlash.enable();
 }
 
 void idleFlashOn(){
