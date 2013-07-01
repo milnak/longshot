@@ -39,25 +39,37 @@ void parseGameState(byte* state){
     ballCount = state[12] << 24 | state[13] << 16 | state[14] << 8 | state[15];
     dispense = dispense + disp_byte;
 
-    if(bitRead(switches,0) == ){
+    if(bitRead(switches,0) == 1 ){ //0 is off
      //turn free game lamp on
-     freeGameLightTimer.reset();
+     //freeGameLightTimer.reset();
      freeGameLightTimer.enable();
+   }
+   if(bitRead(switches,0) == 0 && gameState ==true){
+     digitalWrite(freeGameLight,LOW);
+     freeGameLightTimer.disable();
    }
    
    if(bitRead(switches,1) == 1){
      //turn game over lamp on
-     gameOverLightTimer.reset();
+     //gameOverLightTimer.reset();
      gameOverLightTimer.enable();
    }
-   
+     if(bitRead(switches,1) == 0 && gameState ==true){
+     digitalWrite(gameOverLight, LOW);
+     gameOverLightTimer.disable();
+   }
+     
    if(bitRead(switches,2) == 1){
      //turn winner lamp on
-     winLightTimer.reset();
+     //winLightTimer.reset();
      winLightTimer.enable();
    }
+     if(bitRead(switches,2) == 0 && gameState ==true){
+     digitalWrite(winLight,LOW);
+     winLightTimer.disable();
+   }
   
-   if(bitRead(switches,3) == 1){
+   if(bitRead(switches,3) == 0){
      //turn beacon lamp on
      beaconTimer.reset();
      beaconTimer.enable();
@@ -87,8 +99,10 @@ void parseGameState(byte* state){
    if(bitRead(switches,7) == 1){
     if(gameState == true){
        idle.enable();
+       idleFlash.enable();
      }
      gameState = false;
+        
   }
    else{
      

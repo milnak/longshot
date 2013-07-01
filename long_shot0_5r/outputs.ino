@@ -4,13 +4,13 @@ void idler(){
  // gameOverLightTimer.enable();
 //  freeGameLightTimer.enable();
  // winLightTimer.enable();
- idleFlash.enable();
+
 }
 
 void idleFlashOn(){
-  gameOverLightTimer.reset();
-  winLightTimer.reset();
-  freeGameLightTimer.reset();
+  //gameOverLightTimer.reset();
+  //winLightTimer.reset();
+  //freeGameLightTimer.reset();
   gameOverLightTimer.enable();
   freeGameLightTimer.enable();
   winLightTimer.enable();
