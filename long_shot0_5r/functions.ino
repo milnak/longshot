@@ -39,7 +39,7 @@ void parseGameState(byte* state){
     ballCount = state[12] << 24 | state[13] << 16 | state[14] << 8 | state[15];
     dispense = dispense + disp_byte;
 
-    if(bitRead(switches,0) == 1){
+    if(bitRead(switches,0) == ){
      //turn free game lamp on
      freeGameLightTimer.reset();
      freeGameLightTimer.enable();
@@ -93,18 +93,23 @@ void parseGameState(byte* state){
    else{
      
      coinDebounce.setClicks(0);
-     if(gameState == false){
+     if(gameState == false){  //this might be bad...we might be restarting the game and still be in gameState=true
        coinMeterTimer.reset();
        coinMeterTimer.enable();
+       gameOverLightTimer.disable();
+       freeGameLightTimer.disable();
+       winLightTimer.disable();
+       digitalWrite(winLight,LOW);
+       digitalWrite(freeGameLight,LOW);
+       digitalWrite(gameOverLight,LOW);
+       idleFlash.disable();
+       idleOff.disable();
        scoreDebounce.setClicks(0);
        hundredDebounce.setClicks(0);
        ballCountDebounce.setClicks(0);
-      
-       
-     }
+      }
      gameState = true;
    }
-   
 }
 
 

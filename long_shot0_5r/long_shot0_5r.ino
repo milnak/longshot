@@ -85,6 +85,7 @@ Bounce downDebounce = Bounce(downButton,20);
 
 void setup(){
   Serial.begin(57600);
+  delay(2000);
   idle.enable();
   solenoidTimer.disable();
   pinMode(gameOverLight, OUTPUT);
