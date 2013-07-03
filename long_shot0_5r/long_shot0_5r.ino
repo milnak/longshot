@@ -130,11 +130,16 @@ void loop(){
   poll_inputs(); //get switch states
   updateGame(); //pull the state from Pi, push switches to pi, parse out state
   
- /*if ((dispense - ticketsDispensed)>0){ //temperoarily disable tickets for sanity of coworkers
+ if ((dispense - ticketsDispensed)>0){ //temperoarily disable tickets for sanity of coworkers
    dispense_tickets();
   }
-   */
    
+    if(gameState == false && ticketError == 1){
+        idle.disable();
+        score = (dispense - ticketsDispensed);
+        ballCount = 0;
+        shifter.display(score,ballCount);
+     }
  if(gameState==true){
         idle.disable();
         shifter.display(score,ballCount);

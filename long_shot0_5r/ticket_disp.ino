@@ -5,8 +5,14 @@ int dispense_tickets(){
         digitalWrite(ticketDispenser, HIGH);
         checkButtonInput(ticketDebounce);
         ticketsDispensed = ticketsDispensed + ticketDebounce.getClicks();
+        if(ticketsDispensed == (ticketsDispensed + ticketDebounce.getClicks())){
+          ticketTimer++;
+        }
+        else{
+          ticketTimer = 0;
+        }
         ticketDebounce.setClicks(0);
-        ticketTimer++;
+        
             }
       else{
         digitalWrite(ticketDispenser,LOW);

@@ -9,7 +9,7 @@ void sendGameState(){
   int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
                   ballCountDebounce.getClicks(),coinDebounce.getClicks(),
                   upDebounce.getClicks(),downDebounce.getClicks(),
-                  selectDebounce.getClicks(),setupDebounce.getClicks(),  ticketError};
+                  selectDebounce.getClicks(),setupDebounce.getClicks(),ticketError};
   
   for(int x = 0; x<=10; x++){
     byte statusByte[4];
@@ -101,12 +101,10 @@ void parseGameState(byte* state){
    
    if(bitRead(switches,7) == 1){
     if(gameState == true){
-       idle.enable();
-       idleFlash.enable();
-     }
-     gameState = false;
-        
-  }
+     idle.enable();
+    }
+    gameState = false;
+ }
    else{
      
      coinDebounce.setClicks(0);
@@ -126,8 +124,8 @@ void parseGameState(byte* state){
        ballCountDebounce.setClicks(0);
       }
      gameState = true;
-   }
-}
+    }
+  }
 
 
 
