@@ -56,6 +56,7 @@ int notchRead = 111;
 int ticketsDispensed = 0;
 int ticketMeterClicks = 0;
 int ticketTimer = 0;
+int ticketError = 0;
 /////////////////////////////////////////////////////////// 
 int commandByte = 255;
 //////////////////Score Vars////////////////////////////

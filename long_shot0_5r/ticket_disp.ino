@@ -13,12 +13,14 @@ int dispense_tickets(){
         checkButtonInput(ticketDebounce);
         if(ticketsDispensed == (ticketsDispensed + ticketDebounce.getClicks())){
           ticketTimer++;
+          ticketError = 1; //let Pi know there is a problem with the tixdisp
         }
         else{
           dispense++; //I think because we need to pass at least one ticket by the sensor
           //before we actually have a ticket in the "dispense" position we need to increment here
           //maybe even by two?
           ticketTimer = 0;
+          ticketError = 0; //clear error flag
           digitalWrite(ticketDispenser,HIGH);  
         }
       }
