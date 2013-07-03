@@ -47,32 +47,41 @@ struct timeval gIdleAttractTime;
 
 void StartNewGame() {
     gGameState = GAMESTATE_GAME;
-    SwitchOff(SWITCH_IDLELIGHT);
-    SwitchOff(SWITCH_GAMEOVERLIGHT);
-    SwitchOn(SWITCH_SOLENOID);
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
     gScoreAccumulator = 0;
+
+    SwitchOff(SWITCH_IDLELIGHT);
+    SwitchOff(SWITCH_GAMEOVERLIGHT);
+    SwitchOn(SWITCH_SOLENOID);
+
+    if (gMachineIn.ticketError <= 0)
+      SwitchOff(SWITCH_BEACONLIGHT);
 }
 
 void GoIdle() {
   gGameState = GAMESTATE_IDLE;
-  SwitchOn(SWITCH_IDLELIGHT);
-  SwitchOff(SWITCH_GAMEOVERLIGHT);
-
-  SwitchOff(SWITCH_WINNERLIGHT);
-  SwitchOff(SWITCH_BEACONLIGHT);
-  SwitchOff(SWITCH_FREEGAMELIGHT);
-
   gMachineOut.score = 0;
   gMachineOut.ballCount = 0;
   gettimeofday(&gIdleAttractTime,NULL);
+
+  SwitchOn(SWITCH_IDLELIGHT);
+  SwitchOff(SWITCH_GAMEOVERLIGHT);
+  SwitchOff(SWITCH_WINNERLIGHT);
+  SwitchOff(SWITCH_BEACONLIGHT);
+  SwitchOff(SWITCH_FREEGAMELIGHT);
 }
 
 void EndGame() {
-    SwitchOn(SWITCH_GAMEOVERLIGHT);
     gGameState = GAMESTATE_ENDGAME;
     gettimeofday(&gEndGameTime,NULL);    
+
+    SwitchOn(SWITCH_GAMEOVERLIGHT);
+
+    if (gMachineIn.ticketError > 0) {
+        PlaySound(SFX_CALL_ATTENDANT);
+        SwitchOn( SWITCH_BEACONLIGHT );
+    }
 }
 
 #define PRELOAD_SOUND(id, f) \
@@ -108,6 +117,9 @@ void InitLongshot() {
 
 void UpdateLongshot() {
 
+  ////////////
+  // idle
+  ////////////
   if (gGameState == GAMESTATE_IDLE) {
 
     if (gMachineIn.coinClicks > gMachineInPrev.coinClicks)
@@ -126,12 +138,11 @@ void UpdateLongshot() {
       gettimeofday(&gIdleAttractTime,NULL);
     }
 
-  } else if (gGameState == GAMESTATE_ENDGAME) {
-
-    //if (score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
-    //  SwitchOn(SWITCH_FREEGAMELIGHT);
-    //  StartNewGame();
-    //}
+  } 
+  ////////////
+  // end game
+  ////////////
+  else if (gGameState == GAMESTATE_ENDGAME) {
 
     if (gMachineIn.coinClicks > gMachineInPrev.coinClicks) {
       StartNewGame();
@@ -144,12 +155,22 @@ void UpdateLongshot() {
       gettimeofday(&cur_time,NULL);
 
       if ((cur_time.tv_sec - gEndGameTime.tv_sec) > gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS]) {
+
+        if (gMachineOut.score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
+          SwitchOn(SWITCH_FREEGAMELIGHT);
+          StartNewGame();
+        } else {
            GoIdle();
-           return;
+        }
+        return;
       }
     }
 
-  } else if (gGameState == GAMESTATE_GAME) {
+  } 
+  ////////////
+  // gameplay
+  ////////////
+  else if (gGameState == GAMESTATE_GAME) {
 
     SwitchOff(SWITCH_SOLENOID);
 
@@ -178,8 +199,9 @@ void UpdateLongshot() {
         gScoreAccumulator = 0;
 
         gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
-        if (gMachineOut.ballCount >= gOptionValues[SETUP_OPTION_BALLCOUNT]) 
+        if (gMachineOut.ballCount >= gOptionValues[SETUP_OPTION_BALLCOUNT]) {
           EndGame();
+        }
     }
 
     // we haz points! we can haz tix?
@@ -208,8 +230,9 @@ void UpdateLongshot() {
                   SwitchOn( diff == 1 ? SWITCH_WINNERLIGHT : SWITCH_BEACONLIGHT);
                   //PlaySound(SFX_WINNER_SONG);
                 }
-
+                 
                 gMachineOut.dispense = diff;
+
             } else {
             }
         }

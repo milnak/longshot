@@ -358,7 +358,8 @@ int UpdateMachine() {
         && _readInt(&gMachineIn.upClicks)
         && _readInt(&gMachineIn.downClicks)
         && _readInt(&gMachineIn.selectClicks)
-        && _readInt(&gMachineIn.setupClicks) )) 
+        && _readInt(&gMachineIn.setupClicks)
+        && _readInt(&gMachineIn.ticketError) )) 
     {
       command = RESET_VAL;
     } else {
