@@ -28,6 +28,7 @@ struct MachineInState
   unsigned int downClicks;
   unsigned int selectClicks;
   unsigned int setupClicks;
+  unsigned int ticketError;
 } __attribute__((__packed__));
 
 enum {
