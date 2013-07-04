@@ -130,7 +130,7 @@ void loop(){
   poll_inputs(); //get switch states
   updateGame(); //pull the state from Pi, push switches to pi, parse out state
   
- if ((dispense - ticketsDispensed)>0){ //temperoarily disable tickets for sanity of coworkers
+ if ((dispense >0){ //temperoarily disable tickets for sanity of coworkers
    dispense_tickets();
   }
    

@@ -1,5 +1,7 @@
 
 int dispense_tickets(){
+  checkButtonInput(ticketDebounce);
+  //lets check this once at first and then just check ticketDebounce.getclicks() after that
    if(gameState == false && ticketError == 1){
      //if the game is over and there is a ticket dispenser error
         idle.disable(); //turn off spinning zeros
@@ -18,31 +20,36 @@ int dispense_tickets(){
        idle.enable();
        //display the normal idle display
      }
-  if((dispense - ticketsDispensed) > 0){
+  if((dispense > 0){
     //if we still owe tickets
       if(ticketTimer < 4000){
         //and the ticket dispensor hasn't timed out
         digitalWrite(ticketDispenser, HIGH);
         //turn the ticket dispensor on
-        checkButtonInput(ticketDebounce);
+        
         //check the ticket sensor for ticket insertion
           if(ticketDebounce.getClicks()==0){
             //if there still aren't any tickets
-           // ticketTimer++;
-            //increment the timer? wait...maybe not? once we are in time out we are timed out right?
-            //just don't reset until we have tickets and we will stay in timeout state...
+            ticketTimer++;
+            //increment the timer
           }
-        else{
-          ticketTimer = 0;
+        else{//if we DO find a ticket
+          dispense -= ticketDebounce.getClicks(); //hmmmm
+          ticketDebounce.setClicks(0);
+          ticketTimer = 0; // reset the timer
         }
-        ticketsDispensed += ticketDebounce.getClicks();
-        ticketDebounce.setClicks(0);
+        //ticketsDispensed += ticketDebounce.getClicks();
+        //since we have some tickets, add them to the total # of tickets dispensed
+        //ticketDebounce.setClicks(0);
+        //now clear out the ... why don't we ditch ticketsDispensed and just use ticketDebounce.getClicks()?
+        //are we clearing out every click in the bounce class already? hmmm no?
      }
       else{
+        //if we are in timeout mode
         digitalWrite(ticketDispenser,LOW); //no tickets/timeout turn off TD
-        checkButtonInput(ticketDebounce); //keep checking TD for ticket insertion
-        if(ticketDebounce.getClicks()==0){
-          ticketTimer++;
+        //just check once at top -- checkButtonInput(ticketDebounce); //keep checking TD for ticket insertion
+/*        if(ticketDebounce.getClicks()==0){//still
+          //ticketTimer++; //we want to stop incrementing once we've reached timeout state
           ticketError = 1; //let Pi know there is a problem with the tixdisp
         }
         else{
@@ -53,9 +60,10 @@ int dispense_tickets(){
           ticketError = 0; //clear error flag
           digitalWrite(ticketDispenser,HIGH);  
         }
+        */
       }
     }
-   if((dispense - ticketsDispensed) == 0){
+   if((dispense == 0){
         digitalWrite(ticketDispenser, LOW);
         ticketTimer = 0;
                   }
