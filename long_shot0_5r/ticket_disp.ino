@@ -20,7 +20,7 @@ int dispense_tickets(){
        idle.enable();
        //display the normal idle display
      }
-  if((dispense > 0){
+  //if((dispense > 0){ //this is redudant no?
     //if we still owe tickets
       if(ticketTimer < 4000){
         //and the ticket dispensor hasn't timed out
@@ -62,8 +62,8 @@ int dispense_tickets(){
         }
         */
       }
-    }
-   if((dispense == 0){
+    //}
+   if(dispense == 0){
         digitalWrite(ticketDispenser, LOW);
         ticketTimer = 0;
                   }
