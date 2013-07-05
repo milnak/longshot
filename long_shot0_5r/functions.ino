@@ -34,10 +34,15 @@ void parseGameState(byte* state){
     score = 0;
     switches=0;
     ballCount = 0;
-    score =  state[0] << 24 | state[1] << 16 | state[2] << 8 | state[3];
+    /*score =  state[0] << 24 | state[1] << 16 | state[2] << 8 | state[3];
     switches = state[4] << 24 | state[5] << 16 | state[6] << 8 | state[7];
     int disp_byte = state[8] << 24 | state[9] << 16 | state[10] << 8 | state[11];
     ballCount = state[12] << 24 | state[13] << 16 | state[14] << 8 | state[15];
+    */
+     score =   state[2] << 8 | state[3];
+    switches = state[6] << 8 | state[7];
+    int disp_byte =  state[10] << 8 | state[11];
+    ballCount =  state[14] << 8 | state[15];
     dispense = dispense + disp_byte;
 
     if(bitRead(switches,0) == 1 ){ //0 is off
