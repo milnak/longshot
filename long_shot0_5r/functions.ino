@@ -6,10 +6,10 @@ void integerToBytes(long val, byte b[4]) {
 }
 
 void sendGameState(){
-  int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
-                  ballCountDebounce.getClicks(),coinDebounce.getClicks(),
-                  upDebounce.getClicks(),downDebounce.getClicks(),
-                  selectDebounce.getClicks(),setupDebounce.getClicks(),ticketError};
+  int b[11] = { commandByte,ticketsDispensed,(unsigned int)scoreDebounce.getClicks(),(unsigned int)hundredDebounce.getClicks(),
+                  (unsigned int)ballCountDebounce.getClicks(),(unsigned int)coinDebounce.getClicks(),
+                  (unsigned int)upDebounce.getClicks(),(unsigned int)downDebounce.getClicks(),
+                  (unsigned int)selectDebounce.getClicks(),(unsigned int)setupDebounce.getClicks(),ticketError};
   
   for(int x = 0; x<=10; x++){
     byte statusByte[4];
@@ -122,6 +122,7 @@ void parseGameState(byte* state){
        scoreDebounce.setClicks(0);
        hundredDebounce.setClicks(0);
        ballCountDebounce.setClicks(0);
+       
       }
      gameState = true;
     }

@@ -293,7 +293,7 @@ int ExitMachine() {
 }
 
 ///////////////////////////////////////////////
-int _readInt(int* outVal) {
+int _readInt(unsigned int* outVal) {
   int i = 0;
   int value = 0;
 

@@ -19,6 +19,7 @@ struct MachineOutState {
 
 struct MachineInState
 {
+  unsigned int command;
   unsigned int ticketsDispensed;
   unsigned int scoreClicks;
   unsigned int hundredClicks;
