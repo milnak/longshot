@@ -6,7 +6,7 @@ void integerToBytes(int val, byte b[4]) {
 }
 
 void sendGameState(){
-  int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
+ int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
                   ballCountDebounce.getClicks(),coinDebounce.getClicks(),
                   upDebounce.getClicks(),downDebounce.getClicks(),
                   selectDebounce.getClicks(),setupDebounce.getClicks(),ticketError};
@@ -86,16 +86,16 @@ void parseGameState(byte* state){
   
    if(bitRead(switches,4) == 1){
      //turn coin meter on
-     digitalWrite(coinMeter,LOW);
-     coinMeterTimer.reset();
-     coinMeterTimer.enable();
+    // digitalWrite(coinMeter,LOW);
+  //   coinMeterTimer.reset();
+  //   coinMeterTimer.enable();
    }
    
    if(bitRead(switches,5) == 1){
      //turn ticket meter on
-     digitalWrite(ticketMeter,LOW);
-     ticketMeterTimer.reset();
-     ticketMeterTimer.enable();
+    // digitalWrite(ticketMeter,LOW);
+    // ticketMeterTimer.reset();
+   //  ticketMeterTimer.enable();
    }
    
    if(bitRead(switches,6) == 1){

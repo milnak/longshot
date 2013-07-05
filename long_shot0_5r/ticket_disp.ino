@@ -16,7 +16,7 @@ int dispense_tickets(){
         //normal gameplay)
      }
      
-     if(ticketTimer < 4000){
+     if(ticketTimer < 3000){
         digitalWrite(ticketDispenser, HIGH);
         ticketTimer++;
      }
@@ -27,15 +27,19 @@ int dispense_tickets(){
       
        if(ticketDebounce.getClicks() > 0){
           if(bitRead(PORTK,2)){//
-            dispense -= ticketDebounce.getClicks(); 
-            ticketsDispensed += ticketDebounce.getClicks();
+            dispense -= (int)ticketDebounce.getClicks(); 
+            ticketsDispensed += (int)ticketDebounce.getClicks();
           }
            ticketDebounce.setClicks(0);
            ticketTimer = 0; // reset the timer
         }
   if(dispense <= 0){
-     dispense = 0;
+     
      ticketError = 0;
      digitalWrite(ticketDispenser,LOW);
+     if(gameState == false){
+       idle.enable();
+     
    }  
+}
 }
