@@ -310,7 +310,7 @@ int _readInt(unsigned int* outVal) {
      value |= lastByte << (24 - (8 * i));
   }
   */
-  *outVal = (unsigned int)value;
+  *outVal = value;
   return 1;
 }
 
