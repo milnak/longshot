@@ -294,22 +294,23 @@ int ExitMachine() {
 
 ///////////////////////////////////////////////
 int _readInt(unsigned int* outVal) {
-  int i = 0;
-  int value = serialGetchar(gMachineCommPort);;
+  //int i = 0;
+  int value = serialGetchar(gMachineCommPort);
+  if (value < 0) {
+        if (gDebug) printf("### SERIAL ERROR ###\n");
+        return 0;
+     }
 /*
   for (i = 0; i < sizeof(int); i++)
   {
      int c= serialGetchar(gMachineCommPort);
-     if (c < 0) {
-        if (gDebug) printf("### SERIAL ERROR ###\n");
-        return 0;
-     }
+     
 
      unsigned int lastByte = c;
      value |= lastByte << (24 - (8 * i));
   }
   */
-  *outVal = value;
+  *outVal = (unsigned int)value;
   return 1;
 }
 
