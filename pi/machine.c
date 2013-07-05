@@ -295,19 +295,20 @@ int ExitMachine() {
 ///////////////////////////////////////////////
 int _readInt(unsigned int* outVal) {
   int i = 0;
-  unsigned int value = 0;
-
+  int value = serialGetchar(gMachineCommPort);;
+/*
   for (i = 0; i < sizeof(int); i++)
   {
-     int c = serialGetchar(gMachineCommPort);
+     int c= serialGetchar(gMachineCommPort);
      if (c < 0) {
         if (gDebug) printf("### SERIAL ERROR ###\n");
         return 0;
      }
 
-     unsigned int lastByte = (unsigned int)c;
+     unsigned int lastByte = c;
      value |= lastByte << (24 - (8 * i));
   }
+  */
   *outVal = value;
   return 1;
 }
