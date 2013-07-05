@@ -33,8 +33,8 @@
 
 boolean gameState=false;
 byte state[16];
-unsigned int score = 0;
-unsigned int ballCount = 0;
+int score = 0;
+int ballCount = 0;
 Shifter shifter(4, SRCK,SIN,RCK); //these are the shift registers that contol the 7 seg displays
 int switches = 0;
 ///////////////////////////////////////////////////////////
@@ -51,14 +51,14 @@ TimedAction idleFlash = TimedAction(3 * 1000, idleFlashOn);
 TimedAction idleOff = TimedAction (3*1000, idleFlashOff);
 
 //////////////ticket dispensor variables///////////////////
-unsigned int dispense = 0;
+int dispense = 0;
 int notchRead = 111;
-unsigned int ticketsDispensed = 0;
+int ticketsDispensed = 0;
 int ticketMeterClicks = 0;
 long ticketTimer = 0;
-unsigned int ticketError = 0;
+int ticketError = 0;
 /////////////////////////////////////////////////////////// 
-unsigned int commandByte = 255;
+int commandByte = 255;
 //////////////////Score Vars////////////////////////////
 int scoreClicks = 0;
 int hundredClicks = 0;
