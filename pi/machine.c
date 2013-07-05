@@ -295,9 +295,9 @@ int ExitMachine() {
 ///////////////////////////////////////////////
 int _readInt(unsigned int* outVal) {
   int i = 0;
-  int value = 0;
+  unsigned int value = 0;
 
-  for (i = 0; i < sizeof(unsigned int); i++)
+  for (i = 0; i < sizeof(int); i++)
   {
      int c = serialGetchar(gMachineCommPort);
      if (c < 0) {
