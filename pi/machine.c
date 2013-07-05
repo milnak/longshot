@@ -323,8 +323,8 @@ void _writeByte(unsigned char b) {
 void _writeInt(unsigned int value) {
   _writeByte( (value >> 24) & 0xff );
   _writeByte( (value >> 16) & 0xff );
-  //_writeByte( (value >> 8) & 0xff );
-  //_writeByte( (value & 0xff) );
+  _writeByte( (value >> 8) & 0xff );
+  _writeByte( (value & 0xff) );
 }
 
 ///////////////////////////////////////////////
