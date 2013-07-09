@@ -58,7 +58,7 @@ int ticketMeterClicks = 0;
 long ticketTimer = 0;
 int ticketError = 0;
 /////////////////////////////////////////////////////////// 
-int commandByte = 255;
+int commandByte = 1;
 //////////////////Score Vars////////////////////////////
 int scoreClicks = 0;
 int hundredClicks = 0;
@@ -68,8 +68,6 @@ int upClicks = 0;
 int downClicks = 0;
 int selectClicks = 0;
 int setupClicks = 0;
-
-;
 
 Bounce scoreDebounce = Bounce(scoreSwitch,25);
 Bounce coinDebounce = Bounce(coinSwitch,50);
@@ -87,7 +85,7 @@ Bounce downDebounce = Bounce(downButton,20);
 
 void setup(){
   Serial.begin(57600);
-  delay(2000);
+  //delay(2000); //shouldn't actually need this
   idle.enable();
   solenoidTimer.disable();
   pinMode(gameOverLight, OUTPUT);
@@ -129,24 +127,19 @@ void loop(){
   ticketMeterTimer.check();
   coinMeterTimer.check();
   /////////////////////////////////////
-  
-  
-  
- if (dispense >0){ //temperoarily disable tickets for sanity of coworkers
+ 
+ if (dispense > 0){ 
    dispense_tickets();
   }
-  
-   
-   
+ 
  if(gameState==true){
         idle.disable();
         shifter.display(score,ballCount);
      }
- if(gameState == false && ticketError == 0){
-       //if the game is over and there are no ticket errors
-       idle.enable();
-       //display the normal idle display
-     }
+     
+ if(gameState == false && ticketError == 0){ //if the game is over and there are no ticket errors
+       idle.enable(); //display the normal idle display
+      }
  }
   
 

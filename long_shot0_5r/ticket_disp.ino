@@ -8,8 +8,6 @@ int dispense_tickets(){
         idle.disable(); //turn off spinning zeros
          //set the score to the difference of the number of tickets to
         //be dispensed and the number of tickets dispensed so far
-        //ballCount = 0;
-        //doesn't have to be
         shifter.display(dispense,ballCount);
         //ok so we stuffed the number of tickets owed and we're displaying it instead of
         //idle (only active when there isn't a game going on so it doesn't interfere with
@@ -29,6 +27,9 @@ int dispense_tickets(){
           if(bitRead(PORTK,2)){//
             dispense -= (int)ticketDebounce.getClicks(); 
             ticketsDispensed += (int)ticketDebounce.getClicks();
+             digitalWrite(ticketMeter,HIGH);
+             ticketMeterTimer.reset();
+             ticketMeterTimer.enable();
           }
            ticketDebounce.setClicks(0);
            ticketTimer = 0; // reset the timer
@@ -39,7 +40,6 @@ int dispense_tickets(){
      digitalWrite(ticketDispenser,LOW);
      if(gameState == false){
        idle.enable();
-     
-   }  
-}
+     }  
+   }
 }

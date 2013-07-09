@@ -1,9 +1,9 @@
-void integerToBytes(int val, byte b[4]) {
+/*void integerToBytes(int val, byte b[4]) {
  b[0] = (byte )((val >> 24) & 0xff);
  b[1] = (byte )((val >> 16) & 0xff);
  b[2] = (byte )((val >> 8) & 0xff);
  b[3] = (byte )(val & 0xff);
-}
+}*/
 
 void sendGameState(){
  int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
@@ -93,9 +93,9 @@ void parseGameState(byte* state){
    
    if(bitRead(switches,5) == 1){
      //turn ticket meter on
-    // digitalWrite(ticketMeter,LOW);
-    // ticketMeterTimer.reset();
-   //  ticketMeterTimer.enable();
+     digitalWrite(ticketMeter,HIGH);
+     ticketMeterTimer.reset();
+     ticketMeterTimer.enable();
    }
    
    if(bitRead(switches,6) == 1){
@@ -115,6 +115,9 @@ void parseGameState(byte* state){
      
      coinDebounce.setClicks(0);
      if(gameState == false){  //this might be bad...we might be restarting the game and still be in gameState=true
+       if(dispense==0){
+           ticketsDispensed = 0;
+       }
        coinMeterTimer.reset();
        coinMeterTimer.enable();
        gameOverLightTimer.disable();

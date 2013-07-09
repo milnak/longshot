@@ -1,16 +1,9 @@
 void idler(){
   shifter.idle();
   beaconTimer.enable();
- // gameOverLightTimer.enable();
-//  freeGameLightTimer.enable();
- // winLightTimer.enable();
-
 }
 
 void idleFlashOn(){
-  //gameOverLightTimer.reset();
-  //winLightTimer.reset();
-  //freeGameLightTimer.reset();
   gameOverLightTimer.enable();
   freeGameLightTimer.enable();
   winLightTimer.enable();
@@ -69,7 +62,7 @@ void beaconOff(){
 }
 
 void ticketMeterClick(){
-   digitalWrite(ticketMeter, HIGH);
+   digitalWrite(ticketMeter, LOW);
    ticketMeterTimer.disable(); 
 }
 
