@@ -18,11 +18,11 @@
 #define winLight  32
 #define gameOverLight  31
 #define freeGameLight 30
-#define beacon A9
-#define coinMeter  37
-#define ticketMeter  A11
-#define solenoid A8
-#define ticketDispenser  A10
+#define beacon 11
+#define coinMeter  43
+#define ticketMeter  44
+#define solenoid 12
+#define ticketDispenser  42
 
 //7seg pins
 #define SRCK 33 
@@ -85,6 +85,8 @@ Bounce downDebounce = Bounce(downButton,20);
 
 void setup(){
   Serial.begin(57600);
+  Serial3.begin(57600);
+  Serial3.println("Serial debugging begin...");
   //delay(2000); //shouldn't actually need this
   idle.enable();
   solenoidTimer.disable();

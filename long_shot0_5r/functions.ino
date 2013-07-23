@@ -6,7 +6,7 @@
 }*/
 
 void sendGameState(){
- int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
+int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
                   ballCountDebounce.getClicks(),coinDebounce.getClicks(),
                   upDebounce.getClicks(),downDebounce.getClicks(),
                   selectDebounce.getClicks(),setupDebounce.getClicks(),ticketError};
