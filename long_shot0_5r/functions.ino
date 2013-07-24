@@ -106,18 +106,29 @@ void parseGameState(byte* state){
    }
    
    if(bitRead(switches,7) == 1){
+    
     if(gameState == true){
      idle.enable();
+      if(dispense > 0 && ticketsOwed == 0){
+           ticketsOwed = dispense;
+           dispense = 0;
+       }
+       if (dispense > 0 && ticketsOwed > 0){
+          ticketsOwed += dispense;
+         dispense = 0;
+       }
+       ticketsDispensed = 0;
     }
+     
     gameState = false;
  }
    else{
      
      coinDebounce.setClicks(0);
      if(gameState == false){  //this might be bad...we might be restarting the game and still be in gameState=true
-       if(ticketsOwed==0){
-           ticketsDispensed = 0;
-       }
+      if(dispense == 0 && ticketsOwed == 0){
+        ticketsDispensed = 0;
+      }
        coinMeterTimer.reset();
        coinMeterTimer.enable();
        gameOverLightTimer.disable();
