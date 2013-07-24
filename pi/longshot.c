@@ -53,6 +53,8 @@ void StartNewGame() {
     gMachineOut.ballCount = 0;
     gScoreAccumulator = 0;
 
+    PlaySound(SFX_GAME_START);
+
     SwitchOff(SWITCH_IDLELIGHT);
     SwitchOff(SWITCH_GAMEOVERLIGHT);
     SwitchOn(SWITCH_SOLENOID);
@@ -162,7 +164,7 @@ void UpdateLongshot() {
         if (gMachineOut.score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
           SwitchOn(SWITCH_FREEGAMELIGHT);
           StartNewGame();
-           PlaySound(SFX_GAME_START);
+
         } else {
            GoIdle();
         }
