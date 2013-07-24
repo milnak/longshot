@@ -21,7 +21,9 @@ enum {
   SFX_CALL_ATTENDANT,
   SFX_FREE_GAME,
   SFX_ATTRACT_SONG,
+  SFX_GAME_START,
   SFX_MAX
+
 };
 
 int gTickMatrix[10][9] = { 
@@ -104,6 +106,7 @@ void LoadSounds() {
   PRELOAD_SOUND(SFX_CALL_ATTENDANT, "attendant");
   PRELOAD_SOUND(SFX_FREE_GAME,      "freegame");
   PRELOAD_SOUND(SFX_ATTRACT_SONG,   "attract");
+  PRELOAD_SOUND(SFX_GAME_START, "GameStart")
 
   gSoundsLoaded = 1;
 }
@@ -159,6 +162,7 @@ void UpdateLongshot() {
         if (gMachineOut.score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
           SwitchOn(SWITCH_FREEGAMELIGHT);
           StartNewGame();
+           PlaySound(SFX_GAME_START);
         } else {
            GoIdle();
         }
@@ -189,7 +193,8 @@ void UpdateLongshot() {
         gMachineOut.score += gScoreAccumulator;
 
         // play the appropriate SFX
-        if (gScoreAccumulator <= 10) PlaySound(SFX_10_POINTS);
+        if (gScoreAccumulator == 0) PlaySound(SFX_NO_POINTS);
+        else if (gScoreAccumulator <= 10) PlaySound(SFX_10_POINTS);
         else if (gScoreAccumulator <= 20 ) PlaySound(SFX_20_POINTS);
         else if (gScoreAccumulator <= 30 ) PlaySound(SFX_30_POINTS);
         else if (gScoreAccumulator <= 40 ) PlaySound(SFX_40_POINTS);
