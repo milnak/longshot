@@ -5,7 +5,7 @@
 ///////////////////pin defs////////////////////////////////
 //inputs
 #define coinSwitch  A2
-#define scoreSwitch A3 
+#define scoreSwitch A4 
 #define hundredSwitch  A1
 #define ballCountSwitch  A4
 #define selectButton  26
@@ -19,7 +19,7 @@
 #define gameOverLight  31
 #define freeGameLight 30
 #define beacon 11
-#define coinMeter  43
+#define coinMeater  43
 #define ticketMeter  44
 #define solenoid 12
 #define ticketDispenser  42
