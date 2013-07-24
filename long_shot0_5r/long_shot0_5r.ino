@@ -7,19 +7,19 @@
 #define coinSwitch  A2
 #define scoreSwitch A4 
 #define hundredSwitch  A1
-#define ballCountSwitch  A4
+#define ballCountSwitch  A5
 #define selectButton  26
 #define downButton  27
 #define upButton  28
 #define setupButton  29
-#define ticketSensor  A5
+#define ticketSensor  A3
 
 //outputs
 #define winLight  32
 #define gameOverLight  31
 #define freeGameLight 30
 #define beacon 11
-#define coinMeater  43
+#define coinMeter  43
 #define ticketMeter  44
 #define solenoid 12
 #define ticketDispenser  42
@@ -57,6 +57,7 @@ int ticketsDispensed = 0;
 int ticketMeterClicks = 0;
 long ticketTimer = 0;
 int ticketError = 0;
+int ticketsOwed = 0;
 /////////////////////////////////////////////////////////// 
 int commandByte = 1;
 //////////////////Score Vars////////////////////////////
@@ -130,7 +131,7 @@ void loop(){
   coinMeterTimer.check();
   /////////////////////////////////////
  
- if (dispense > 0){ 
+ if (dispense > 0 || ticketsOwed > 0){ 
    dispense_tickets();
   }
  

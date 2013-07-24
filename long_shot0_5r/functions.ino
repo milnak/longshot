@@ -115,7 +115,7 @@ void parseGameState(byte* state){
      
      coinDebounce.setClicks(0);
      if(gameState == false){  //this might be bad...we might be restarting the game and still be in gameState=true
-       if(dispense==0){
+       if(ticketsOwed==0){
            ticketsDispensed = 0;
        }
        coinMeterTimer.reset();
