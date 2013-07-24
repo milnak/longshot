@@ -50,7 +50,7 @@ struct MachineOutState gMachineOut, gMachineOutPrev;
 struct MachineInState gMachineIn, gMachineInPrev;
 
 // Audio stuff
-#define kAUDIO_FREQ 22050
+#define kAUDIO_FREQ 48000
 #define kAUDIO_FMT AUDIO_S16
 #define kAUDIO_CHANNELS 1
 #define NUM_ACTIVE_SOUNDS 8
