@@ -49,7 +49,7 @@ struct timeval gIdleAttractTime;
 
 void StartNewGame() {
     gGameState = GAMESTATE_GAME;
-    gGameState = 0;
+    gMachineOut.gameState = 0;
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
     gScoreAccumulator = 0;

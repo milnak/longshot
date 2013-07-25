@@ -34,6 +34,7 @@ void parseGameState(byte* state){
     score = 0;
     switches=0;
     ballCount = 0;
+    prevGameState = gameState;
     /*score =  state[0] << 24 | state[1] << 16 | state[2] << 8 | state[3];
     switches = state[4] << 24 | state[5] << 16 | state[6] << 8 | state[7];
     int disp_byte = state[8] << 24 | state[9] << 16 | state[10] << 8 | state[11];
@@ -43,12 +44,51 @@ void parseGameState(byte* state){
     switches = state[6] << 8 | state[7];
     int disp_byte =  state[10] << 8 | state[11];
     ballCount =  state[14] << 8 | state[15];
+    
+    gameState = state[18] << 8 | state[19];
     dispense = dispense + disp_byte;
     Serial3.print("disp_byte:");
     Serial3.println(disp_byte);
     Serial3.print("Dispense + disp_byte:");
     Serial3.println(dispense);
+    
 
+    if(gameState = 1 &&  prevGameState == 0){
+       ticketsDispensed = 0;
+       if(dispense > 0 && ticketsOwed == 0){
+           ticketsOwed = dispense;
+           dispense = 0;
+           
+       }
+       if (dispense > 0 && ticketsOwed > 0){
+         //Serial3.print("Dispense:");
+         //Serial3.println(dispense);
+         //Serial3.print("TicketsOwed:");
+         //Serial3.println(ticketsOwed);
+          ticketsOwed += dispense;
+          //Serial3.print("TicketsOwed+dispense:");
+          //Serial3.println(ticketsOwed);
+          dispense = 0;
+          
+       }
+    }
+     else{
+      //start a new game
+      coinDebounce.setClicks(0);
+      //this might be bad...we might be restarting the game and still be in gameState=true
+       gameOverLightTimer.disable();
+       freeGameLightTimer.disable();
+       winLightTimer.disable();
+       digitalWrite(winLight,LOW);
+       digitalWrite(freeGameLight,LOW);
+       digitalWrite(gameOverLight,LOW);
+       idleFlash.disable();
+       idleOff.disable();
+       scoreDebounce.setClicks(0);
+       hundredDebounce.setClicks(0);
+       ballCountDebounce.setClicks(0);
+     }
+     
     if(bitRead(switches,0) == 1 ){ //0 is off
      //turn free game lamp on
      //freeGameLightTimer.reset();
@@ -110,53 +150,11 @@ void parseGameState(byte* state){
    }
    
    if(bitRead(switches,7) == 1){
-    
-    if(gameState == true){
-     idle.enable();
-     
-       
-    }
-     
-    gameState = false;
- }
+      idle.enable();
+   }
    else{
-     
-     coinDebounce.setClicks(0);
-     if(gameState == false){  //this might be bad...we might be restarting the game and still be in gameState=true
-       ticketsDispensed = 0;
-       if(dispense > 0 && ticketsOwed == 0){
-           ticketsOwed = dispense;
-           dispense = 0;
-           
-       }
-       if (dispense > 0 && ticketsOwed > 0){
-         Serial3.print("Dispense:");
-         Serial3.println(dispense);
-         Serial3.print("TicketsOwed:");
-         Serial3.println(ticketsOwed);
-          ticketsOwed += dispense;
-          Serial3.print("TicketsOwed+dispense:");
-          Serial3.println(ticketsOwed);
-          dispense = 0;
-          
-       }
-       coinMeterTimer.reset();
-       coinMeterTimer.enable();
-       gameOverLightTimer.disable();
-       freeGameLightTimer.disable();
-       winLightTimer.disable();
-       digitalWrite(winLight,LOW);
-       digitalWrite(freeGameLight,LOW);
-       digitalWrite(gameOverLight,LOW);
-       idleFlash.disable();
-       idleOff.disable();
-       scoreDebounce.setClicks(0);
-       hundredDebounce.setClicks(0);
-       ballCountDebounce.setClicks(0);
+   }
        
-      }
-     gameState = true;
-    }
   }
 
 

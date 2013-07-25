@@ -31,12 +31,14 @@
 
 ////////////////////////////////////////////////////////////
 
-boolean gameState=false;
+int gameState=1;
+int prevGameState=1;
 byte state[16];
 int score = 0;
 int ballCount = 0;
 Shifter shifter(4, SRCK,SIN,RCK); //these are the shift registers that contol the 7 seg displays
 int switches = 0;
+
 ///////////////////////////////////////////////////////////
 
 TimedAction idle = TimedAction(100,idler);
