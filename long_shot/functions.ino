@@ -44,6 +44,10 @@ void parseGameState(byte* state){
     int disp_byte =  state[10] << 8 | state[11];
     ballCount =  state[14] << 8 | state[15];
     dispense = dispense + disp_byte;
+    Serial3.print("disp_byte:");
+    Serial3.println(disp_byte);
+    Serial3.print("Dispense + disp_byte:");
+    Serial3.println(dispense);
 
     if(bitRead(switches,0) == 1 ){ //0 is off
      //turn free game lamp on
@@ -112,6 +116,7 @@ void parseGameState(byte* state){
       if(dispense > 0 && ticketsOwed == 0){
            ticketsOwed = dispense;
            dispense = 0;
+           
        }
        if (dispense > 0 && ticketsOwed > 0){
          Serial3.print("Dispense:");
@@ -122,8 +127,9 @@ void parseGameState(byte* state){
           Serial3.print("TicketsOwed+dispense:");
           Serial3.println(ticketsOwed);
           dispense = 0;
+          
        }
-       ticketsDispensed = 0;
+       
     }
      
     gameState = false;
@@ -132,9 +138,8 @@ void parseGameState(byte* state){
      
      coinDebounce.setClicks(0);
      if(gameState == false){  //this might be bad...we might be restarting the game and still be in gameState=true
-     // if(dispense == 0 && ticketsOwed == 0){
-       // ticketsDispensed = 0;
-     // }
+       ticketsDispensed = 0;
+      
        coinMeterTimer.reset();
        coinMeterTimer.enable();
        gameOverLightTimer.disable();
