@@ -110,7 +110,7 @@ int IncConfigVal(int val) {
       break;
 
     case SETUP_OPTION_LAST_SCORE_HOLD_SECS:
-      INC_AND_WRAP(val, 0, 90, 10)
+      INC_AND_WRAP(val, 10, 90, 0)
       break;
 
     case SETUP_OPTION_ATTRACT_MODE_TIME_MINS:
@@ -156,7 +156,7 @@ int DecConfigVal(int val) {
       break;
 
     case SETUP_OPTION_LAST_SCORE_HOLD_SECS:
-      DEC_AND_WRAP(val, 0, 90, 10)
+      DEC_AND_WRAP(val, 10, 90, 0)
       break;
 
     case SETUP_OPTION_ATTRACT_MODE_TIME_MINS:
