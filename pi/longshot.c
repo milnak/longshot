@@ -116,6 +116,7 @@ void LoadSounds() {
 }
 
 void InitLongshot() {
+  gMachineOut.gameState = 1; //start out with the game off
   if (gSoundsLoaded == 0)
     LoadSounds();
   

@@ -53,7 +53,7 @@ void parseGameState(byte* state){
     Serial3.println(dispense);
     
 
-    if(gameState = 1 &&  prevGameState == 0){
+    if(gameState == 1 &&  prevGameState == 0){
        ticketsDispensed = 0;
        if(dispense > 0 && ticketsOwed == 0){
            ticketsOwed = dispense;
@@ -72,7 +72,7 @@ void parseGameState(byte* state){
           
        }
     }
-     else{
+     if(gameState == 0 && prevGameState ==1){
       //start a new game
       coinDebounce.setClicks(0);
       //this might be bad...we might be restarting the game and still be in gameState=true
