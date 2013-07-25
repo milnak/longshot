@@ -148,7 +148,7 @@ void UpdateLongshot() {
   ////////////
   else if (gGameState == GAMESTATE_ENDGAME) {
 
-    if (gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD] > 0)
+    if (gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS] > 0)
     {
       struct timeval cur_time;
       gettimeofday(&cur_time,NULL);
