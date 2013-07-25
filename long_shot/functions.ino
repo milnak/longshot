@@ -86,9 +86,9 @@ void parseGameState(byte* state){
   
    if(bitRead(switches,4) == 1){
      //turn coin meter on
-    // digitalWrite(coinMeter,LOW);
-  //   coinMeterTimer.reset();
-  //   coinMeterTimer.enable();
+     digitalWrite(coinMeter,HIGH);
+     coinMeterTimer.reset();
+     coinMeterTimer.enable();
    }
    
    if(bitRead(switches,5) == 1){
@@ -114,8 +114,14 @@ void parseGameState(byte* state){
            dispense = 0;
        }
        if (dispense > 0 && ticketsOwed > 0){
+         Serial3.print("Dispense:");
+         Serial3.println(dispense);
+         Serial3.print("TicketsOwed:");
+         Serial3.println(ticketsOwed);
           ticketsOwed += dispense;
-         dispense = 0;
+          Serial3.print("TicketsOwed+dispense:");
+          Serial3.println(ticketsOwed);
+          dispense = 0;
        }
        ticketsDispensed = 0;
     }
@@ -126,9 +132,9 @@ void parseGameState(byte* state){
      
      coinDebounce.setClicks(0);
      if(gameState == false){  //this might be bad...we might be restarting the game and still be in gameState=true
-      if(dispense == 0 && ticketsOwed == 0){
-        ticketsDispensed = 0;
-      }
+     // if(dispense == 0 && ticketsOwed == 0){
+       // ticketsDispensed = 0;
+     // }
        coinMeterTimer.reset();
        coinMeterTimer.enable();
        gameOverLightTimer.disable();

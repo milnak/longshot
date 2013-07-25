@@ -67,6 +67,6 @@ void ticketMeterClick(){
 }
 
 void coinMeterClick(){
-   digitalWrite(coinMeter, HIGH);
+   digitalWrite(coinMeter, LOW);
    coinMeterTimer.disable(); 
 }
