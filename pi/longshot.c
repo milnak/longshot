@@ -42,6 +42,7 @@ int gTickMatrix[10][9] = {
 
 int gGameState = GAMESTATE_IDLE;
 int gScoreAccumulator = 0;
+int gCoinAccumulator = 0;
 int gSoundsLoaded = 0;
 int gHoldScoreTimer = 0;
 struct timeval gEndGameTime;
@@ -55,6 +56,7 @@ void StartNewGame() {
     gMachineIn.coinClicks = 0;
     gMachineInPrev.coinClicks = 0;
     gScoreAccumulator = 0;
+    gCoinAccumulator = 0;
 
     PlaySound(SFX_GAME_START);
 
@@ -131,10 +133,13 @@ void UpdateLongshot() {
   ////////////
   // idle
   ////////////
-  if (gMachineIn.coinClicks > gMachineInPrev.coinClicks) 
+  if (gMachineIn.coinClicks > 0) {
        SwitchOn(SWITCH_COINMETER);
+       gCoinAccumulator += gMachineIn.coinClicks;
+     }
 
-    if (gMachineIn.coinClicks >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
+    if (gCoinAccumulator >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
+
           StartNewGame();
           return;
     }
