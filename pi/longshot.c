@@ -68,6 +68,7 @@ void GoIdle() {
   gGameState = GAMESTATE_IDLE;
   gMachineOut.score = 0;
   gMachineOut.ballCount = 0;
+  gMachineOut.gameState = 1;
   gettimeofday(&gIdleAttractTime,NULL);
 
   SwitchOn(SWITCH_IDLELIGHT);
@@ -116,7 +117,7 @@ void LoadSounds() {
 }
 
 void InitLongshot() {
-  
+
   if (gSoundsLoaded == 0)
     LoadSounds();
   
