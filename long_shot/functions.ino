@@ -22,7 +22,7 @@ int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebo
 
 void updateGame(){
   if(Serial.available()){
-      if(Serial.readBytes((char *)state,16)){ //read in the 16 byte game status from Pi
+      if(Serial.readBytes((char *)state,20)){ //read in the 16 byte game status from Pi
         sendGameState(); //send out the current switch states
         parseGameState(state); //act on the game status from Pi
        }
@@ -33,8 +33,10 @@ void parseGameState(byte* state){
    
     score = 0;
     switches=0;
+    
     ballCount = 0;
     prevGameState = gameState;
+    gameState = 0;
     /*score =  state[0] << 24 | state[1] << 16 | state[2] << 8 | state[3];
     switches = state[4] << 24 | state[5] << 16 | state[6] << 8 | state[7];
     int disp_byte = state[8] << 24 | state[9] << 16 | state[10] << 8 | state[11];
@@ -46,7 +48,7 @@ void parseGameState(byte* state){
     ballCount =  state[14] << 8 | state[15];
     
     gameState = state[18] << 8 | state[19];
-    dispense = dispense + disp_byte;
+    dispense += disp_byte;
     Serial3.print("disp_byte:");
     Serial3.println(disp_byte);
     Serial3.print("Dispense + disp_byte:");
@@ -54,7 +56,7 @@ void parseGameState(byte* state){
     
 
     if(gameState == 1 &&  prevGameState == 0){
-       ticketsDispensed = 0;
+       
        if(dispense > 0 && ticketsOwed == 0){
            ticketsOwed = dispense;
            dispense = 0;
@@ -74,6 +76,7 @@ void parseGameState(byte* state){
     }
      if(gameState == 0 && prevGameState ==1){
       //start a new game
+      ticketsDispensed = 0;
       coinDebounce.setClicks(0);
       //this might be bad...we might be restarting the game and still be in gameState=true
        gameOverLightTimer.disable();

@@ -3,7 +3,7 @@ int dispense_tickets(){
   checkButtonInput(ticketDebounce);
   
   //lets check this once at first and then just check ticketDebounce.getclicks() after that
-   if(gameState == false && ticketError == 1){
+   if(gameState == 1 && ticketError == 1){
      //if the game is over and there is a ticket dispenser error
         idle.disable(); //turn off spinning zeros
          //set the score to the difference of the number of tickets to
@@ -44,7 +44,7 @@ int dispense_tickets(){
      
      ticketError = 0;
      digitalWrite(ticketDispenser,LOW);
-     if(gameState == false){
+     if(gameState == 1){
        idle.enable();
      }  
    }

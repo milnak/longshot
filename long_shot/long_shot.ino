@@ -31,9 +31,9 @@
 
 ////////////////////////////////////////////////////////////
 
-int gameState=1;
+int gameState = 1;
 int prevGameState=1;
-byte state[16];
+byte state[20];
 int score = 0;
 int ballCount = 0;
 Shifter shifter(4, SRCK,SIN,RCK); //these are the shift registers that contol the 7 seg displays
@@ -137,12 +137,12 @@ void loop(){
    dispense_tickets();
   }
  
- if(gameState==true){
+ if(gameState==0){
         idle.disable();
         shifter.display(score,ballCount);
      }
      
- if(gameState == false && ticketError == 0){ //if the game is over and there are no ticket errors
+ if(gameState == 1 && ticketError == 0){ //if the game is over and there are no ticket errors
        idle.enable(); //display the normal idle display
       }
  }

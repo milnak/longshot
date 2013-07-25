@@ -52,6 +52,8 @@ void StartNewGame() {
     gMachineOut.gameState = 0;
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
+    gMachineIn.coinClicks = 0;
+    gMachineInPrev.coinClicks = 0;
     gScoreAccumulator = 0;
 
     PlaySound(SFX_GAME_START);
