@@ -347,6 +347,7 @@ int UpdateMachine() {
     _writeInt(gMachineOut.switches);
     _writeInt(gMachineOut.dispense);
     _writeInt(gMachineOut.ballCount);
+    _writeInt(gMachineOut.gameState);
     
     int command = 0;
 

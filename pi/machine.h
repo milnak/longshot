@@ -15,6 +15,7 @@ struct MachineOutState {
   unsigned int switches;
   unsigned int dispense;
   unsigned int ballCount;
+  unsigned int gameState; //adding this because if there is no idle state (hold last score) then things get wonky
 } __attribute__((__packed__));
 
 struct MachineInState
