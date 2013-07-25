@@ -149,9 +149,12 @@ void UpdateLongshot() {
   ////////////
   else if (gGameState == GAMESTATE_ENDGAME) {
 
-    if (gMachineIn.coinClicks > gMachineInPrev.coinClicks) {
-      StartNewGame();
-      return;
+    if (gMachineIn.coinClicks > gMachineInPrev.coinClicks) 
+       SwitchOn(SWITCH_COINMETER);
+
+    if (gMachineIn.coinClicks >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
+          StartNewGame();
+          return;
     }
 
     //if (gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD] > 0)
@@ -177,6 +180,14 @@ void UpdateLongshot() {
   // gameplay
   ////////////
   else if (gGameState == GAMESTATE_GAME) {
+
+    if (gMachineIn.coinClicks > gMachineInPrev.coinClicks) 
+       SwitchOn(SWITCH_COINMETER);
+
+    if (gMachineIn.coinClicks >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
+          StartNewGame();
+          return;
+    }
 
     SwitchOff(SWITCH_SOLENOID);
 
