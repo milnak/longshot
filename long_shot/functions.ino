@@ -1,10 +1,3 @@
-/*void integerToBytes(int val, byte b[4]) {
- b[0] = (byte )((val >> 24) & 0xff);
- b[1] = (byte )((val >> 16) & 0xff);
- b[2] = (byte )((val >> 8) & 0xff);
- b[3] = (byte )(val & 0xff);
-}*/
-
 void sendGameState(){
 int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebounce.getClicks(),
                   ballCountDebounce.getClicks(),coinDebounce.getClicks(),
@@ -16,6 +9,12 @@ int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebo
     //integerToBytes(b[x], statusByte);
     //Serial.write(statusByte,sizeof(statusByte));
     Serial.write(b[x]);
+  }
+  if(coinDebounce.getClicks() > 0){
+    digitalWrite(coinMeter,HIGH);
+    coinMeterTimer.reset();
+    coinMeterTimer.enable();
+    coinDebounce.setClicks(0);
   }
   commandByte = 1;
 }
@@ -37,23 +36,14 @@ void parseGameState(byte* state){
     ballCount = 0;
     prevGameState = gameState;
     gameState = 0;
-    /*score =  state[0] << 24 | state[1] << 16 | state[2] << 8 | state[3];
-    switches = state[4] << 24 | state[5] << 16 | state[6] << 8 | state[7];
-    int disp_byte = state[8] << 24 | state[9] << 16 | state[10] << 8 | state[11];
-    ballCount = state[12] << 24 | state[13] << 16 | state[14] << 8 | state[15];
-    */
-     score =   state[2] << 8 | state[3];
+    score =   state[2] << 8 | state[3];
     switches = state[6] << 8 | state[7];
     int disp_byte =  state[10] << 8 | state[11];
     ballCount =  state[14] << 8 | state[15];
     
     gameState = state[18] << 8 | state[19];
     dispense += disp_byte;
-    Serial3.print("disp_byte:");
-    Serial3.println(disp_byte);
-    Serial3.print("Dispense + disp_byte:");
-    Serial3.println(dispense);
-    
+      
 
     if(gameState == 1 &&  prevGameState == 0){
        
@@ -63,21 +53,15 @@ void parseGameState(byte* state){
            
        }
        if (dispense > 0 && ticketsOwed > 0){
-         //Serial3.print("Dispense:");
-         //Serial3.println(dispense);
-         //Serial3.print("TicketsOwed:");
-         //Serial3.println(ticketsOwed);
-          ticketsOwed += dispense;
-          //Serial3.print("TicketsOwed+dispense:");
-          //Serial3.println(ticketsOwed);
-          dispense = 0;
+         ticketsOwed += dispense;
+         dispense = 0;
           
        }
     }
      if(gameState == 0 && prevGameState ==1){
       //start a new game
       ticketsDispensed = 0;
-      coinDebounce.setClicks(0);
+      
       //this might be bad...we might be restarting the game and still be in gameState=true
        gameOverLightTimer.disable();
        freeGameLightTimer.disable();
@@ -132,10 +116,11 @@ void parseGameState(byte* state){
    }
   
    if(bitRead(switches,4) == 1){
-     //turn coin meter on
+     /* //turn coin meter on
+     Serial3.println("COIN METER!!");
      digitalWrite(coinMeter,HIGH);
      coinMeterTimer.reset();
-     coinMeterTimer.enable();
+     coinMeterTimer.enable();*/
    }
    
    if(bitRead(switches,5) == 1){
