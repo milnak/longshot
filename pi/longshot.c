@@ -49,6 +49,7 @@ struct timeval gIdleAttractTime;
 
 void StartNewGame() {
     gGameState = GAMESTATE_GAME;
+    gGameState = 0;
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
     gScoreAccumulator = 0;
@@ -78,6 +79,7 @@ void GoIdle() {
 
 void EndGame() {
     gGameState = GAMESTATE_ENDGAME;
+    gMachineOut.gameState = 1;
     gettimeofday(&gEndGameTime,NULL);    
 
     SwitchOn(SWITCH_GAMEOVERLIGHT);
@@ -201,7 +203,7 @@ void UpdateLongshot() {
 
         gMachineOut.ballCount += (gMachineIn.ballClicks - gMachineInPrev.ballClicks);
         if (gMachineOut.ballCount >= gOptionValues[SETUP_OPTION_BALLCOUNT]) {
-          EndGame();
+            EndGame();
         }
     }
 
