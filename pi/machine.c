@@ -556,7 +556,7 @@ void DumpMachineOutState() {
 
       if (gMachineOutPrev.ballCount != gMachineOut.ballCount) 
         printf("CHANGED: Ball Count: %d\n", gMachineOut.ballCount);
-    }
+    
     if (gMachineOutPrev.gameState != gMachineOut.gameState) 
         printf("CHANGED: GameState: %d\n", gMachineOut.gameState);
     }
