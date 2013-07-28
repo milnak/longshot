@@ -50,7 +50,7 @@ struct timeval gIdleAttractTime;
 
 void StartNewGame() {
     gGameState = GAMESTATE_GAME;
-    gMachineOut.gameState = 0;
+    gMachineOut.gameState = 1;
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
     gMachineIn.coinClicks = 0;
@@ -72,7 +72,7 @@ void GoIdle() {
   gGameState = GAMESTATE_IDLE;
   gMachineOut.score = 0;
   gMachineOut.ballCount = 0;
-  gMachineOut.gameState = 1;
+  gMachineOut.gameState = 0;
   gettimeofday(&gIdleAttractTime,NULL);
 
   SwitchOn(SWITCH_IDLELIGHT);
@@ -84,7 +84,7 @@ void GoIdle() {
 
 void EndGame() {
     gGameState = GAMESTATE_ENDGAME;
-    gMachineOut.gameState = 1;
+    gMachineOut.gameState = 0;
     gettimeofday(&gEndGameTime,NULL);    
 
     SwitchOn(SWITCH_GAMEOVERLIGHT);

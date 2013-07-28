@@ -45,7 +45,7 @@ void parseGameState(byte* state){
     dispense += disp_byte;
       
 
-    if(gameState == 1 &&  prevGameState == 0){
+    if(gameState == 0 &&  prevGameState == 1){
        
        if(dispense > 0 && ticketsOwed == 0){
            ticketsOwed = dispense;
@@ -58,7 +58,7 @@ void parseGameState(byte* state){
           
        }
     }
-     if(gameState == 0 && prevGameState ==1){
+     if(gameState == 1 && prevGameState ==0){
       //start a new game
       ticketsDispensed = 0;
       
@@ -82,7 +82,7 @@ void parseGameState(byte* state){
      digitalWrite(freeGameLight,HIGH);
      freeGameLightTimer.enable();
    }
-   if(bitRead(switches,0) == 0 && gameState ==true){
+   if(bitRead(switches,0) == 0 && gameState == 1){
      digitalWrite(freeGameLight,LOW);
      freeGameLightTimer.disable();
    }
@@ -93,7 +93,7 @@ void parseGameState(byte* state){
      digitalWrite(gameOverLight,HIGH);
      gameOverLightTimer.enable();
    }
-     if(bitRead(switches,1) == 0 && gameState ==true){
+     if(bitRead(switches,1) == 0 && gameState == 1){
      digitalWrite(gameOverLight, LOW);
      gameOverLightTimer.disable();
    }
@@ -104,7 +104,7 @@ void parseGameState(byte* state){
      digitalWrite(winLight,HIGH);
      winLightTimer.enable();
    }
-     if(bitRead(switches,2) == 0 && gameState ==true){
+     if(bitRead(switches,2) == 0 && gameState == 1){
      digitalWrite(winLight,LOW);
      winLightTimer.disable();
    }

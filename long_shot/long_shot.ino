@@ -4,10 +4,10 @@
 
 ///////////////////pin defs////////////////////////////////
 //inputs
-#define coinSwitch  A2
+#define coinSwitch  A0
 #define scoreSwitch A4 
 #define hundredSwitch  A1
-#define ballCountSwitch  A0
+#define ballCountSwitch  A2
 #define selectButton  26
 #define downButton  27
 #define upButton  28
@@ -31,7 +31,7 @@
 
 ////////////////////////////////////////////////////////////
 
-int gameState = 1;
+int gameState = 0;
 int prevGameState=1;
 byte state[20];
 int score = 0;
@@ -137,12 +137,12 @@ void loop(){
    dispense_tickets();
   }
  
- if(gameState==0){
+ if(gameState==1){
         idle.disable();
         shifter.display(score,ballCount);
      }
      
- if(gameState == 1 && ticketError == 0){ //if the game is over and there are no ticket errors
+ if(gameState == 0 && ticketError == 0){ //if the game is over and there are no ticket errors
        idle.enable(); //display the normal idle display
       }
  }

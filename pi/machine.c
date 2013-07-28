@@ -275,7 +275,7 @@ void ResetMachine() {
     gMachineOut.dispense  = 0;
     gMachineOut.score     = 0;
     gMachineOut.ballCount = 0;
-    gMachineOut.gameState = 1;
+    gMachineOut.gameState = 0;
     gMachineInPrev.scoreClicks = 0;
 
     memset(&gMachineOut, 0, sizeof(gMachineOut));
@@ -349,6 +349,7 @@ int UpdateMachine() {
     _writeInt(gMachineOut.dispense);
     _writeInt(gMachineOut.ballCount);
     _writeInt(gMachineOut.gameState);
+
     
     int command = 0;
 
