@@ -40,7 +40,7 @@ int dispense_tickets(){
            ticketDebounce.setClicks(0);
            ticketTimer = 0; // reset the timer
         }
-  if(dispense <= 0 && ticketsOwed <= 0){
+  if(dispense == 0 && ticketsOwed == 0){
      
      ticketError = 0;
      
