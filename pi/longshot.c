@@ -194,19 +194,19 @@ void UpdateLongshot() {
     // score up
     if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
       gScoreAccumulator += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
-      gMachineOut.score += gScoreAccumulator;
+      //gMachineOut.score += gScoreAccumulator;
 
     // score up
     if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
       gScoreAccumulator += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
-      gMachineOut.score += gScoreAccumulator;
+     
     
 
     // balls played
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
     {
        
-
+         gMachineOut.score += gScoreAccumulator;
         // play the appropriate SFX
         if (gScoreAccumulator == 0) PlaySound(SFX_NO_POINTS);
         else if (gScoreAccumulator <= 10) PlaySound(SFX_10_POINTS);
