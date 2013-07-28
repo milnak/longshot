@@ -141,6 +141,7 @@ void parseGameState(byte* state){
       idle.enable();
    }
    else{
+     idle.disable();
    }
        
   }
