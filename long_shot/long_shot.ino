@@ -7,7 +7,7 @@
 #define coinSwitch  A2
 #define scoreSwitch A4 
 #define hundredSwitch  A1
-#define ballCountSwitch  A5
+#define ballCountSwitch  A0
 #define selectButton  26
 #define downButton  27
 #define upButton  28
