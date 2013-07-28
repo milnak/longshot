@@ -177,6 +177,11 @@ void UpdateLongshot() {
         return;
       }
     }
+    else{ 
+      gMachineOut.gameState = 0;
+      GoIdle();
+      return;
+      }
 
   } 
   ////////////
