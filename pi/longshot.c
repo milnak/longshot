@@ -219,7 +219,7 @@ void UpdateLongshot() {
 
     // we haz points! we can haz tix?
     gMachineOut.dispense = 0;
-    if (gMachineOut.score > gMachineOutPrev.score {
+    if (gMachineOut.score > gMachineOutPrev.score) {
         int tableIndex = 0;
         int ticketsEarned = 0;
 
