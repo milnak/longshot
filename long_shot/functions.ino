@@ -45,12 +45,12 @@ void parseGameState(byte* state){
        if(dispense > 0 && ticketsOwed == 0){
            ticketsOwed = dispense;
            dispense = 0;
-           ticketsDispensed = 0;
+           //ticketsDispensed = 0;
        }
        if (dispense > 0 && ticketsOwed > 0){
          ticketsOwed += dispense;
          dispense = 0;
-          ticketsDispensed = 0;
+          //ticketsDispensed = 0;
        }
     }
      if(gameState == 1 && prevGameState ==0){
