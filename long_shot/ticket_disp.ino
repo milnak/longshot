@@ -43,9 +43,12 @@ int dispense_tickets(){
   if(dispense <= 0 && ticketsOwed <= 0){
      
      ticketError = 0;
+     
      digitalWrite(ticketDispenser,LOW);
      if(gameState == 0){
+       ticketsDispensed = 0;
        idle.enable();
+       
      }  
    }
 }

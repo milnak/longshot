@@ -45,6 +45,7 @@ int gScoreAccumulator = 0;
 int gCoinAccumulator = 0;
 int gSoundsLoaded = 0;
 int gHoldScoreTimer = 0;
+int gTotalTicketsEarned = 0;
 struct timeval gEndGameTime;
 struct timeval gIdleAttractTime;
 
@@ -63,6 +64,7 @@ void StartNewGame() {
     gMachineInPrev.coinClicks = 0;
     gScoreAccumulator = 0;
     gCoinAccumulator = 0;
+    gTotalTicketsEarned = 0;
 
     PlaySound(SFX_GAME_START);
 
@@ -248,15 +250,17 @@ void UpdateLongshot() {
 
         if (tableIndex < 9) {
             ticketsEarned = gTickMatrix[gOptionValues[SETUP_OPTION_TICKETTABLE]][tableIndex];
+
             if (ticketsEarned > gMachineIn.ticketsDispensed) {
-                int diff = ticketsEarned - gMachineIn.ticketsDispensed;
+               // int diff = ticketsEarned - gMachineIn.ticketsDispensed;
+                int diff = ticketsEarned - gTotalTicketsEarned; //getting wonk trying to compare ticketsDispensed from duino side
                 
-                if (diff > 0 && gMachineIn.ticketsDispensed == 0) {
+                if (diff > 0 && gTotalTicketsEarned == 0) {
 
                   SwitchOn( diff == 1 ? SWITCH_WINNERLIGHT : SWITCH_BEACONLIGHT);
                   //PlaySound(SFX_WINNER_SONG);
                 }
-                 
+                 gTotalTicketsEarned = ticketsEarned;
                 gMachineOut.dispense = diff;
 
             } else {

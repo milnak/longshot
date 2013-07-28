@@ -11,6 +11,7 @@ int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebo
     Serial.write(b[x]);
   }
   
+  coinDebounce.setClicks(0);
   commandByte = 1;
 }
 
@@ -45,12 +46,12 @@ void parseGameState(byte* state){
        if(dispense > 0 && ticketsOwed == 0){
            ticketsOwed = dispense;
            dispense = 0;
-           //ticketsDispensed = 0;
+           ticketsDispensed = 0;
        }
        if (dispense > 0 && ticketsOwed > 0){
          ticketsOwed += dispense;
          dispense = 0;
-          //ticketsDispensed = 0;
+          ticketsDispensed = 0;
        }
     }
      if(gameState == 1 && prevGameState ==0){
@@ -69,7 +70,7 @@ void parseGameState(byte* state){
        scoreDebounce.setClicks(0);
        hundredDebounce.setClicks(0);
        ballCountDebounce.setClicks(0);
-       coinDebounce.setClicks(0);
+       
      }
      
     if(bitRead(switches,0) == 1 ){ //0 is off
