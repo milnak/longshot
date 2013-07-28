@@ -32,7 +32,7 @@
 ////////////////////////////////////////////////////////////
 
 int gameState = 0;
-int prevGameState=1;
+int prevGameState=0;
 byte state[20];
 int score = 0;
 int ballCount = 0;
@@ -72,7 +72,7 @@ int downClicks = 0;
 int selectClicks = 0;
 int setupClicks = 0;
 
-Bounce scoreDebounce = Bounce(scoreSwitch,25);
+Bounce scoreDebounce = Bounce(scoreSwitch,18);
 Bounce coinDebounce = Bounce(coinSwitch,50);
 Bounce hundredDebounce = Bounce(hundredSwitch,50);
 Bounce ballCountDebounce = Bounce(ballCountSwitch,50);
