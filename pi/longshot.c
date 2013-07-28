@@ -139,7 +139,7 @@ void UpdateLongshot() {
      }
 
     if (gCoinAccumulator >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
-
+          //gMachineIn.coinClicks = 0; //once we've reached the game cost threshhold reset this to zero
           StartNewGame();
           return;
     }

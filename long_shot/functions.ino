@@ -10,11 +10,7 @@ int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebo
     //Serial.write(statusByte,sizeof(statusByte));
     Serial.write(b[x]);
   }
-  if(coinDebounce.getClicks() > 0){
-    digitalWrite(coinMeter,HIGH);
-    coinMeterTimer.reset();
-    coinMeterTimer.enable();
-   }
+  
   commandByte = 1;
 }
 
@@ -73,6 +69,7 @@ void parseGameState(byte* state){
        scoreDebounce.setClicks(0);
        hundredDebounce.setClicks(0);
        ballCountDebounce.setClicks(0);
+       coinDebounce.setClicks(0);
      }
      
     if(bitRead(switches,0) == 1 ){ //0 is off
