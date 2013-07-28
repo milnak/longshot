@@ -58,7 +58,7 @@ void parseGameState(byte* state){
     }
      if(gameState == 1 && prevGameState ==0){
       //start a new game
-      ticketsDispensed = 0;
+     
       
       //this might be bad...we might be restarting the game and still be in gameState=true
        gameOverLightTimer.disable();

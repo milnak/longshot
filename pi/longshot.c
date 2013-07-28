@@ -145,8 +145,6 @@ void UpdateLongshot() {
        SwitchOn(SWITCH_COINMETER);
        gCoinAccumulator += gMachineIn.coinClicks;
        if (gCoinAccumulator >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
-          EndGame();
-          GoIdle();
           StartNewGame();
           return;
         }
@@ -179,12 +177,12 @@ void UpdateLongshot() {
         gMachineOut.gameState = 0;
         if (gMachineOut.score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
           SwitchOn(SWITCH_FREEGAMELIGHT);
-          EndGame();
+          //EndGame();
           GoIdle();
           StartNewGame();
 
         } else {
-           EndGame();
+           //EndGame();
            GoIdle();
         }
         return;
