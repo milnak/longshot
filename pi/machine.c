@@ -411,6 +411,7 @@ int UpdateMachine() {
         if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
           gLogicState = LOGICSTATE_GAME;
           gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
+          gameState = 1;
           if (gDebug) printf("*** GAME MODE ***\n");
           SaveConfig();
         }
@@ -420,6 +421,7 @@ int UpdateMachine() {
 
          // enter Setup mode
          if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
+            gameState = 0;
             gLogicState = LOGICSTATE_SETUP;
             if (gDebug) printf("*** SETUP MODE ***\n");
             LoadConfig();

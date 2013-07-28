@@ -14,8 +14,7 @@ int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebo
     digitalWrite(coinMeter,HIGH);
     coinMeterTimer.reset();
     coinMeterTimer.enable();
-    coinDebounce.setClicks(0);
-  }
+   }
   commandByte = 1;
 }
 
@@ -142,6 +141,7 @@ void parseGameState(byte* state){
    }
    else{
      idle.disable();
+     //gameState = 0; //not sure about this...we need to drop out for setup mode
    }
        
   }
