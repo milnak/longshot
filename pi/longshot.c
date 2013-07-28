@@ -145,6 +145,8 @@ void UpdateLongshot() {
        SwitchOn(SWITCH_COINMETER);
        gCoinAccumulator += gMachineIn.coinClicks;
        if (gCoinAccumulator >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
+          EndGame();
+          GoIdle();
           StartNewGame();
           return;
         }

@@ -106,7 +106,6 @@ void setup(){
   pinMode(scoreSwitch, INPUT);
   pinMode(hundredSwitch, INPUT);
   pinMode(ballCountSwitch, INPUT);
-  
   pinMode(ticketMeter, OUTPUT);
   pinMode(coinMeter, OUTPUT);
   
