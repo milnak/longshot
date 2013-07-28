@@ -136,13 +136,13 @@ void UpdateLongshot() {
   if (gMachineIn.coinClicks > 0) {
        SwitchOn(SWITCH_COINMETER);
        gCoinAccumulator += gMachineIn.coinClicks;
-     }
-
-    if (gCoinAccumulator >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
-          //gMachineIn.coinClicks = 0; //once we've reached the game cost threshhold reset this to zero
+       if (gCoinAccumulator >= gOptionValues[SETUP_OPTION_COINCOUNT]) {
           StartNewGame();
           return;
-    }
+        }
+     }
+
+    
   if (gGameState == GAMESTATE_IDLE) {
 
     struct timeval cur_time;
@@ -163,10 +163,10 @@ void UpdateLongshot() {
     {
       struct timeval cur_time;
       gettimeofday(&cur_time,NULL);
-      gMachineOut.gameState = 0;
+      
 
       if ((cur_time.tv_sec - gEndGameTime.tv_sec) > gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS]) {
-
+        gMachineOut.gameState = 0;
         if (gMachineOut.score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
           SwitchOn(SWITCH_FREEGAMELIGHT);
           StartNewGame();
@@ -219,7 +219,7 @@ void UpdateLongshot() {
 
     // we haz points! we can haz tix?
     gMachineOut.dispense = 0;
-    if (gMachineOut.score > gMachineOutPrev.score && gGameState == GAMESTATE_GAME) {
+    if (gMachineOut.score > gMachineOutPrev.score {
         int tableIndex = 0;
         int ticketsEarned = 0;
 
