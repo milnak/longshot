@@ -84,7 +84,7 @@ void GoIdle() {
 
 void EndGame() {
     gGameState = GAMESTATE_ENDGAME;
-    gMachineOut.gameState = 0;
+   
     gettimeofday(&gEndGameTime,NULL);    
 
     SwitchOn(SWITCH_GAMEOVERLIGHT);
@@ -163,6 +163,7 @@ void UpdateLongshot() {
     {
       struct timeval cur_time;
       gettimeofday(&cur_time,NULL);
+      gMachineOut.gameState = 0;
 
       if ((cur_time.tv_sec - gEndGameTime.tv_sec) > gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS]) {
 
