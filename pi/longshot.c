@@ -84,7 +84,7 @@ void GoIdle() {
 
 void EndGame() {
     gGameState = GAMESTATE_ENDGAME;
-   
+    gMachineOut.dispense = 0;
     gettimeofday(&gEndGameTime,NULL);    
 
     SwitchOn(SWITCH_GAMEOVERLIGHT);
