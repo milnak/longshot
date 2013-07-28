@@ -88,8 +88,8 @@ Bounce downDebounce = Bounce(downButton,20);
 
 void setup(){
   Serial.begin(57600);
-  Serial3.begin(57600);
-  Serial3.println("Serial debugging begin...");
+  //Serial3.begin(57600);
+  //Serial3.println("Serial debugging begin...");
   //delay(2000); //shouldn't actually need this
   idle.enable();
   solenoidTimer.disable();

@@ -42,7 +42,9 @@ void parseGameState(byte* state){
       
 
     if(gameState == 0 &&  prevGameState == 1){
-       
+       scoreDebounce.setClicks(0);
+       hundredDebounce.setClicks(0);
+       ballCountDebounce.setClicks(0);
        if(dispense > 0 && ticketsOwed == 0){
            ticketsOwed = dispense;
            dispense = 0;
@@ -67,11 +69,10 @@ void parseGameState(byte* state){
        digitalWrite(gameOverLight,LOW);
        idleFlash.disable();
        idleOff.disable();
-       scoreDebounce.setClicks(0);
-       hundredDebounce.setClicks(0);
-       ballCountDebounce.setClicks(0);
+       
        
      }
+     
      
     if(bitRead(switches,0) == 1 ){ //0 is off
      //turn free game lamp on
