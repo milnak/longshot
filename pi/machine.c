@@ -423,7 +423,7 @@ int UpdateMachine() {
          // enter Setup mode
          if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
             prevGameMode = gMachineOut.gameState;
-            gMachineOut.gameState = 1;
+            gMachineOut.gameState = 5;
             gLogicState = LOGICSTATE_SETUP;
             if (gDebug) printf("*** SETUP MODE ***\n");
             LoadConfig();

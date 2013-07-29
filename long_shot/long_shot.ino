@@ -141,11 +141,15 @@ void loop(){
    dispense_tickets();
   }
  
- if(gameState == 1){
+ if(gameState == (1||5)){ //real game or setup mode
         idle.disable();
+        if(gameState == 1 && prevGameState == 5){
+          score = lastScore;
+          ballCount = lastBallCount;
+        }
         shifter.display(score,ballCount);
      }
- if(gameState == 3){
+ if(gameState == 3){ //hold score mode
        idle.disable();
        shifter.display(lastScore,lastBallCount);
  }
