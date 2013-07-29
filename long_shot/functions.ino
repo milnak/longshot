@@ -34,7 +34,7 @@ void parseGameState(byte* state){
       lastBallCount = ballCount;
     }
     score = 0;
-    switches=0;
+    switches = 0;
     ballCount = 0;
 
     score =   state[2] << 8 | state[3];
@@ -42,8 +42,8 @@ void parseGameState(byte* state){
     ballCount =  state[14] << 8 | state[15];
    
     if(gameState == 1){ //little hacky, only accept new tickets if we are in active game
-    int disp_byte =  state[10] << 8 | state[11];
-    dispense += disp_byte;
+      int disp_byte =  state[10] << 8 | state[11];
+      dispense += disp_byte;
     }
 
     if(gameState == 2){
@@ -56,11 +56,7 @@ void parseGameState(byte* state){
        ticketsDispensed = 0;
     }
 
-   
-
-
-
-     if(gameState == 1 && (prevGameState == 0 || prevGameState == 2 || prevGameState == 3 || prevGameState == 4)){
+    if(gameState == 1 && (prevGameState == 0 || prevGameState == 2 || prevGameState == 3 || prevGameState == 4)){
       //start a new game
       ticketsDispensed = 0;
       

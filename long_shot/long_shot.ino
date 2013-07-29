@@ -141,7 +141,7 @@ void loop(){
    dispense_tickets();
   }
  
- if(gameState==1){
+ if(gameState == 1){
         idle.disable();
         shifter.display(score,ballCount);
      }
