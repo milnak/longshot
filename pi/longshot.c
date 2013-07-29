@@ -200,12 +200,12 @@ void UpdateLongshot() {
     SwitchOff(SWITCH_SOLENOID);
 
     // score up
-    if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks){}
+    if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks){
       gScoreAccumulator += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
       gMachineOut.score += gScoreAccumulator;
     }
     // score up
-    if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks){}
+    if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks){
       gScoreAccumulator += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
       gMachineOut.score += gScoreAccumulator;
     }
