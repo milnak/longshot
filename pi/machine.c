@@ -412,7 +412,7 @@ int UpdateMachine() {
         if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
           gLogicState = LOGICSTATE_GAME;
           gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
-          gMachineOut.gameState = 0;
+          gMachineOut.gameState = prevGameMode;
           if (gDebug) printf("*** GAME MODE ***\n");
           SaveConfig();
         }
