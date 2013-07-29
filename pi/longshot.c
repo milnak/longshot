@@ -192,9 +192,14 @@ void UpdateLongshot() {
         //gMachineOut.gameState = 0;
         if (gMachineOut.score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
           SwitchOn(SWITCH_FREEGAMELIGHT);
+          //EndGame();
+          GoIdle();
           StartNewGame();
         } 
         else {
+
+        } else {
+	  //EndGame();
            GoIdle();
         }
         return;

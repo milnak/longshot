@@ -88,8 +88,8 @@ Bounce downDebounce = Bounce(downButton,20);
 
 void setup(){
   Serial.begin(57600);
-  Serial3.begin(57600);
-  Serial3.println("Serial debugging begin...");
+  //Serial3.begin(57600);
+  //Serial3.println("Serial debugging begin...");
   //delay(2000); //shouldn't actually need this
   idle.enable();
   solenoidTimer.disable();
@@ -106,7 +106,6 @@ void setup(){
   pinMode(scoreSwitch, INPUT);
   pinMode(hundredSwitch, INPUT);
   pinMode(ballCountSwitch, INPUT);
-  
   pinMode(ticketMeter, OUTPUT);
   pinMode(coinMeter, OUTPUT);
   
@@ -119,6 +118,9 @@ void setup(){
 
 void loop(){
   poll_inputs(); //get switch states
+   if (dispense > 0 || ticketsOwed > 0){ 
+   dispense_tickets();
+  }
   updateGame(); //pull the state from Pi, push switches to pi, parse out state
   //TimedAction checks//
   solenoidTimer.check();
@@ -133,9 +135,7 @@ void loop(){
   coinMeterTimer.check();
   /////////////////////////////////////
  
- if (dispense > 0 || ticketsOwed > 0){ 
-   dispense_tickets();
-  }
+
  
  if(gameState==1){
         idle.disable();
