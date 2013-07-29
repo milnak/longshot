@@ -11,6 +11,7 @@
 #define selectButton  26
 #define downButton  27
 #define upButton  28
+
 #define setupButton  29
 #define ticketSensor  A3
 

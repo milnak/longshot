@@ -4,11 +4,21 @@
 #include <sys/time.h>
 
 enum {
-  GAMESTATE_IDLE, //0
-  GAMESTATE_GAME, //1
-  GAMESTATE_ENDGAME, //2
-  GAMESTATE_HOLDSCORE, //3
-  GAMESTATE_OUTOFTICKETS //4
+  GAMESTATE_IDLE,
+  GAMESTATE_GAME,
+  GAMESTATE_ENDGAME,
+  GAMESTATE_HOLDSCORE,
+  GAMESTATE_OUTOFTICKETS
+  GAMESTATE_IDLE = 0 , 
+  GAMESTATE_GAME = 1,
+  GAMESTATE_ENDGAME = 2, 
+  GAMESTATE_HOLDSCORE =3,
+  GAMESTATE_OUTOFTICKETS = 4
+  GAMESTATE_IDLE = 0,
+  GAMESTATE_GAME = 1,
+  GAMESTATE_ENDGAME = 2,
+  GAMESTATE_HOLDSCORE = 3,
+  GAMESTATE_OUTOFTICKETS = 4
 };
 
 enum {
@@ -53,11 +63,11 @@ struct timeval gIdleAttractTime;
 
 void StartNewGame() {
     gMachineOut.gameState = GAMESTATE_GAME;
-    memset(&gMachineOut, 0, sizeof(gMachineOut));
-    memset(&gMachineOutPrev, 0, sizeof(gMachineOutPrev));
+   // memset(&gMachineOut, 0, sizeof(gMachineOut));
+   // memset(&gMachineOutPrev, 0, sizeof(gMachineOutPrev));
 
-    memset(&gMachineIn, 0, sizeof(gMachineIn));
-    memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
+   // memset(&gMachineIn, 0, sizeof(gMachineIn));
+   // memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
     gScoreAccumulator = 0;
     gCoinAccumulator = 0;
     gTotalTicketsEarned = 0;
