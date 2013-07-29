@@ -6,7 +6,9 @@
 enum {
   GAMESTATE_IDLE,
   GAMESTATE_GAME,
-  GAMESTATE_ENDGAME
+  GAMESTATE_ENDGAME,
+  GAMESTATE_HOLDSCORE,
+  GAMESTATE_OUTOFTICKETS
 };
 
 enum {
@@ -169,29 +171,35 @@ void UpdateLongshot() {
 
     if (gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS] > 0)
     {
-      struct timeval cur_time;
-      gettimeofday(&cur_time,NULL);
-      
-
-      if ((cur_time.tv_sec - gEndGameTime.tv_sec) > gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS]) {
-        gMachineOut.gameState = 0;
-        if (gMachineOut.score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
-          SwitchOn(SWITCH_FREEGAMELIGHT);
-          StartNewGame();
-
-        } else {
-           GoIdle();
-        }
-        return;
-      }
+      gGameState = GAMESTATE_HOLDSCORE;
     }
-    else{ 
-      gMachineOut.gameState = 0;
+    else { 
+      //gMachineOut.gameState = 0;
       GoIdle();
       return;
       }
 
   } 
+  ////////////
+  // hold score
+  ////////////
+  else if (gGameState == GAMESTATE_HOLDSCORE){
+    struct timeval cur_time;
+    gettimeofday(&cur_time,NULL);
+      
+
+      if ((cur_time.tv_sec - gEndGameTime.tv_sec) > gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS]) {
+        //gMachineOut.gameState = 0;
+        if (gMachineOut.score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
+          SwitchOn(SWITCH_FREEGAMELIGHT);
+          StartNewGame();
+        } 
+        else {
+           GoIdle();
+        }
+        return;
+      }
+  }
   ////////////
   // gameplay
   ////////////
@@ -261,11 +269,12 @@ void UpdateLongshot() {
                   //PlaySound(SFX_WINNER_SONG);
                 }
                  gTotalTicketsEarned = ticketsEarned;
-                gMachineOut.dispense = diff;
+                 gMachineOut.dispense = diff;
 
             } else {
             }
         }
     }
   }
+  gameState = gGameState;
 }
