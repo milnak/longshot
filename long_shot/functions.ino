@@ -46,13 +46,14 @@ void parseGameState(byte* state){
       dispense += disp_byte;
     }
 
-    if(gameState == 2){
+    if(gameState == (2 || 0)){
       //END_GAME state - clear vars
 
        scoreDebounce.setClicks(0);
        hundredDebounce.setClicks(0);
        ballCountDebounce.setClicks(0);
        ticketsOwed += dispense;
+       dispense = 0;
        ticketsDispensed = 0;
     }
 

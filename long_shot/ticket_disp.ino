@@ -26,7 +26,7 @@ int dispense_tickets(){
        if(ticketDebounce.getClicks() > 0){
           if(bitRead(PORTL,7)){//
           if(ticketsOwed > 0){
-            ticketsOwed -=(int)ticketDebounce.getClicks();//pay out previously owed tickets first)
+            ticketsOwed -=(int)ticketDebounce.getClicks();//pay out previously owed tickets first
           }
           else{
             dispense -= (int)ticketDebounce.getClicks(); 
@@ -40,15 +40,13 @@ int dispense_tickets(){
            ticketDebounce.setClicks(0);
            ticketTimer = 0; // reset the timer
         }
-  if(dispense == 0 && ticketsOwed == 0){
+  if(dispense <= 0 && ticketsOwed <= 0){
      
      ticketError = 0;
-     
      digitalWrite(ticketDispenser,LOW);
      if(gameState == 0){
        ticketsDispensed = 0;
        idle.enable();
-       
-     }  
+      }  
    }
 }
