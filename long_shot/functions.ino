@@ -28,7 +28,7 @@ void parseGameState(byte* state){
     prevGameState = gameState;
     gameState = 0;
     gameState = state[18] << 8 | state[19];
-    if(gameState == (2||5) && prevGameState != 5){
+    if((gameState == 2|| gameState == 5) && prevGameState != 5){
       //catch lastscore and ballcount before they are cleared
       lastScore = score;
       lastBallCount = ballCount;
@@ -46,7 +46,7 @@ void parseGameState(byte* state){
       dispense += disp_byte;
     }
 
-    if(gameState == (2 || 0)){
+    if(gameState == 2 || gameState == 0)){
       //END_GAME state - clear vars
 
        scoreDebounce.setClicks(0);

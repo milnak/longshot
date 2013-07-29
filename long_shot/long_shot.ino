@@ -141,7 +141,7 @@ void loop(){
    dispense_tickets();
   }
  
- if(gameState == (1||5)){ //real game or setup mode
+ if(gameState == 1|| gameState == 5){ //real game or setup mode
         idle.disable();
         if(gameState == 1 && prevGameState == 5){
           score = lastScore;
