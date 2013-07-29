@@ -43,6 +43,7 @@ int gOptionValues[SETUP_OPTION_MAX] = {
 int gLogicState = LOGICSTATE_GAME;
 int gSetupMode = SETUP_MODE_MENUSELECT;
 int gSetupMenu = 0;
+int prevGameMode = 0;
 
 // Our state and data that gets passed to and from the machine
 int gMachineCommPort = -1;
@@ -411,7 +412,7 @@ int UpdateMachine() {
         if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
           gLogicState = LOGICSTATE_GAME;
           gMachineOut.switches |= (1 << SWITCH_IDLELIGHT);
-          //gMachineOut.gameState = 0;
+          gMachineOut.gameState = prevGameMode;
           if (gDebug) printf("*** GAME MODE ***\n");
           SaveConfig();
         }
@@ -421,7 +422,8 @@ int UpdateMachine() {
 
          // enter Setup mode
          if ((gMachineIn.setupClicks - gMachineInPrev.setupClicks) > 0) {
-            //gMachineOut.gameState = 1;
+            prevGameMode = gMachineOut.gameState;
+            gMachineOut.gameState = 1;
             gLogicState = LOGICSTATE_SETUP;
             if (gDebug) printf("*** SETUP MODE ***\n");
             LoadConfig();
