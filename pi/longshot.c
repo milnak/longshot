@@ -55,11 +55,11 @@ struct timeval gIdleAttractTime;
 
 void StartNewGame() {
     gMachineOut.gameState = GAMESTATE_GAME;
-   // memset(&gMachineOut, 0, sizeof(gMachineOut));
-   // memset(&gMachineOutPrev, 0, sizeof(gMachineOutPrev));
+    memset(&gMachineOut, 0, sizeof(gMachineOut));
+    memset(&gMachineOutPrev, 0, sizeof(gMachineOutPrev));
 
-   // memset(&gMachineIn, 0, sizeof(gMachineIn));
-   // memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
+    memset(&gMachineIn, 0, sizeof(gMachineIn));
+    memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
     gScoreAccumulator = 0;
     gCoinAccumulator = 0;
     gTotalTicketsEarned = 0;
