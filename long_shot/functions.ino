@@ -63,6 +63,9 @@ void parseGameState(byte* state){
     }
 
    
+
+
+
      if(gameState == 1 && (prevGameState == 0 || prevGameState == 2 || prevGameState == 3 || prevGameState == 4)){
       //start a new game
       ticketsDispensed = 0;
@@ -142,6 +145,7 @@ void parseGameState(byte* state){
    }
    
    if(bitRead(switches,7) == 1){
+    if(ticketError == 0 && gameState != 3)
       idle.enable();
    }
    else{
