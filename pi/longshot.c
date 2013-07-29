@@ -42,7 +42,7 @@ int gTickMatrix[10][9] = {
   { 0,0,0,0,0,0,0,0,0           }
 };
 
-int gGameState = GAMESTATE_IDLE;
+gMachineOut.gameState = GAMESTATE_IDLE;
 int gScoreAccumulator = 0;
 int gCoinAccumulator = 0;
 int gSoundsLoaded = 0;
@@ -52,8 +52,7 @@ struct timeval gEndGameTime;
 struct timeval gIdleAttractTime;
 
 void StartNewGame() {
-    gGameState = GAMESTATE_GAME;
-    gMachineOut.gameState = 1;
+    gMachineOut.gameState = GAMESTATE_GAME;
     gMachineOut.score = 0;
     gMachineOut.ballCount = 0;
     gMachineIn.ballClicks = 0;
@@ -79,10 +78,9 @@ void StartNewGame() {
 }
 
 void GoIdle() {
-  gGameState = GAMESTATE_IDLE;
+  gMachineOut.gameState = GAMESTATE_IDLE;
   gMachineOut.score = 0;
   gMachineOut.ballCount = 0;
-  gMachineOut.gameState = 0;
   gettimeofday(&gIdleAttractTime,NULL);
 
   SwitchOn(SWITCH_IDLELIGHT);
@@ -93,7 +91,7 @@ void GoIdle() {
 }
 
 void EndGame() {
-    gGameState = GAMESTATE_ENDGAME;
+    gMachineOut.gameState = GAMESTATE_ENDGAME;
     gMachineOut.dispense = 0;
     gettimeofday(&gEndGameTime,NULL);    
 
@@ -153,7 +151,7 @@ void UpdateLongshot() {
      }
 
     
-  if (gGameState == GAMESTATE_IDLE) {
+  if (gMachineOut.gameState == GAMESTATE_IDLE) {
 
     struct timeval cur_time;
     gettimeofday(&cur_time,NULL);
@@ -167,14 +165,13 @@ void UpdateLongshot() {
   ////////////
   // end game
   ////////////
-  else if (gGameState == GAMESTATE_ENDGAME) {
+  else if (gMachineOut.gameState == GAMESTATE_ENDGAME) {
 
     if (gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS] > 0)
     {
-      gGameState = GAMESTATE_HOLDSCORE;
+      gMachineOut.gameState = GAMESTATE_HOLDSCORE;
     }
     else { 
-      //gMachineOut.gameState = 0;
       GoIdle();
       return;
       }
@@ -183,24 +180,16 @@ void UpdateLongshot() {
   ////////////
   // hold score
   ////////////
-  else if (gGameState == GAMESTATE_HOLDSCORE){
+  else if (gMachineOut.gameState == GAMESTATE_HOLDSCORE){
     struct timeval cur_time;
     gettimeofday(&cur_time,NULL);
-      
-
       if ((cur_time.tv_sec - gEndGameTime.tv_sec) > gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS]) {
-        //gMachineOut.gameState = 0;
         if (gMachineOut.score >= gOptionValues[SETUP_OPTION_FREEGAME_SCORE]) { 
           SwitchOn(SWITCH_FREEGAMELIGHT);
-          //EndGame();
-          GoIdle();
           StartNewGame();
         } 
-        else {
-
-        } else {
-	  //EndGame();
-           GoIdle();
+         else {
+	        GoIdle();
         }
         return;
       }
@@ -208,7 +197,7 @@ void UpdateLongshot() {
   ////////////
   // gameplay
   ////////////
-  else if (gGameState == GAMESTATE_GAME) {
+  else if (gMachineOut.gameState == GAMESTATE_GAME) {
 
     SwitchOff(SWITCH_SOLENOID);
 
@@ -281,5 +270,5 @@ void UpdateLongshot() {
         }
     }
   }
-  gameState = gGameState;
+  
 }

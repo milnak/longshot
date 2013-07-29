@@ -34,6 +34,7 @@
 int gameState = 0;
 int prevGameState=0;
 byte state[20];
+
 int score = 0;
 int ballCount = 0;
 Shifter shifter(4, SRCK,SIN,RCK); //these are the shift registers that contol the 7 seg displays
@@ -106,6 +107,7 @@ void setup(){
   pinMode(scoreSwitch, INPUT);
   pinMode(hundredSwitch, INPUT);
   pinMode(ballCountSwitch, INPUT);
+  
   pinMode(ticketMeter, OUTPUT);
   pinMode(coinMeter, OUTPUT);
   
@@ -118,9 +120,6 @@ void setup(){
 
 void loop(){
   poll_inputs(); //get switch states
-   if (dispense > 0 || ticketsOwed > 0){ 
-   dispense_tickets();
-  }
   updateGame(); //pull the state from Pi, push switches to pi, parse out state
   //TimedAction checks//
   solenoidTimer.check();
@@ -135,7 +134,9 @@ void loop(){
   coinMeterTimer.check();
   /////////////////////////////////////
  
-
+ if (dispense > 0 || ticketsOwed > 0){ 
+   dispense_tickets();
+  }
  
  if(gameState==1){
         idle.disable();

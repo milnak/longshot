@@ -28,23 +28,22 @@ void parseGameState(byte* state){
    
     score = 0;
     switches=0;
-    
     ballCount = 0;
     prevGameState = gameState;
     gameState = 0;
     score =   state[2] << 8 | state[3];
     switches = state[6] << 8 | state[7];
+    if(gameState == 1){ //little hacky
     int disp_byte =  state[10] << 8 | state[11];
-    ballCount =  state[14] << 8 | state[15];
-    
-    gameState = state[18] << 8 | state[19];
     dispense += disp_byte;
+    }
+    ballCount =  state[14] << 8 | state[15];
+    gameState = state[18] << 8 | state[19];
+    
       
 
     if(gameState == 0 &&  prevGameState == 1){
-       scoreDebounce.setClicks(0);
-       hundredDebounce.setClicks(0);
-       ballCountDebounce.setClicks(0);
+       
        if(dispense > 0 && ticketsOwed == 0){
            ticketsOwed = dispense;
            dispense = 0;
@@ -58,7 +57,7 @@ void parseGameState(byte* state){
     }
      if(gameState == 1 && prevGameState ==0){
       //start a new game
-     
+      ticketsDispensed = 0;
       
       //this might be bad...we might be restarting the game and still be in gameState=true
        gameOverLightTimer.disable();
@@ -69,10 +68,11 @@ void parseGameState(byte* state){
        digitalWrite(gameOverLight,LOW);
        idleFlash.disable();
        idleOff.disable();
-       
+       scoreDebounce.setClicks(0);
+       hundredDebounce.setClicks(0);
+       ballCountDebounce.setClicks(0);
        
      }
-     
      
     if(bitRead(switches,0) == 1 ){ //0 is off
      //turn free game lamp on
