@@ -28,11 +28,7 @@ void parseGameState(byte* state){
     prevGameState = gameState;
     gameState = 0;
     gameState = state[18] << 8 | state[19];
-    if((gameState == 2 || gameState == 5) && prevGameState != 5){
-      //catch lastscore and ballcount before they are cleared
-      lastScore = score;
-      lastBallCount = ballCount;
-    }
+    
     score = 0;
     switches = 0;
     ballCount = 0;
@@ -40,7 +36,11 @@ void parseGameState(byte* state){
     score =   state[2] << 8 | state[3];
     switches = state[6] << 8 | state[7];
     ballCount =  state[14] << 8 | state[15];
-   
+    if((gameState == 2 || gameState == 5) && prevGameState != 5){
+      //catch lastscore and ballcount before they are cleared
+      lastScore = score;
+      lastBallCount = ballCount;
+    }
     if(gameState == 1){ //little hacky, only accept new tickets if we are in active game
       int disp_byte =  state[10] << 8 | state[11];
       dispense += disp_byte;
