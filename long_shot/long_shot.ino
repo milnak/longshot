@@ -76,7 +76,7 @@ int downClicks = 0;
 int selectClicks = 0;
 int setupClicks = 0;
 
-Bounce scoreDebounce = Bounce(scoreSwitch,18);
+Bounce scoreDebounce = Bounce(scoreSwitch,25);
 Bounce coinDebounce = Bounce(coinSwitch,50);
 Bounce hundredDebounce = Bounce(hundredSwitch,50);
 Bounce ballCountDebounce = Bounce(ballCountSwitch,50);
