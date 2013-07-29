@@ -46,7 +46,7 @@ void parseGameState(byte* state){
       dispense += disp_byte;
     }
 
-    if(gameState == 2 || gameState == 0)){
+    if(gameState == 2 || gameState == 0){
       //END_GAME state - clear vars
 
        scoreDebounce.setClicks(0);
