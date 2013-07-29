@@ -33,6 +33,8 @@
 
 int gameState = 0;
 int prevGameState=0;
+int lastScore = 0;
+int lastBallCount = 0;
 byte state[20];
 
 int score = 0;
@@ -142,7 +144,10 @@ void loop(){
         idle.disable();
         shifter.display(score,ballCount);
      }
-     
+ if(gameState == 3){
+       idle.disable();
+       shifter.display(lastScore,lastBallCount);
+ }
  if(gameState == 0 && ticketError == 0){ //if the game is over and there are no ticket errors
        idle.enable(); //display the normal idle display
       }

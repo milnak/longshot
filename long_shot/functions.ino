@@ -25,24 +25,28 @@ void updateGame(){
 }
 
 void parseGameState(byte* state){
-   
+    prevGameState = gameState;
+    gameState = 0;
+    gameState = state[18] << 8 | state[19];
+    if(gameState == 2){
+      //catch lastscore and ballcount before they are cleared
+      lastScore = score;
+      lastBallCount = ballCount;
+    }
     score = 0;
     switches=0;
     ballCount = 0;
-    prevGameState = gameState;
-    gameState = 0;
+
     score =   state[2] << 8 | state[3];
     switches = state[6] << 8 | state[7];
+    ballCount =  state[14] << 8 | state[15];
+   
     if(gameState == 1){ //little hacky
     int disp_byte =  state[10] << 8 | state[11];
     dispense += disp_byte;
     }
-    ballCount =  state[14] << 8 | state[15];
-    gameState = state[18] << 8 | state[19];
-    
-      
 
-    if(gameState == 0 &&  prevGameState == 1){
+    if(gameState == 0 &&  (prevGameState == 1 || prevGameState == 2)){
        
        if(dispense > 0 && ticketsOwed == 0){
            ticketsOwed = dispense;
@@ -55,7 +59,7 @@ void parseGameState(byte* state){
           //ticketsDispensed = 0;
        }
     }
-     if(gameState == 1 && prevGameState ==0){
+     if(gameState == 1 && (prevGameState == 0 || prevGameState == 2)){
       //start a new game
       ticketsDispensed = 0;
       
