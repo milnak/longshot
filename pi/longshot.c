@@ -4,11 +4,11 @@
 #include <sys/time.h>
 
 enum {
-  GAMESTATE_IDLE,
-  GAMESTATE_GAME,
-  GAMESTATE_ENDGAME,
-  GAMESTATE_HOLDSCORE,
-  GAMESTATE_OUTOFTICKETS
+  GAMESTATE_IDLE, //0
+  GAMESTATE_GAME, //1
+  GAMESTATE_ENDGAME, //2
+  GAMESTATE_HOLDSCORE, //3
+  GAMESTATE_OUTOFTICKETS //4
 };
 
 enum {
@@ -74,8 +74,8 @@ void StartNewGame() {
 
 void GoIdle() {
   gMachineOut.gameState = GAMESTATE_IDLE;
-  gMachineOut.score = 0;
-  gMachineOut.ballCount = 0;
+  //gMachineOut.score = 0;
+  //gMachineOut.ballCount = 0;
   gettimeofday(&gIdleAttractTime,NULL);
 
   SwitchOn(SWITCH_IDLELIGHT);
@@ -198,21 +198,21 @@ void UpdateLongshot() {
     SwitchOff(SWITCH_SOLENOID);
 
     // score up
-    if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks)
+    if (gMachineInPrev.hundredClicks < gMachineIn.hundredClicks){}
       gScoreAccumulator += (50 * (gMachineIn.hundredClicks - gMachineInPrev.hundredClicks));
-      //gMachineOut.score += gScoreAccumulator;
-
+      gMachineOut.score += gScoreAccumulator;
+    }
     // score up
-    if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks)
+    if (gMachineInPrev.scoreClicks < gMachineIn.scoreClicks){}
       gScoreAccumulator += (10 * (gMachineIn.scoreClicks - gMachineInPrev.scoreClicks));
-     
-    
+      gMachineOut.score += gScoreAccumulator;
+    }
 
     // balls played
     if (gMachineInPrev.ballClicks < gMachineIn.ballClicks)
     {
        
-         gMachineOut.score += gScoreAccumulator;
+         //gMachineOut.score += gScoreAccumulator;
         // play the appropriate SFX
         if (gScoreAccumulator == 0) PlaySound(SFX_NO_POINTS);
         else if (gScoreAccumulator <= 10) PlaySound(SFX_10_POINTS);
