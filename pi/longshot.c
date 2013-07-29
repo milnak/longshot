@@ -53,16 +53,11 @@ struct timeval gIdleAttractTime;
 
 void StartNewGame() {
     gMachineOut.gameState = GAMESTATE_GAME;
-    gMachineOut.score = 0;
-    gMachineOut.ballCount = 0;
-    gMachineIn.ballClicks = 0;
-    gMachineInPrev.ballClicks = 0;
-    gMachineIn.scoreClicks = 0;
-    gMachineInPrev.scoreClicks = 0;
-    gMachineIn.hundredClicks = 0;
-    gMachineInPrev.hundredClicks = 0;
-    gMachineIn.coinClicks = 0;
-    gMachineInPrev.coinClicks = 0;
+    memset(&gMachineOut, 0, sizeof(gMachineOut));
+    memset(&gMachineOutPrev, 0, sizeof(gMachineOutPrev));
+
+    memset(&gMachineIn, 0, sizeof(gMachineIn));
+    memset(&gMachineInPrev, 0, sizeof(gMachineInPrev));
     gScoreAccumulator = 0;
     gCoinAccumulator = 0;
     gTotalTicketsEarned = 0;
@@ -92,7 +87,7 @@ void GoIdle() {
 
 void EndGame() {
     gMachineOut.gameState = GAMESTATE_ENDGAME;
-    gMachineOut.dispense = 0;
+    //gMachineOut.dispense = 0;
     gettimeofday(&gEndGameTime,NULL);    
 
     SwitchOn(SWITCH_GAMEOVERLIGHT);
@@ -170,6 +165,7 @@ void UpdateLongshot() {
     if (gOptionValues[SETUP_OPTION_LAST_SCORE_HOLD_SECS] > 0)
     {
       gMachineOut.gameState = GAMESTATE_HOLDSCORE;
+      return;
     }
     else { 
       GoIdle();

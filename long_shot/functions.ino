@@ -41,25 +41,29 @@ void parseGameState(byte* state){
     switches = state[6] << 8 | state[7];
     ballCount =  state[14] << 8 | state[15];
    
-    if(gameState == 1){ //little hacky
+    if(gameState == 1){ //little hacky, only accept new tickets if we are in active game
     int disp_byte =  state[10] << 8 | state[11];
     dispense += disp_byte;
     }
 
-    if(gameState == 0 &&  (prevGameState == 1 || prevGameState == 2)){
-       
+    if(gameState == 2){
+      //END_GAME state - clear vars
+       scoreDebounce.setClicks(0);
+       hundredDebounce.setClicks(0);
+       ballCountDebounce.setClicks(0);
        if(dispense > 0 && ticketsOwed == 0){
            ticketsOwed = dispense;
            dispense = 0;
-           //ticketsDispensed = 0;
-       }
+         }
        if (dispense > 0 && ticketsOwed > 0){
          ticketsOwed += dispense;
          dispense = 0;
-          //ticketsDispensed = 0;
-       }
+         }
+       ticketsDispensed = 0;
     }
-     if(gameState == 1 && (prevGameState == 0 || prevGameState == 2)){
+
+   
+     if(gameState == 1 && (prevGameState == 0 || prevGameState == 2 || prevGameState == 3 || prevGameState == 4)){
       //start a new game
       ticketsDispensed = 0;
       
@@ -72,9 +76,7 @@ void parseGameState(byte* state){
        digitalWrite(gameOverLight,LOW);
        idleFlash.disable();
        idleOff.disable();
-       scoreDebounce.setClicks(0);
-       hundredDebounce.setClicks(0);
-       ballCountDebounce.setClicks(0);
+       
        
      }
      
