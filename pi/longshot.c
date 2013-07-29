@@ -42,7 +42,7 @@ int gTickMatrix[10][9] = {
   { 0,0,0,0,0,0,0,0,0           }
 };
 
-gMachineOut.gameState = GAMESTATE_IDLE;
+//gMachineOut.gameState = GAMESTATE_IDLE;
 int gScoreAccumulator = 0;
 int gCoinAccumulator = 0;
 int gSoundsLoaded = 0;
