@@ -19,8 +19,12 @@ int dispense_tickets(){
         ticketTimer++;
      }
      else{
+        if(ticketError == 0){
+          dispense++; //testing if this will make up for the ticket gap
+        }
           ticketError = 1;
           digitalWrite(ticketDispenser, LOW);
+
            }
       
        if(ticketDebounce.getClicks() > 0){
