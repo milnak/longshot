@@ -14,21 +14,12 @@ int dispense_tickets(){
         //normal gameplay)
      }
      
-
-     if(ticketTimer < 3000 ||  ticketDelay > 1000){
-
+     if(ticketTimer < 3000){
         digitalWrite(ticketDispenser, HIGH);
         ticketTimer++;
-        if(ticketDelay > 1000){
-          ticketDelay = 0;
-          dispense += 2; //2? right? I mean it is going to count however man notches they get through
-          //before we start the motor up?
-        }
      }
      else{
-        //if(ticketError == 0){
-        //  dispense++; //testing if this will make up for the ticket gap
-       // }
+      
           ticketError = 1;
           digitalWrite(ticketDispenser, LOW);
 
@@ -47,14 +38,9 @@ int dispense_tickets(){
              digitalWrite(ticketMeter,HIGH);
              ticketMeterTimer.reset();
              ticketMeterTimer.enable();
-             ticketTimer = 0; // reset the timer
-             ticketDebounce.setClicks(0);
           }
-          else{
-            ticketDelay++;
-          }
-          
-           
+           ticketDebounce.setClicks(0);
+           ticketTimer = 0; // reset the timer
         }
   if(dispense <= 0 && ticketsOwed <= 0){
      
