@@ -14,7 +14,9 @@ int dispense_tickets(){
         //normal gameplay)
      }
      
-     if(ticketTimer < 3000 || ticketDelay > 1000){
+
+     if(ticketTimer < 3000 ||  ticketDelay > 1000){
+
         digitalWrite(ticketDispenser, HIGH);
         ticketTimer++;
         ticketDelay = 0;
@@ -41,12 +43,13 @@ int dispense_tickets(){
              digitalWrite(ticketMeter,HIGH);
              ticketMeterTimer.reset();
              ticketMeterTimer.enable();
+             ticketTimer = 0; // reset the timer
           }
           else{
             ticketDelay++;
           }
            ticketDebounce.setClicks(0);
-           ticketTimer = 0; // reset the timer
+           
         }
   if(dispense <= 0 && ticketsOwed <= 0){
      
