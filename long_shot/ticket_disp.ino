@@ -14,7 +14,7 @@ int dispense_tickets(){
         //normal gameplay)
      }
      
-     if(ticketTimer < 3000 && ticketDelay > 1000){
+     if(ticketTimer < 3000 || ticketDelay > 1000){
         digitalWrite(ticketDispenser, HIGH);
         ticketTimer++;
         ticketDelay = 0;
