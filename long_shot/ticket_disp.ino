@@ -20,6 +20,7 @@ int dispense_tickets(){
         digitalWrite(ticketDispenser, HIGH);
         ticketTimer++;
         if(ticketDelay > 1000){
+          ticketDebounce.setClicks(0);
           ticketDelay = 0;
         }
      }
