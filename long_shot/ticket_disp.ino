@@ -19,7 +19,9 @@ int dispense_tickets(){
 
         digitalWrite(ticketDispenser, HIGH);
         ticketTimer++;
-        ticketDelay = 0;
+        if(ticketDelay > 1000){
+          ticketDelay = 0;
+        }
      }
      else{
         //if(ticketError == 0){
@@ -44,11 +46,12 @@ int dispense_tickets(){
              ticketMeterTimer.reset();
              ticketMeterTimer.enable();
              ticketTimer = 0; // reset the timer
+             ticketDebounce.setClicks(0);
           }
           else{
             ticketDelay++;
           }
-           ticketDebounce.setClicks(0);
+          
            
         }
   if(dispense <= 0 && ticketsOwed <= 0){
