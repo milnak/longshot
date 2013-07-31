@@ -22,6 +22,8 @@ int dispense_tickets(){
         if(ticketDelay > 1000){
           ticketDebounce.setClicks(0);
           ticketDelay = 0;
+          dispense += 2; //2? right? I mean it is going to count however man notches they get through
+          //before we start the motor up?
         }
      }
      else{
