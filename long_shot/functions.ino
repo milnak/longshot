@@ -10,7 +10,11 @@ int b[11] = { commandByte,ticketsDispensed,scoreDebounce.getClicks(),hundredDebo
     //Serial.write(statusByte,sizeof(statusByte));
     Serial.write(b[x]);
   }
-  
+  if(coinDebounce.getClicks()>0){
+     digitalWrite(coinMeter,HIGH);
+     coinMeterTimer.reset();
+     coinMeterTimer.enable();
+  }
   coinDebounce.setClicks(0);
   commandByte = 1;
 }
