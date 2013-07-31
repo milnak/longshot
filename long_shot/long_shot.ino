@@ -62,6 +62,7 @@ int notchRead = 111;
 int ticketsDispensed = 0;
 int ticketMeterClicks = 0;
 long ticketTimer = 0;
+long ticketDelay = 0;
 int ticketError = 0;
 int ticketsOwed = 0;
 /////////////////////////////////////////////////////////// 
