@@ -14,14 +14,15 @@ int dispense_tickets(){
         //normal gameplay)
      }
      
-     if(ticketTimer < 3000){
+     if(ticketTimer < 3000 && ticketDelay > 1000){
         digitalWrite(ticketDispenser, HIGH);
         ticketTimer++;
+        ticketDelay = 0;
      }
      else{
-        if(ticketError == 0){
-          dispense++; //testing if this will make up for the ticket gap
-        }
+        //if(ticketError == 0){
+        //  dispense++; //testing if this will make up for the ticket gap
+       // }
           ticketError = 1;
           digitalWrite(ticketDispenser, LOW);
 
@@ -40,6 +41,9 @@ int dispense_tickets(){
              digitalWrite(ticketMeter,HIGH);
              ticketMeterTimer.reset();
              ticketMeterTimer.enable();
+          }
+          else{
+            ticketDelay++;
           }
            ticketDebounce.setClicks(0);
            ticketTimer = 0; // reset the timer
