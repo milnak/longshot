@@ -19,10 +19,10 @@
 #define winLight  32
 #define gameOverLight  31
 #define freeGameLight 30
-#define beacon 11
+#define beacon 12
 #define coinMeter  43
 #define ticketMeter  44
-#define solenoid 12
+#define solenoid 11
 #define ticketDispenser  42
 
 //7seg pins
