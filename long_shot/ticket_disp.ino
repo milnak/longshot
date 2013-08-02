@@ -15,18 +15,18 @@ int dispense_tickets(){
      }
      
      if(ticketTimer < 3000){
-        digitalWrite(ticketDispenser, HIGH);
+        digitalWrite(ticketDispenser, HIGH); //activate motor
         ticketTimer++;
      }
      else{
-      
+
           ticketError = 1;
-          digitalWrite(ticketDispenser, LOW);
+          digitalWrite(ticketDispenser, LOW); //no tickets, deactivate motor
 
            }
       
        if(ticketDebounce.getClicks() > 0){
-          if(bitRead(PORTL,7)){//
+          if(bitRead(PORTL,7)){//check to see if the motor is active
           if(ticketsOwed > 0){
             ticketsOwed -=(int)ticketDebounce.getClicks();//pay out previously owed tickets first
           }
