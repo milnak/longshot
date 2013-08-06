@@ -132,7 +132,7 @@ void parseGameState(byte* state){
    
    if(bitRead(switches,6) == 1){
      //turn solenoid on 
-     digitalWrite(solenoid,HIGH);
+     digitalWrite(solenoid,LOW);
      solenoidTimer.reset();
      solenoidTimer.enable();
    }

@@ -21,7 +21,7 @@ void idleFlashOff(){
    idleFlash.enable();
 }
 void solenoidOff(){
-  digitalWrite(solenoid, LOW);
+  digitalWrite(solenoid, HIGH);
   solenoidTimer.disable();
 }
 

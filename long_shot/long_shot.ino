@@ -100,6 +100,7 @@ void setup(){
   pinMode(gameOverLight, OUTPUT);
   pinMode(winLight, OUTPUT);
   pinMode(solenoid, OUTPUT);
+  digitalWrite(solenoid, HIGH);
   pinMode(beacon, OUTPUT);
   
   pinMode(ticketDispenser, OUTPUT);
