@@ -125,7 +125,7 @@ void LoadSounds() {
   PRELOAD_SOUND(SFX_FREE_GAME,      "freegame");
   PRELOAD_SOUND(SFX_ATTRACT_SONG,   "attract");
   PRELOAD_SOUND(SFX_GAME_START, "GameStart");
-  PRELOAD_SOUND(SFX_GAME_OVER), "gameover")
+  PRELOAD_SOUND(SFX_GAME_OVER, "gameover");
   
 
   gSoundsLoaded = 1;
