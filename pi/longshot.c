@@ -121,10 +121,12 @@ void LoadSounds() {
   PRELOAD_SOUND(SFX_50_POINTS,      "50points");
   PRELOAD_SOUND(SFX_100_POINTS,     "100points");
   PRELOAD_SOUND(SFX_WINNER_SONG,    "winner");
-  PRELOAD_SOUND(SFX_CALL_ATTENDANT, "attendant");
+  PRELOAD_SOUND(SFX_CALL_ATTENDANT, "callattendant");
   PRELOAD_SOUND(SFX_FREE_GAME,      "freegame");
   PRELOAD_SOUND(SFX_ATTRACT_SONG,   "attract");
-  PRELOAD_SOUND(SFX_GAME_START, "GameStart")
+  PRELOAD_SOUND(SFX_GAME_START, "GameStart");
+  PRELOAD_SOUND(SFX_GAME_OVER), "gameover")
+  
 
   gSoundsLoaded = 1;
 }
