@@ -11,7 +11,6 @@
 #define selectButton  26
 #define downButton  27
 #define upButton  28
-
 #define setupButton  29
 #define ticketSensor  A3
 
@@ -46,7 +45,7 @@ int switches = 0;
 ///////////////////////////////////////////////////////////
 
 TimedAction idle = TimedAction(100,idler);
-TimedAction solenoidTimer = TimedAction(10 * 1000,solenoidOff);
+TimedAction solenoidTimer = TimedAction(8 * 1000,solenoidOff);
 TimedAction ticketMeterTimer = TimedAction(25, ticketMeterClick);
 TimedAction coinMeterTimer = TimedAction(25, coinMeterClick);
 TimedAction gameOverLightTimer = TimedAction(1000, gameOverLightBlink);
