@@ -115,7 +115,7 @@ int IncConfigVal(int val) {
       break;
 
     case SETUP_OPTION_ATTRACT_MODE_TIME_MINS:
-      INC_AND_WRAP(val, 1, 10, 1)
+      INC_AND_WRAP(val, 1, 60, 0)
       break;
 
     default:
