@@ -25,9 +25,9 @@
 #define ticketDispenser  42
 
 //7seg pins
-#define SRCK 36 
-#define RCK 35
-#define SIN 37
+#define SRCK 33 
+#define RCK 36
+#define SIN 35
 
 ////////////////////////////////////////////////////////////
 
